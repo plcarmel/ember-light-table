@@ -1,4 +1,4 @@
-import { click, findAll, find, triggerEvent } from '@ember/test-helpers';
+import { click, findAll, find, triggerEvent, triggerKeyEvent } from '@ember/test-helpers';
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { render } from '@ember/test-helpers';
@@ -9,6 +9,7 @@ import hasClass from '../../helpers/has-class';
 import Columns from '../../helpers/table-columns';
 import { run } from '@ember/runloop';
 import { all } from 'rsvp';
+import getCmdKey from 'ember-keyboard/utils/get-cmd-key';
 
 module('Integration | Component | lt body', async function(hooks) {
   setupRenderingTest(hooks);
@@ -99,6 +100,34 @@ module('Integration | Component | lt body', async function(hooks) {
 
     await click(middleRow);
     assert.equal(findAll('tr.is-selected').length, 5, 'clicking a deselected row selects it without affecting other selected rows');
+  });
+
+  const triggerSelectAll = () => {
+    let options = {};
+    options[`${getCmdKey()}Key`] = true;
+    return triggerKeyEvent(document.body, 'keydown', 65, options);
+  };
+
+  test('row selection - select all key', async function(assert) {
+    this.set('table', new Table(Columns, this.server.createList('user', 3)));
+    await render(hbs `{{lt-body table=table sharedOptions=sharedOptions canSelect=true multiSelect=true}}`);
+    find('.lt-body-wrap').focus();
+    await triggerSelectAll();
+    assert.equal(findAll('tr.is-selected').length, 3, 'cmd+a selects all rows');
+  });
+
+  test('row selection - select all key - single select', async function(assert) {
+    this.set('table', new Table(Columns, this.server.createList('user', 3)));
+    await render(hbs `{{lt-body table=table sharedOptions=sharedOptions canSelect=true}}`);
+    await triggerSelectAll();
+    assert.equal(this.$('tr.is-selected').length, 0, 'cmd+a selects no row');
+  });
+
+  test('row selection - select all key - select disabled', async function(assert) {
+    this.set('table', new Table(Columns, this.server.createList('user', 3)));
+    this.render(hbs `{{lt-body table=table sharedOptions=sharedOptions canSelect=false}}`);
+    await triggerSelectAll();
+    assert.equal(this.$('tr.is-selected').length, 0, 'cmd+a selects no row');
   });
 
   test('row expansion', async function(assert) {

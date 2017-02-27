@@ -1,8 +1,6 @@
-import Behavior from 'ember-light-table/behaviors/behavior';
+import SelectAll from 'ember-light-table/behaviors/select-all';
 
-export default Behavior.extend({
-
-  exclusionGroup: 'selection',
+export default SelectAll.extend({
 
   // passed in
   requiresKeyboard: true,

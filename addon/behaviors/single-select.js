@@ -9,7 +9,8 @@ export default Behavior.extend({
     this.events.onRowClick = ['rowClick:_all'];
   },
 
-  onRowClick(ltBody, row) {
+  onRowClick(ltBody, ltRow) {
+    let row = ltRow.get('row');
     let isSelected = row.get('selected');
     ltBody.get('table.selectedRows').setEach('selected', false);
     row.set('selected', !isSelected);

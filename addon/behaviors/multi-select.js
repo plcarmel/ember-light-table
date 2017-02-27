@@ -22,7 +22,8 @@ export default SelectAll.extend({
     this._prevSelectedIndex = i;
   },
 
-  onSelectRow(ltBody, row) {
+  onSelectRow(ltBody, ltRow) {
+    let row = ltRow.get('row');
     if (this.get('selectOnClick')) {
       let isSelected = row.get('selected');
       if (this.get('requiresKeyboard')) {
@@ -31,12 +32,13 @@ export default SelectAll.extend({
           row.set('selected', !isSelected);
         });
       } else {
-        this.onToggleRow(ltBody, row);
+        this.onToggleRow(ltBody, ltRow);
       }
     }
   },
 
-  onExtendRange(ltBody, row) {
+  onExtendRange(ltBody, ltRow) {
+    let row = ltRow.get('row');
     this._onRowClick(ltBody, row, (i, table) => {
       let j = this._prevSelectedIndex === -1 ? i : this._prevSelectedIndex;
       table
@@ -46,7 +48,8 @@ export default SelectAll.extend({
     });
   },
 
-  onToggleRow(ltBody, row) {
+  onToggleRow(ltBody, ltRow) {
+    let row = ltRow.get('row');
     this._onRowClick(ltBody, row, () => {
       row.toggleProperty('selected');
     });

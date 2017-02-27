@@ -13,7 +13,8 @@ export default Behavior.extend({
     this.events.onToggleExpandedRow = ['rowClick:_none'];
   },
 
-  onToggleExpandedRow(ltBody, row) {
+  onToggleExpandedRow(ltBody, ltRow) {
+    let row = ltRow.get('row');
     if (this.get('expandOnClick')) {
       let shouldExpand = !row.get('expanded');
       if (!this.get('multiRow')) {

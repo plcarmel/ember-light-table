@@ -1,4 +1,4 @@
-{{#each columns as |column|}}
+{{#each columns as |column i|}}
   {{component (concat 'light-table/cells/' column.cellType) column row
     table=table
     rawValue=(get row column.valuePath)

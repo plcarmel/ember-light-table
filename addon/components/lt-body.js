@@ -1,5 +1,8 @@
 import Component from '@ember/component';
+import { A as emberArray } from '@ember/array';
 import { computed, observer } from '@ember/object';
+import { getOwner } from '@ember/application';
+import $ from 'jquery';
 import withBackingField from 'ember-light-table/utils/with-backing-field';
 import layout from 'ember-light-table/templates/components/lt-body';
 import { run } from '@ember/runloop';
@@ -360,8 +363,20 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
     }
   }),
 
+  /* Components to add in the scrollable content
+   *
+   * @property
+   * @type {[ { component, namedArgs ]} ]}
+   * @default []
+   */
+  scrollableDecorations: null,
+
   init() {
     this._super(...arguments);
+
+    if (this.get('scrollableDecorations') === null) {
+      this.set('scrollableDecorations', emberArray());
+    }
 
     /*
       We can only set `useVirtualScrollbar` once all contextual components have
@@ -430,23 +445,29 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
     }
   },
 
-  _onFocusedRowChanged: observer('table.focusIndex', function() {
-    run.schedule('afterRender', null, () => {
-      let row = this.$('tr.has-focus');
-      if (row.length !== 0) {
-        let rt = row.position().top - this.$('tr:first-child').position().top;
-        let rh = row.height();
-        let rb = rt + rh;
-        let h = this.$().height();
-        let t = this.get('currentScrollOffset');
-        let b = t + h;
-        if (rt < t) {
-          this.set('targetScrollOffset', rt);
-        } else if (rb > b) {
-          this.set('targetScrollOffset', t + rb - b);
-        }
+  makeRowAtVisible(i) {
+    this.makeRowVisible(this.get('ltRows').objectAt(i).$());
+  },
+
+  makeRowVisible(rowQ) {
+    if (rowQ.length !== 0) {
+      let rt = rowQ.position().top - this.$('.scrollable-content').position().top;
+      let rh = rowQ.height();
+      let rb = rt + rh;
+      let h = this.$().height();
+      let t = this.get('currentScrollOffset');
+      let b = t + h;
+      let extraSpace = rh / 2;
+      if (rt < t) {
+        this.set('targetScrollOffset', rt - extraSpace);
+      } else if (rb > b) {
+        this.set('targetScrollOffset', t + rb - b + extraSpace);
       }
-    });
+    }
+  },
+
+  _onFocusedRowChanged: observer('table.focusIndex', function() {
+    run.schedule('afterRender', null, () => this.makeRowVisible(this.$('tr.has-focus')));
   }),
 
   checkTargetScrollOffset() {
@@ -486,24 +507,27 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
     run.cancel(this._debounceTimer);
   },
 
+  ltRows: computed(function() {
+    let vrm = getOwner(this).lookup('-view-registry:main');
+    let q = this.$('tr:not(.lt-expanded-row)');
+    return emberArray($.makeArray(q.map((i, e) => vrm[e.id])));
+  }).volatile(),
+
+  getLtRowAt(position) {
+    return this
+      .get('ltRows')
+      .find((ltr) => {
+        let top = ltr.get('top');
+        return top <= position && position < top + ltr.get('height');
+      });
+  },
+
   actions: {
-    /**
-     * onRowClick action.
-     * @event onRowClick
-     * @param  {Row}   row The row that was clicked
-     * @param  {Event}   event   The click event
-     */
     onRowClick() {
       this.triggerBehaviorEvent('rowClick', ...arguments);
       this.sendAction('onRowClick', ...arguments);
     },
 
-    /**
-     * onRowDoubleClick action.
-     * @event onRowDoubleClick
-     * @param  {Row}   row The row that was clicked
-     * @param  {Event}   event   The click event
-     */
     onRowDoubleClick() {
       this.triggerBehaviorEvent('rowDoubleClick', ...arguments);
       this.sendAction('onRowDoubleClick', ...arguments);
@@ -524,6 +548,31 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
       this.sendAction('onRowMouseMove', ...arguments);
     },
 
+    onRowTouchStart() {
+      this.triggerBehaviorEvent('rowTouchStart', ...arguments);
+      this.sendAction('onRowTouchStart', ...arguments);
+    },
+
+    onRowTouchEnd() {
+      this.triggerBehaviorEvent('rowTouchEnd', ...arguments);
+      this.sendAction('onRowTouchEnd', ...arguments);
+    },
+
+    onRowTouchCancel() {
+      this.triggerBehaviorEvent('rowTouchCancel', ...arguments);
+      this.sendAction('onRowTouchCancel', ...arguments);
+    },
+
+    onRowTouchLeave() {
+      this.triggerBehaviorEvent('rowTouchLeave', ...arguments);
+      this.sendAction('onRowTouchLeave', ...arguments);
+    },
+
+    onRowTouchMove() {
+      this.triggerBehaviorEvent('rowTouchMove', ...arguments);
+      this.sendAction('onRowTouchMove', ...arguments);
+    },
+
     /**
      * onScroll action - sent when user scrolls in the Y direction
      *
@@ -536,6 +585,7 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
      */
     onScroll(scrollOffset /* , event */) {
       this.set('currentScrollOffset', scrollOffset);
+      this.triggerBehaviorEvent('scroll', ...arguments);
       this.sendAction('onScroll', ...arguments);
     },
 

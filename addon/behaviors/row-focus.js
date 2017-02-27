@@ -12,7 +12,8 @@ export default Behavior.extend({
     this.events.onGoUp = [keyDown('ArrowUp')];
   },
 
-  onFocusToRow(ltBody, row) {
+  onFocusToRow(ltBody, ltRow) {
+    let row = ltRow.get('row');
     ltBody.set('table.focusedRow', row);
   },
 

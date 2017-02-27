@@ -430,6 +430,25 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
     }
   },
 
+  _onFocusedRowChanged: observer('table.focusIndex', function() {
+    run.schedule('afterRender', null, () => {
+      let row = this.$('tr.has-focus');
+      if (row.length !== 0) {
+        let rt = row.position().top - this.$('tr:first-child').position().top;
+        let rh = row.height();
+        let rb = rt + rh;
+        let h = this.$().height();
+        let t = this.get('currentScrollOffset');
+        let b = t + h;
+        if (rt < t) {
+          this.set('targetScrollOffset', rt);
+        } else if (rb > b) {
+          this.set('targetScrollOffset', t + rb - b);
+        }
+      }
+    });
+  }),
+
   checkTargetScrollOffset() {
     if (!this.get('hasReachedTargetScrollOffset')) {
       let targetScrollOffset = this.get('targetScrollOffset');

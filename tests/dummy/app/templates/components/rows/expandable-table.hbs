@@ -9,7 +9,7 @@
   }}
 
   {{#t.body
-    behaviors=(array (lt-row-expansion multiRow=false))
+    behaviors=(array (lt-row-focus) (lt-row-expansion multiRow=false))
     onScrolledToBottom=(action 'onScrolledToBottom')
   as |body|}}
     {{#body.expanded-row as |row|}}

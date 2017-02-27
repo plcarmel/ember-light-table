@@ -136,5 +136,11 @@ import Row from './classes/Row';
  * @module Usage
  * @submodule Component Declaration
  */
+
 export default Table;
-export { Table, Column, Row };
+
+export {
+  Table,
+  Column,
+  Row
+};

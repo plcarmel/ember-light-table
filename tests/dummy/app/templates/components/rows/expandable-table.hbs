@@ -9,8 +9,7 @@
   }}
 
   {{#t.body
-    canExpand=true
-    multiRowExpansion=false
+    behaviors=(array (lt-row-expansion multiRow=false))
     onScrolledToBottom=(action 'onScrolledToBottom')
   as |body|}}
     {{#body.expanded-row as |row|}}

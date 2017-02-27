@@ -1,8 +1,16 @@
 import Component from '@ember/component';
 import { computed, observer } from '@ember/object';
+import withBackingField from 'ember-light-table/utils/with-backing-field';
 import layout from 'ember-light-table/templates/components/lt-body';
 import { run } from '@ember/runloop';
 import Row from 'ember-light-table/classes/Row';
+import { EKMixin } from 'ember-keyboard';
+import ActivateKeyboardOnFocusMixin from 'ember-keyboard/mixins/activate-keyboard-on-focus';
+import HasBehaviorsMixin from 'ember-light-table/mixins/has-behaviors';
+import RowExpansionBehavior from 'ember-light-table/behaviors/row-expansion';
+import SingleSelectBehavior from 'ember-light-table/behaviors/single-select';
+import MultiSelectBehavior from 'ember-light-table/behaviors/multi-select';
+import { behaviorGroupFlag, behaviorFlag } from 'ember-light-table/mixins/has-behaviors';
 
 /**
  * @module Light Table
@@ -33,11 +41,15 @@ import Row from 'ember-light-table/classes/Row';
  *
  * @class t.body
  */
+export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehaviorsMixin, {
 
-export default Component.extend({
   layout,
   classNames: ['lt-body-wrap'],
   classNameBindings: ['canSelect', 'multiSelect', 'canExpand'],
+
+  attributeBindings: ['tabindex'],
+
+  tabindex: 0,
 
   /**
    * @property table
@@ -58,6 +70,18 @@ export default Component.extend({
    * @type {Object}
    */
   tableActions: null,
+
+  singleSelectBehavior: withBackingField('_singleSelectBehavior', () => SingleSelectBehavior.create({})),
+  multiSelectBehavior: withBackingField('_multiSelectBehavior', () => MultiSelectBehavior.create({})),
+  expandRowBehavior: withBackingField('_expandRowBehavior', () => RowExpansionBehavior.create({})),
+
+  _initDefaultBehaviorsIfNeeded() {
+    if (this.get('behaviors.length') === 0 && this.get('behaviorsOff.length') === 0) {
+      this.activateBehavior(this.get('multiSelectBehavior'), true);
+      this.activateBehavior(this.get('singleSelectBehavior'), true);
+      this.activateBehavior(this.get('expandRowBehavior'), false);
+    }
+  },
 
   /**
    * @property extra
@@ -80,8 +104,9 @@ export default Component.extend({
    * @property canSelect
    * @type {Boolean}
    * @default true
+   * @deprecated Please set the value of the `behaviors` property directly.
    */
-  canSelect: true,
+  canSelect: behaviorGroupFlag('selection'),
 
   /**
    * Select a row on click. If this is set to `false` and multiSelect is
@@ -91,8 +116,9 @@ export default Component.extend({
    * @property selectOnClick
    * @type {Boolean}
    * @default true
+   * @deprecated Please set the flag directly on the `behaviors/multi-select` instance.
    */
-  selectOnClick: true,
+  selectOnClick: computed.alias('multiSelectBehavior.selectOnClick'),
 
   /**
    * Allows for expanding row. This will create a new row under the row that was
@@ -107,8 +133,9 @@ export default Component.extend({
    * @property canExpand
    * @type {Boolean}
    * @default false
+   * @deprecated Please set the value of the `behaviors` property directly.
    */
-  canExpand: false,
+  canExpand: behaviorGroupFlag('row-expansion'),
 
   /**
    * Allows a user to select multiple rows with the `ctrl`, `cmd`, and `shift` keys.
@@ -117,8 +144,9 @@ export default Component.extend({
    * @property multiSelect
    * @type {Boolean}
    * @default false
+   * @deprecated Please set the value of the `behaviors` property directly.
    */
-  multiSelect: false,
+  multiSelect: behaviorFlag('selection', 'multiSelectBehavior'),
 
   /**
    * When multiSelect is true, this property determines whether or not `ctrl`
@@ -130,8 +158,9 @@ export default Component.extend({
    * @property multiSelectRequiresKeyboard
    * @type {Boolean}
    * @default true
+   * @deprecated Please set the flag directly on the `behaviors/multi-select` instance.
    */
-  multiSelectRequiresKeyboard: true,
+  multiSelectRequiresKeyboard: computed.alias('multiSelectBehavior.requiresKeyboard'),
 
   /**
    * Hide scrollbar when not scrolling
@@ -148,8 +177,9 @@ export default Component.extend({
    * @property multiRowExpansion
    * @type {Boolean}
    * @default true
+   * @deprecated Please set the flag directly on the `behaviors/row-expansion` instance.
    */
-  multiRowExpansion: true,
+  multiRowExpansion: computed.alias('expandRowBehavior.multiRow'),
 
   /**
    * Expand a row on click
@@ -157,8 +187,9 @@ export default Component.extend({
    * @property expandOnClick
    * @type {Boolean}
    * @default true
+   * @deprecated Please set the flag directly on the `behaviors/row-expansion` instance.
    */
-  expandOnClick: true,
+  expandOnClick: computed.alias('expandRowBehavior.expandOnClick'),
 
   /**
    * If true, the body block will yield columns and rows, allowing you
@@ -329,8 +360,6 @@ export default Component.extend({
     }
   }),
 
-  _prevSelectedIndex: -1,
-
   init() {
     this._super(...arguments);
 
@@ -340,6 +369,11 @@ export default Component.extend({
       initialization.
      */
     run.once(this, this._setupVirtualScrollbar);
+
+    this._initDefaultBehaviorsIfNeeded();
+
+    this.get('table.focusIndex'); // so the observers are triggered
+
   },
 
   didReceiveAttrs() {
@@ -412,18 +446,6 @@ export default Component.extend({
     }
   },
 
-  toggleExpandedRow(row) {
-    let multiRowExpansion = this.get('multiRowExpansion');
-    let shouldExpand = !row.expanded;
-
-    if (multiRowExpansion) {
-      row.toggleProperty('expanded');
-    } else {
-      this.get('table.expandedRows').setEach('expanded', false);
-      row.set('expanded', shouldExpand);
-    }
-  },
-
   /**
    * @method _debounceScrolledToBottom
    */
@@ -447,48 +469,13 @@ export default Component.extend({
 
   actions: {
     /**
-     * onRowClick action. Handles selection, and row expansion.
+     * onRowClick action.
      * @event onRowClick
      * @param  {Row}   row The row that was clicked
      * @param  {Event}   event   The click event
      */
-    onRowClick(row, e) {
-      let rows = this.get('table.rows');
-      let multiSelect = this.get('multiSelect');
-      let multiSelectRequiresKeyboard = this.get('multiSelectRequiresKeyboard');
-      let canSelect = this.get('canSelect');
-      let selectOnClick = this.get('selectOnClick');
-      let canExpand = this.get('canExpand');
-      let expandOnClick = this.get('expandOnClick');
-      let isSelected = row.get('selected');
-      let currIndex = rows.indexOf(row);
-      let prevIndex = this._prevSelectedIndex === -1 ? currIndex : this._prevSelectedIndex;
-
-      this._prevSelectedIndex = currIndex;
-
-      let toggleExpandedRow = () => {
-        if (canExpand && expandOnClick) {
-          this.toggleExpandedRow(row);
-        }
-      };
-
-      if (canSelect) {
-        if (e.shiftKey && multiSelect) {
-          rows.slice(Math.min(currIndex, prevIndex), Math.max(currIndex, prevIndex) + 1).forEach((r) => r.set('selected', !isSelected));
-        } else if ((!multiSelectRequiresKeyboard || (e.ctrlKey || e.metaKey)) && multiSelect) {
-          row.toggleProperty('selected');
-        } else {
-          if (selectOnClick) {
-            this.get('table.selectedRows').setEach('selected', false);
-            row.set('selected', !isSelected);
-          }
-
-          toggleExpandedRow();
-        }
-      } else {
-        toggleExpandedRow();
-      }
-
+    onRowClick() {
+      this.triggerBehaviorEvent('rowClick', ...arguments);
       this.sendAction('onRowClick', ...arguments);
     },
 
@@ -498,8 +485,24 @@ export default Component.extend({
      * @param  {Row}   row The row that was clicked
      * @param  {Event}   event   The click event
      */
-    onRowDoubleClick(/* row */) {
+    onRowDoubleClick() {
+      this.triggerBehaviorEvent('rowDoubleClick', ...arguments);
       this.sendAction('onRowDoubleClick', ...arguments);
+    },
+
+    onRowMouseDown() {
+      this.triggerBehaviorEvent('rowMouseDown', ...arguments);
+      this.sendAction('onRowMouseDown', ...arguments);
+    },
+
+    onRowMouseUp() {
+      this.triggerBehaviorEvent('rowMouseUp', ...arguments);
+      this.sendAction('onRowMouseUp', ...arguments);
+    },
+
+    onRowMouseMove() {
+      this.triggerBehaviorEvent('rowMouseMove', ...arguments);
+      this.sendAction('onRowMouseMove', ...arguments);
     },
 
     /**

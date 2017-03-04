@@ -103,7 +103,14 @@ export default class Table extends EmberObject.extend({
       return this.get('rows').findBy('hasFocus');
     },
     set(key, value) {
-      value.set('hasFocus', true);
+      if (value) {
+        value.set('hasFocus', true);
+      } else {
+        let r = this.get('focusedRow');
+        if (r) {
+          r.set('hasFocus', false);
+        }
+      }
       return value;
     }
   }),

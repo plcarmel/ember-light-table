@@ -10,6 +10,9 @@ export default Behavior.extend({
     this.events.onFocusToRow = ['rowMouseDown:_none', 'rowMouseDown:ctrl'];
     this.events.onGoDown = [keyDown('ArrowDown')];
     this.events.onGoUp = [keyDown('ArrowUp')];
+    this.events.onNavSelForward = [keyDown('Enter')];
+    this.events.onNavSelBackward = [keyDown('Enter+shift')];
+    this.events.onClearFocus = [keyDown('Escape')];
   },
 
   onFocusToRow(ltBody, ltRow) {
@@ -23,6 +26,53 @@ export default Behavior.extend({
 
   onGoUp(ltBody) {
     ltBody.set('table.focusIndex', ltBody.get('table.focusIndex') - 1);
+  },
+
+  onNavSelForward(ltBody) {
+    let table = ltBody.get('table');
+    let rows = table.get('rows');
+    let i = Math.max(0, table.get('focusIndex'));
+    let n = rows.get('length');
+    let k = null;
+    for (let j = i + 1; !k && j < n; j++) {
+      if (rows.objectAt(j).get('selected')) {
+        k = j;
+      }
+    }
+    for (let j = 0; !k && j <= i; j++) {
+      if (rows.objectAt(j).get('selected')) {
+        k = j;
+      }
+    }
+    if (k) {
+      table.set('focusIndex', k);
+    }
+  },
+
+  onNavSelBackward(ltBody) {
+    let table = ltBody.get('table');
+    let rows = table.get('rows');
+    let i = Math.max(0, table.get('focusIndex'));
+    let n = rows.get('length');
+    let k = null;
+    for (let j = i - 1; !k && j >= 0; j--) {
+      if (rows.objectAt(j).get('selected')) {
+        k = j;
+      }
+    }
+    for (let j = n - 1; !k && j >= i; j--) {
+      if (rows.objectAt(j).get('selected')) {
+        k = j;
+      }
+    }
+    if (k) {
+      table.set('focusIndex', k);
+    }
+  },
+
+  onClearFocus(ltBody) {
+    let table = ltBody.get('table');
+    table.set('focusedRow', null);
   }
 
 });

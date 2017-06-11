@@ -1,31 +1,32 @@
 {{!-- BEGIN-SNIPPET horizontal-scrolling-table --}}
-{{#light-table table height='65vh' as |t|}}
+{{#standard-scrollable height='65vh'}}
+  {{#light-table table as |t|}}
 
-  {{!--
-    In order for `fa-sort-asc` and `fa-sort-desc` icons to work,
-    you need to have ember-font-awesome installed or manually include
-    the font-awesome assets, e.g. via a CDN.
-  --}}
+    {{!--
+      In order for `fa-sort-asc` and `fa-sort-desc` icons to work,
+      you need to have ember-font-awesome installed or manually include
+      the font-awesome assets, e.g. via a CDN.
+    --}}
 
-  {{t.head
-    onColumnClick=(action 'onColumnClick')
-    iconSortable='fa fa-sort'
-    iconAscending='fa fa-sort-asc'
-    iconDescending='fa fa-sort-desc'
-    fixed=true
-  }}
+    {{t.head
+      onColumnClick=(action 'onColumnClick')
+      iconSortable='fa fa-sort'
+      iconAscending='fa fa-sort-asc'
+      iconDescending='fa fa-sort-desc'
+    }}
 
-  {{#t.body
-    canSelect=false
-    onScrolledToBottom=(action 'onScrolledToBottom')
-    as |body|
-  }}
-    {{#if isLoading}}
-      {{#body.loader}}
-        {{table-loader}}
-      {{/body.loader}}
-    {{/if}}
-  {{/t.body}}
+    {{#t.body
+      canSelect=false
+      onScrolledToBottom=(action 'onScrolledToBottom')
+      as |body|
+    }}
+      {{#if isLoading}}
+        {{#body.loader}}
+          {{table-loader}}
+        {{/body.loader}}
+      {{/if}}
+    {{/t.body}}
 
-{{/light-table}}
+  {{/light-table}}
+{{/standard-scrollable}}
 {{!-- END-SNIPPET --}}

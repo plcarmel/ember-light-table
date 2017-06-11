@@ -8,31 +8,32 @@
   {{/if}}
 </div>
 
-{{#light-table table height='65vh' as |t|}}
-  {{t.head
-    onColumnClick=(action 'onColumnClick')
-    iconSortable='fa fa-sort'
-    iconAscending='fa fa-sort-asc'
-    iconDescending='fa fa-sort-desc'
-    fixed=true
-  }}
+{{#standard-scrollable height='65vh'}}
+  {{#light-table table as |t|}}
+    {{t.head
+      onColumnClick=(action 'onColumnClick')
+      iconSortable='fa fa-sort'
+      iconAscending='fa fa-sort-asc'
+      iconDescending='fa fa-sort-desc'
+    }}
 
-  {{#t.body
-    behaviors=(array (lt-multi-select requiresKeyboard=true))
-    onScrolledToBottom=(action 'onScrolledToBottom')
-    as |body|
-  }}
-    {{#if isLoading}}
-      {{#body.loader}}
-        {{table-loader}}
-      {{/body.loader}}
-    {{/if}}
+    {{#t.body
+      behaviors=(array (lt-multi-select requiresKeyboard=true))
+      onScrolledToBottom=(action 'onScrolledToBottom')
+      as |body|
+    }}
+      {{#if isLoading}}
+        {{#body.loader}}
+          {{table-loader}}
+        {{/body.loader}}
+      {{/if}}
 
-    {{#if (and (not isLoading) table.isEmpty)}}
-      {{#body.no-data}}
-        {{no-data}}
-      {{/body.no-data}}
-    {{/if}}
-  {{/t.body}}
-{{/light-table}}
+      {{#if (and (not isLoading) table.isEmpty)}}
+        {{#body.no-data}}
+          {{no-data}}
+        {{/body.no-data}}
+      {{/if}}
+    {{/t.body}}
+  {{/light-table}}
+{{/standard-scrollable}}
 {{!-- END-SNIPPET --}}

@@ -7,13 +7,19 @@
 
 @handle-color: lightgray;
 
-.ember-light-table {
+.standard-scrollable {
+    flex: 1 0 0;
+}
+
+.lt-table-container {
+
   width: 95%;
   margin: 0 auto;
   font-family: 'Open Sans', sans-serif;
 
-  .scrollable-content {
-    padding: 2px;
+  &.lt-put-head-here, &.lt-put-foot-here {
+    flex: 0 0 auto;
+    height: auto;
   }
 
   .lt-body-wrap {
@@ -23,32 +29,6 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-  }
-
-  tfoot .lt-column {
-    border-top: 1px solid @border-color;
-  }
-
-  thead .lt-column {
-    border-bottom: 1px solid @border-color;
-  }
-
-  thead th,
-  tfoot th {
-    &.is-dragging {
-      opacity: 0.75;
-      background: #eee;
-    }
-
-    &.is-drag-target {
-      &.drag-right {
-        border-right: 1px dotted @border-color;
-      }
-
-      &.drag-left {
-        border-left: 1px dotted @border-color;
-      }
-    }
   }
 
   .lt-column {

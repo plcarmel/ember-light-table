@@ -1,4 +1,4 @@
-{{#ember-wormhole to=(concat tableId '_inline_head') renderInPlace=renderInPlace}}
+{{#ember-wormhole to=(lt-head-id sharedOptions.frameId) renderInPlace=renderInPlace}}
   <table class={{tableClassNames}}>
     <thead class="lt-head">
       {{#if hasBlock}}

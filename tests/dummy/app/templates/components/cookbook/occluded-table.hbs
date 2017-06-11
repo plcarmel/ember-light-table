@@ -1,35 +1,34 @@
 {{!-- BEGIN-SNIPPET occluded-table --}}
-{{#light-table table
-               height='65vh'
-               occlusion=true
-               estimatedRowHeight=50
-  as |t|}}
-
-{{!--
-  In order for `fa-sort-asc` and `fa-sort-desc` icons to work,
-  you need to have ember-font-awesome installed or manually include
-  the font-awesome assets, e.g. via a CDN.
---}}
-
-  {{t.head
-    fixed=true
+<div style='height=65vh;'>
+  {{#light-table
+    table
+    occlusion=true
+    estimatedRowHeight=50
+    as |t|
   }}
 
-  {{#t.body
-    canSelect=false
-    scrollBuffer=200
-    onScrolledToBottom=(action 'onScrolledToBottom')
-  as |body|
-  }}
-    {{#if isLoading}}
-      {{#body.loader}}
-        {{table-loader}}
-      {{/body.loader}}
-    {{/if}}
-  {{/t.body}}
+  {{!--
+    In order for `fa-sort-asc` and `fa-sort-desc` icons to work,
+    you need to have ember-font-awesome installed or manually include
+    the font-awesome assets, e.g. via a CDN.
+  --}}
 
-  {{t.foot
-    fixed=true
-  }}
-{{/light-table}}
+    {{t.head}}
+
+    {{#t.body
+      canSelect=false
+      scrollBuffer=200
+      onScrolledToBottom=(action 'onScrolledToBottom')
+    as |body|
+    }}
+      {{#if isLoading}}
+        {{#body.loader}}
+          {{table-loader}}
+        {{/body.loader}}
+      {{/if}}
+    {{/t.body}}
+
+    {{t.foot}}
+  {{/light-table}}
+</div>
 {{!-- END-SNIPPET --}}

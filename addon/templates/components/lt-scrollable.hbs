@@ -4,12 +4,17 @@
     autoHide=autoHide
     horizontal=horizontal
     vertical=vertical
-    scrollToY=scrollTo
-    onScrollY=onScrollY
-    as |scrollbar|
+    scrollToY=_scrollTopSet
+    onScrollY=(action 'onScroll')
   }}
-    {{yield}}
+    {{yield (hash scrollTop=_scrollTopGet scrollTo=(action 'scrollTo'))}}
   {{/ember-scrollable}}
 {{else}}
-  {{yield}}
+  {{#standard-scrollable
+    classNames='lt-scrollable'
+    scrollToY=_scrollTopSet
+    onScroll=(action 'onScroll')
+  }}
+    {{yield (hash scrollTop=_scrollTopGet scrollTo=(action 'scrollTo'))}}
+  {{/standard-scrollable}}
 {{/if}}

@@ -1,47 +1,60 @@
 {{!-- BEGIN-SNIPPET client-side-table --}}
-{{#light-table table height='65vh' as |t|}}
+<div class='table-actions'>
+  {{fixed-header-table-action fixed=fixed onChange=(action (mut fixed))}}
+</div>
 
-  {{!--
-    In order for `fa-sort-asc` and `fa-sort-desc` icons to work,
-    you need to have ember-font-awesome installed or manually include
-    the font-awesome assets, e.g. via a CDN.
-  --}}
+{{#lt-fixed-frame height='65vh' as |frame|}}
+  {{frame.head-here}}
 
-  {{t.head
-    onColumnClick=(action 'onColumnClick')
-    iconSortable='fa fa-sort'
-    iconAscending='fa fa-sort-asc'
-    iconDescending='fa fa-sort-desc'
-    fixed=true
-  }}
+  {{#frame.scrollable-zone}}
+    {{#frame.light-table table as |t|}}
 
-  {{#t.body
-    canSelect=false
-    as |body|
-  }}
-    {{#if isLoading}}
-      {{#body.loader}}
-        {{table-loader}}
-      {{/body.loader}}
-    {{/if}}
-  {{/t.body}}
+      {{!--
+        In order for `fa-sort-asc` and `fa-sort-desc` icons to work,
+        you need to have ember-font-awesome installed or manually include
+        the font-awesome assets, e.g. via a CDN.
+      --}}
 
-  {{#t.foot fixed=true as |columns|}}
-    <tr>
-      <td class="align-center" colspan={{columns.length}}>
-        {{one-way-select selectedFilter
-            options=possibleFilters
-            optionValuePath="valuePath"
-            optionLabelPath="label"
-            update=(action (pipe (action (mut selectedFilter)) (action 'onSearchChange')))
-        }}
-        {{one-way-input
-          value=query
-          placeholder="Search..."
-          update=(action (pipe (action (mut query)) (action 'onSearchChange')))
-        }}
-      </td>
-    </tr>
-  {{/t.foot}}
-{{/light-table}}
+      {{t.head
+        fixed=fixed
+        onColumnClick=(action 'onColumnClick')
+        iconSortable='fa fa-sort'
+        iconAscending='fa fa-sort-asc'
+        iconDescending='fa fa-sort-desc'
+      }}
+
+      {{#t.body canSelect=false as |body|}}
+        {{#if isLoading}}
+          {{#body.loader}}
+            {{table-loader}}
+          {{/body.loader}}
+        {{/if}}
+      {{/t.body}}
+
+      {{#t.foot
+        fixed=fixed
+        to=(concat elementId '-foot-position')
+        as |columns|
+      }}
+        <tr>
+          <td class="align-center" colspan={{columns.length}}>
+            {{one-way-select selectedFilter
+                options=possibleFilters
+                optionValuePath="valuePath"
+                optionLabelPath="label"
+                update=(action (pipe (action (mut selectedFilter)) (action 'onSearchChange')))
+            }}
+            {{one-way-input
+              value=query
+              placeholder="Search..."
+              update=(action (pipe (action (mut query)) (action 'onSearchChange')))
+            }}
+          </td>
+        </tr>
+      {{/t.foot}}
+    {{/frame.light-table}}
+  {{/frame.scrollable-zone}}
+
+  {{frame.foot-here}}
+{{/lt-fixed-frame}}
 {{!-- END-SNIPPET --}}

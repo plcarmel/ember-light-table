@@ -1,33 +1,33 @@
 {{!-- BEGIN-SNIPPET resizable-table --}}
-{{#light-table table height='65vh' as |t|}}
+{{#standard-scrollable height='65vh'}}
+  {{#light-table table as |t|}}
 
-  {{t.head
-    onColumnClick=(action 'onColumnClick')
-    iconSortable='fa fa-sort'
-    iconAscending='fa fa-sort-asc'
-    iconDescending='fa fa-sort-desc'
-    resizeOnDrag=true
-    fixed=true
-  }}
+    {{t.head
+      onColumnClick=(action 'onColumnClick')
+      iconSortable='fa fa-sort'
+      iconAscending='fa fa-sort-asc'
+      iconDescending='fa fa-sort-desc'
+      resizeOnDrag=true
+    }}
 
-  {{#t.body
-    canSelect=false
-    onScrolledToBottom=(action 'onScrolledToBottom')
-    as |body|
-  }}
-    {{#if isLoading}}
-      {{#body.loader}}
-        {{table-loader}}
-      {{/body.loader}}
-    {{/if}}
-  {{/t.body}}
+    {{#t.body
+      canSelect=false
+      onScrolledToBottom=(action 'onScrolledToBottom')
+      as |body|
+    }}
+      {{#if isLoading}}
+        {{#body.loader}}
+          {{table-loader}}
+        {{/body.loader}}
+      {{/if}}
+    {{/t.body}}
 
-  {{t.foot
-    onColumnClick=(action 'onColumnClick')
-    iconAscending='fa fa-sort-asc'
-    iconDescending='fa fa-sort-desc'
-    resizeOnDrag=true
-    fixed=true
-  }}
-{{/light-table}}
+    {{t.foot
+      onColumnClick=(action 'onColumnClick')
+      iconAscending='fa fa-sort-asc'
+      iconDescending='fa fa-sort-desc'
+      resizeOnDrag=true
+    }}
+  {{/light-table}}
+{{/standard-scrollable}}
 {{!-- END-SNIPPET --}}

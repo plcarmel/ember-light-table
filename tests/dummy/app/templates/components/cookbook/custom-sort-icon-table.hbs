@@ -1,26 +1,27 @@
 {{!-- BEGIN-SNIPPET custom-sort-icon-table --}}
-{{#light-table table height='65vh' as |t|}}
+{{#standard-scrollable height='65vh'}}
+  {{#light-table table as |t|}}
 
-  {{t.head
-    onColumnClick=(action 'onColumnClick')
-    iconSortable='unfold_more'
-    iconAscending='keyboard_arrow_up'
-    iconDescending='keyboard_arrow_down'
-    iconComponent='materialize-icon'
-    fixed=true
-  }}
+    {{t.head
+      onColumnClick=(action 'onColumnClick')
+      iconSortable='unfold_more'
+      iconAscending='keyboard_arrow_up'
+      iconDescending='keyboard_arrow_down'
+      iconComponent='materialize-icon'
+    }}
 
-  {{#t.body
-    canSelect=false
-    onScrolledToBottom=(action 'onScrolledToBottom')
-    as |body|
-  }}
-    {{#if isLoading}}
-      {{#body.loader}}
-        {{table-loader}}
-      {{/body.loader}}
-    {{/if}}
-  {{/t.body}}
+    {{#t.body
+      canSelect=false
+      onScrolledToBottom=(action 'onScrolledToBottom')
+      as |body|
+    }}
+      {{#if isLoading}}
+        {{#body.loader}}
+          {{table-loader}}
+        {{/body.loader}}
+      {{/if}}
+    {{/t.body}}
 
-{{/light-table}}
+  {{/light-table}}
+{{/standard-scrollable}}
 {{!-- END-SNIPPET --}}

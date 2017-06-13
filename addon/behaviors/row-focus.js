@@ -12,6 +12,8 @@ export default Behavior.extend({
     this.events.onGoUp = [keyDown('ArrowUp')];
     this.events.onGoPageDown = [keyDown('PageDown'), keyDown('Space')];
     this.events.onGoPageUp = [keyDown('PageUp')];
+    this.events.onGoFirst = [keyDown('Home')];
+    this.events.onGoLast = [keyDown('End')];
     this.events.onNavSelForward = [keyDown('Enter')];
     this.events.onNavSelBackward = [keyDown('Enter+shift')];
     this.events.onClearFocus = [keyDown('Escape')];
@@ -36,6 +38,14 @@ export default Behavior.extend({
 
   onGoPageUp(ltBody) {
     ltBody.set('table.focusIndex', ltBody.get('table.focusIndex') - ltBody.get('pageSize') + 1);
+  },
+
+  onGoFirst(ltBody) {
+    ltBody.set('table.focusIndex', 0);
+  },
+
+  onGoLast(ltBody) {
+    ltBody.set('table.focusIndex', ltBody.get('table.rows.length') - 1);
   },
 
   onNavSelForward(ltBody) {

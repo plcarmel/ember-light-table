@@ -10,6 +10,8 @@ export default Behavior.extend({
     this.events.onFocusToRow = ['rowMouseDown:_none', 'rowMouseDown:ctrl'];
     this.events.onGoDown = [keyDown('ArrowDown')];
     this.events.onGoUp = [keyDown('ArrowUp')];
+    this.events.onGoPageDown = [keyDown('PageDown'), keyDown('Space')];
+    this.events.onGoPageUp = [keyDown('PageUp')];
     this.events.onNavSelForward = [keyDown('Enter')];
     this.events.onNavSelBackward = [keyDown('Enter+shift')];
     this.events.onClearFocus = [keyDown('Escape')];
@@ -26,6 +28,14 @@ export default Behavior.extend({
 
   onGoUp(ltBody) {
     ltBody.set('table.focusIndex', ltBody.get('table.focusIndex') - 1);
+  },
+
+  onGoPageDown(ltBody) {
+    ltBody.set('table.focusIndex', ltBody.get('table.focusIndex') + ltBody.get('pageSize') - 1);
+  },
+
+  onGoPageUp(ltBody) {
+    ltBody.set('table.focusIndex', ltBody.get('table.focusIndex') - ltBody.get('pageSize') + 1);
   },
 
   onNavSelForward(ltBody) {

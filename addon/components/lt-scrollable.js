@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import Component from '@ember/component';
 import { computed } from '@ember/object';
 import layout from '../templates/components/lt-scrollable';
@@ -11,6 +12,20 @@ export default Component.extend({
   virtualScrollbar: false,
   vertical: true,
   horizontal: false,
+
+  didInsertElement() {
+    $(document).on('keydown', this._disableScrollbarKeyboardSupport);
+  },
+
+  willDestroyElement() {
+    $(document).off('keydown', this._disableScrollbarKeyboardSupport);
+  },
+
+  _disableScrollbarKeyboardSupport(e) {
+    if (e.target !== $('.lt-scrollable')[0]) {
+      return false;
+    }
+  },
 
   scrollTop: computed('_scrollTopGet', {
     get() {

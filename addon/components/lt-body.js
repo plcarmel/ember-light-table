@@ -383,14 +383,17 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
     this.makeRowVisible(this.get('ltRows').objectAt(i).$());
   },
 
+  $container: computed(function() {
+    return this.$().parents('.lt-scrollable');
+  }).volatile().readOnly(),
+
   makeRowVisible($row) {
     let $sc = this.$().parents('.scrollable-content');
-    let $container = this.$().parents('.lt-scrollable');
     if ($row.length !== 0 && $sc.length !== 0) {
       let rt = $row.offset().top - $sc.offset().top;
       let rh = $row.height();
       let rb = rt + rh;
-      let h = $container.height();
+      let h = this.get('$container').height();
       let t = this.get('currentScrollOffset');
       let b = t + h;
       let extraSpace = rh / 2;
@@ -457,6 +460,23 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
         return top <= position && position < top + ltr.get('height');
       });
   },
+
+  pageSize: computed(function() {
+    let rows = this.get('table.rows');
+    if (rows.get('length') === 0) {
+      return 0;
+    }
+    let r0 = this.getLtRowAt(0);
+    if (!r0) {
+      r0 = this.get('ltRows').get('firstObject');
+    }
+    let rN = this.getLtRowAt(this.get('$container').height());
+    if (!rN) {
+      rN = this.get('ltRows').get('lastObject');
+    }
+    let i = (r) => rows.indexOf(r.get('row'));
+    return i(rN) - i(r0);
+  }).volatile().readOnly(),
 
   actions: {
     onRowClick() {

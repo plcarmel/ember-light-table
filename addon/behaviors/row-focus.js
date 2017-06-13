@@ -10,7 +10,7 @@ export default Behavior.extend({
     this.events.onFocusToRow = ['rowMouseDown:_none', 'rowMouseDown:ctrl'];
     this.events.onGoDown = [keyDown('ArrowDown')];
     this.events.onGoUp = [keyDown('ArrowUp')];
-    this.events.onGoPageDown = [keyDown('PageDown'), keyDown('Space')];
+    this.events.onGoPageDown = [keyDown('PageDown')];
     this.events.onGoPageUp = [keyDown('PageUp')];
     this.events.onGoFirst = [keyDown('Home')];
     this.events.onGoLast = [keyDown('End')];

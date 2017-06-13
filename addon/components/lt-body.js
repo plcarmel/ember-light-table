@@ -383,17 +383,22 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
     this.makeRowVisible(this.get('ltRows').objectAt(i).$());
   },
 
-  $container: computed(function() {
+  $scrollableContainer: computed(function() {
     return this.$().parents('.lt-scrollable');
   }).volatile().readOnly(),
 
+  $scrollableContent: computed(function() {
+    return this.$().parents('.scrollable-content');
+  }).volatile().readOnly(),
+
   makeRowVisible($row) {
-    let $sc = this.$().parents('.scrollable-content');
-    if ($row.length !== 0 && $sc.length !== 0) {
-      let rt = $row.offset().top - $sc.offset().top;
+    let $scrollableContent = this.get('$scrollableContent');
+    let $scrollableContainer = this.get('$scrollableContainer');
+    if ($row.length !== 0 && $scrollableContent.length !== 0 && $scrollableContainer.length !== 0) {
+      let rt = $row.offset().top - $scrollableContent.offset().top;
       let rh = $row.height();
       let rb = rt + rh;
-      let h = this.get('$container').height();
+      let h = $scrollableContainer.height();
       let t = this.get('currentScrollOffset');
       let b = t + h;
       let extraSpace = rh / 2;
@@ -470,7 +475,7 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
     if (!r0) {
       r0 = this.get('ltRows').get('firstObject');
     }
-    let rN = this.getLtRowAt(this.get('$container').height());
+    let rN = this.getLtRowAt(this.get('$scrollableContainer').height());
     if (!rN) {
       rN = this.get('ltRows').get('lastObject');
     }

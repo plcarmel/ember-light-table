@@ -1,4 +1,5 @@
 /* eslint ember/no-on-calls-in-components:off */
+import { getOwner } from '@ember/application';
 import Component from '@ember/component';
 import { computed } from '@ember/object';
 import { on } from '@ember/object/evented';
@@ -34,8 +35,21 @@ const Row = Component.extend({
   isExpanded: computed.readOnly('row.expanded'),
   hasFocus: computed.readOnly('row.hasFocus'),
 
+  ltBody: computed(function() {
+    let $this = this.$();
+    if ($this) {
+      let vrm = getOwner(this).lookup('-view-registry:main');
+      let $body = $this.parents('.lt-body-wrap');
+      return $body.length ? vrm[$body[0].id] : null;
+    }
+  }).volatile().readOnly(),
+
+  $scrollableContent: computed(function() {
+    return this.get('ltBody.$scrollableContent');
+  }).volatile().readOnly(),
+
   left: computed(function() {
-    return this.$().offset().left - this.$().parents('.scrollable-content').offset().left;
+    return this.$().offset().left - this.get('$scrollableContent').offset().left;
   }).volatile().readOnly(),
 
   width: computed(function() {
@@ -43,7 +57,7 @@ const Row = Component.extend({
   }).volatile().readOnly(),
 
   top: computed(function() {
-    return this.$().offset().top - this.$().parents('.scrollable-content').offset().top;
+    return this.$().offset().top - this.get('$scrollableContent').offset().top;
   }).volatile().readOnly(),
 
   height: computed(function() {

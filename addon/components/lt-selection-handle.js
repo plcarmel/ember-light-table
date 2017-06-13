@@ -24,11 +24,16 @@ export default Component.extend({
   offset: 0,
 
   ltBody: computed(function() {
-    if (this.$()) {
+    let $this = this.$();
+    if ($this) {
       let vrm = getOwner(this).lookup('-view-registry:main');
-      let $body = this.$().parents('.lt-body-wrap');
+      let $body = $this.parents('.lt-body-wrap');
       return $body.length ? vrm[$body[0].id] : null;
     }
+  }).volatile().readOnly(),
+
+  $scrollableContent: computed(function() {
+    return this.get('ltBody.$scrollableContent');
   }).volatile().readOnly(),
 
   ltRow: computed(function() {
@@ -36,6 +41,10 @@ export default Component.extend({
     if (ltBody) {
       return ltBody.get('ltRows').objectAt(this.get('rowIndex'));
     }
+  }).volatile().readOnly(),
+
+  $row: computed(function() {
+    return this.get('ltRow').$();
   }).volatile().readOnly(),
 
   isUp: computed('direction', 'inverse', function() {
@@ -53,7 +62,7 @@ export default Component.extend({
   }).volatile().readOnly(),
 
   _getMousePosition(event) {
-    return event.clientY - this.$().parents('.scrollable-content').offset().top;
+    return event.clientY - this.get('$scrollableContent').offset().top;
   },
 
   _setDomEvents: on('init', function() {
@@ -114,16 +123,13 @@ export default Component.extend({
   },
 
   fromBottom: computed(function() {
-    let $row = this.get('ltRow').$();
-    let $content = this.$().parents('.scrollable-content');
-    let $container = this.$().parents('.lt-scrollable');
-    return $content.offset().top + $container.height() - $row.offset().top;
+    let $scrollableContent = this.get('$scrollableContent');
+    return $scrollableContent.offset().top + $scrollableContent.height() - this.get('$row').offset().top;
   }).volatile().readOnly(),
 
   fromTop: computed(function() {
-    let $row = this.get('ltRow').$();
-    let $content = this.$().parents('.scrollable-content');
-    return $row.offset().top + $row.height() - $content.offset().top;
+    let $row = this.get('$row');
+    return $row.offset().top + $row.height() - this.get('$scrollableContent').offset().top;
   }).volatile().readOnly(),
 
   _onResize: null,

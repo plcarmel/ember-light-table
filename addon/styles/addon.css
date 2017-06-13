@@ -133,3 +133,20 @@ td.lt-scaffolding {
 .lt-row.is-selectable {
   cursor: pointer;
 }
+
+.lt-scrollable {
+  width: 100%;
+  position: relative;
+}
+
+.standard-scrollable {
+  overflow: auto;
+}
+
+.scrollable-content {
+  position: relative;
+}
+
+.ember-light-table .lt-selection-handle {
+  left: 0;
+}

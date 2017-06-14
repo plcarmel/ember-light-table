@@ -392,28 +392,28 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
   }).volatile().readOnly(),
 
   makeRowVisible($row) {
-    if (typeof window.FastBoot === 'undefined') {
-      let $scrollableContent = this.get('$scrollableContent');
-      let $scrollableContainer = this.get('$scrollableContainer');
-      if ($row.length !== 0 && $scrollableContent.length !== 0 && $scrollableContainer.length !== 0) {
-        let rt = $row.offset().top - $scrollableContent.offset().top;
-        let rh = $row.height();
-        let rb = rt + rh;
-        let h = $scrollableContainer.height();
-        let t = this.get('scrollTop');
-        let b = t + h;
-        let extraSpace = rh / 2;
-        if (rt < t) {
-          this.sendAction('scrollTo', rt - extraSpace);
-        } else if (rb > b) {
-          this.sendAction('scrollTo', t + rb - b + extraSpace);
-        }
+    let $scrollableContent = this.get('$scrollableContent');
+    let $scrollableContainer = this.get('$scrollableContainer');
+    if ($row.length !== 0 && $scrollableContent.length !== 0 && $scrollableContainer.length !== 0) {
+      let rt = $row.offset().top - $scrollableContent.offset().top;
+      let rh = $row.height();
+      let rb = rt + rh;
+      let h = $scrollableContainer.height();
+      let t = this.get('scrollTop');
+      let b = t + h;
+      let extraSpace = rh / 2;
+      if (rt < t) {
+        this.sendAction('scrollTo', rt - extraSpace);
+      } else if (rb > b) {
+        this.sendAction('scrollTo', t + rb - b + extraSpace);
       }
     }
   },
 
-  _onFocusedRowChanged: observer('table.focusIndex', function() {
-    run.schedule('afterRender', null, () => this.makeRowVisible(this.$('tr.has-focus')));
+  _onFocusedRowChanged: Ember.observer('table.focusIndex', function() {
+    if (typeof FastBoot === 'undefined') {
+      run.schedule('afterRender', null, () => this.makeRowVisible(this.$('tr.has-focus')));
+    }
   }),
 
   checkTargetScrollOffset() {

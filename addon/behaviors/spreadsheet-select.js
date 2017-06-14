@@ -164,10 +164,12 @@ export default SelectAll.extend({
     this.immediateSimplification(ltBody);
   },
 
-  onSelectNone(ltBody) {
-    this.revertDomModifications(ltBody);
-    this.resetRanges();
-    this.noSimplification(ltBody);
+  onSelectNone(ltBody, ltRow, event) {
+    if (event.button === 0) {
+      this.revertDomModifications(ltBody);
+      this.resetRanges();
+      this.noSimplification(ltBody);
+    }
   },
 
   onRangeDown(ltBody) {
@@ -191,16 +193,20 @@ export default SelectAll.extend({
     }
   },
 
-  onRowMouseStartNewSelection(ltBody, ltRow) {
-    this._mouseNewSelectionAnchor = ltBody.get('table.rows').indexOf(ltRow.get('row'));
+  onRowMouseStartNewSelection(ltBody, ltRow, event) {
+    if (event.button === 0) {
+      this._mouseNewSelectionAnchor = ltBody.get('table.rows').indexOf(ltRow.get('row'));
+    }
   },
 
-  onRowMouseStartAddRange(ltBody, ltRow) {
-    this.revertDomModifications(ltBody);
-    let i = ltBody.get('table.rows').indexOf(ltRow.get('row'));
-    this.get('ranges').insertAt(0, RowRange.create({ a: i, b: i }));
-    this._mouseAddRangeActive = true;
-    this.noSimplification(ltBody);
+  onRowMouseStartAddRange(ltBody, ltRow, event) {
+    if (event.button === 0) {
+      this.revertDomModifications(ltBody);
+      let i = ltBody.get('table.rows').indexOf(ltRow.get('row'));
+      this.get('ranges').insertAt(0, RowRange.create({ a: i, b: i }));
+      this._mouseAddRangeActive = true;
+      this.noSimplification(ltBody);
+    }
   },
 
   onRowMouseEndNewSelection() {
@@ -214,37 +220,41 @@ export default SelectAll.extend({
     this.thenSimplify(ltBody);
   },
 
-  onRowMouseNewSelectionMove(ltBody, ltRow) {
-    let ranges = this.get('ranges');
-    let i = ltBody.get('table.rows').indexOf(ltRow.get('row'));
-    if (
-      this._mouseNewSelectionAnchor
-      && !this._mouseNewSelectionActive
-      && this._mouseNewSelectionAnchor !== i
-    ) {
-      this.resetRanges();
-      ranges.insertAt(
-        0,
-        RowRange.create({
-          a: this._mouseNewSelectionAnchor,
-          b: this._mouseNewSelectionAnchor
-        })
-      );
-      this._mouseNewSelectionActive = true;
-    }
-    if (this._mouseNewSelectionActive && ranges.get('length')) {
-      this.revertDomModifications(ltBody);
-      ranges.objectAt(0).set('b', i);
-      this.noSimplification(ltBody);
+  onRowMouseNewSelectionMove(ltBody, ltRow, event) {
+    if (event.button === 0) {
+      let ranges = this.get('ranges');
+      let i = ltBody.get('table.rows').indexOf(ltRow.get('row'));
+      if (
+        this._mouseNewSelectionAnchor
+        && !this._mouseNewSelectionActive
+        && this._mouseNewSelectionAnchor !== i
+      ) {
+        this.resetRanges();
+        ranges.insertAt(
+          0,
+          RowRange.create({
+            a: this._mouseNewSelectionAnchor,
+            b: this._mouseNewSelectionAnchor
+          })
+        );
+        this._mouseNewSelectionActive = true;
+      }
+      if (this._mouseNewSelectionActive && ranges.get('length')) {
+        this.revertDomModifications(ltBody);
+        ranges.objectAt(0).set('b', i);
+        this.noSimplification(ltBody);
+      }
     }
   },
 
-  onRowMouseAddRangeMove(ltBody, ltRow) {
-    let ranges = this.get('ranges');
-    if (this._mouseAddRangeActive && ranges.get('length')) {
-      this.revertDomModifications(ltBody);
-      ranges.objectAt(0).set('b', ltBody.get('table.rows').indexOf(ltRow.get('row')));
-      this.noSimplification(ltBody);
+  onRowMouseAddRangeMove(ltBody, ltRow, event) {
+    if (event.button === 0) {
+      let ranges = this.get('ranges');
+      if (this._mouseAddRangeActive && ranges.get('length')) {
+        this.revertDomModifications(ltBody);
+        ranges.objectAt(0).set('b', ltBody.get('table.rows').indexOf(ltRow.get('row')));
+        this.noSimplification(ltBody);
+      }
     }
   },
 

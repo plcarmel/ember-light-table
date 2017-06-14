@@ -19,9 +19,11 @@ export default Behavior.extend({
     this.events.onClearFocus = [keyDown('Escape')];
   },
 
-  onFocusToRow(ltBody, ltRow) {
-    let row = ltRow.get('row');
-    ltBody.set('table.focusedRow', row);
+  onFocusToRow(ltBody, ltRow, event) {
+    if (event.button === 0) {
+      let row = ltRow.get('row');
+      ltBody.set('table.focusedRow', row);
+    }
   },
 
   onGoDown(ltBody) {

@@ -4,7 +4,6 @@ import { computed, observer } from '@ember/object';
 import { on } from '@ember/object/evented';
 import { htmlSafe } from '@ember/string';
 import { run } from '@ember/runloop';
-import { getOwner } from '@ember/application';
 import layout from '../templates/components/lt-row-range';
 
 export default Component.extend({
@@ -13,9 +12,9 @@ export default Component.extend({
 
   // passed in
   namedArgs: null,
+  ltBody: null,
 
   range: computed.reads('namedArgs.range'),
-
   a: null,
   b: null,
   startA: null,
@@ -24,12 +23,6 @@ export default Component.extend({
   offsetB: 0,
   movingA: false,
   movingB: false,
-
-  ltBody: computed(function() {
-    let vrm = getOwner(this).lookup('-view-registry:main');
-    let $body = this.$().parents('.lt-body-wrap');
-    return $body.length ? vrm[$body[0].id] : null;
-  }).volatile().readOnly(),
 
   _getPosition(pointName) {
     let i = this.get(pointName);

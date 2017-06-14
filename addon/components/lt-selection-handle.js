@@ -1,6 +1,5 @@
 /* eslint ember/no-on-calls-in-components:off */
 import $ from 'jquery';
-import { getOwner } from '@ember/application';
 import Component from '@ember/component';
 import { computed, observer } from '@ember/object';
 import { on } from '@ember/object/evented';
@@ -16,21 +15,13 @@ export default Component.extend({
   attributeBindings: ['style'],
 
   // passed in
+  ltBody: null,
   rowIndex: null,
   direction: null,
   inverse: false,
 
   _initialMousePosition: null,
   offset: 0,
-
-  ltBody: computed(function() {
-    let $this = this.$();
-    if ($this) {
-      let vrm = getOwner(this).lookup('-view-registry:main');
-      let $body = $this.parents('.lt-body-wrap');
-      return $body.length ? vrm[$body[0].id] : null;
-    }
-  }).volatile().readOnly(),
 
   $scrollableContent: computed(function() {
     return this.get('ltBody.$scrollableContent');

@@ -21,7 +21,7 @@
           {{#each rows as |row|}}
             {{lt.row row columns
               data-row-id=row.rowId
-              table=table
+              ltBody=this
               tableActions=tableActions
               extra=extra
               enableScaffolding=enableScaffolding
@@ -66,7 +66,7 @@
 
       <div class='scrollable-decorations'>
         {{#each scrollableDecorations as |decoration|}}
-          {{component decoration.component namedArgs=decoration.namedArgs}}
+          {{component decoration.component ltBody=this namedArgs=decoration.namedArgs}}
         {{/each}}
       </div>
   {{else}}
@@ -90,7 +90,7 @@
           }}
             {{lt.row row columns
                      data-row-id=row.rowId
-                     table=table
+                     ltBody=this
                      tableActions=tableActions
                      extra=extra
                      enableScaffolding=enableScaffolding

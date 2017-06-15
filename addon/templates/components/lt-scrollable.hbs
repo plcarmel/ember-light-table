@@ -1,6 +1,7 @@
-{{#if virtualScrollbar}}
+{{#if virtual}}
   {{#ember-scrollable
-    classNames='lt-scrollable'
+    class=class
+    classNames=classNames
     autoHide=autoHide
     horizontal=horizontal
     vertical=vertical
@@ -11,7 +12,8 @@
   {{/ember-scrollable}}
 {{else}}
   {{#standard-scrollable
-    classNames='lt-scrollable'
+    class=class
+    classNames=classNames
     scrollToY=_scrollTopSet
     onScroll=(action 'onScroll')
   }}

@@ -12,7 +12,7 @@ export default SelectAll.extend({
     this.events.onExtendRange = ['rowMouseDown:shift'];
     this.events.onRangeDown = [keyDown('ArrowDown+shift')];
     this.events.onRangeUp = [keyDown('ArrowUp+shift')];
-    this.events.onSelectNone = ['rowMouseDown:_none', keyDown('ArrowDown'), keyDown('ArrowUp')];
+    this.events.onSelectNone = ['rowMouseDown:_none', keyDown('ArrowDown'), keyDown('ArrowUp'), keyDown('Escape')];
     this.events.onStopRangeUpDown = [keyUp('ShiftLeft')];
     this.events.onRowMouseStartNewSelection = ['rowMouseDown:_none'];
     this.events.onRowMouseStartAddRange = ['rowMouseDown:ctrl'];
@@ -132,6 +132,7 @@ export default SelectAll.extend({
 
   extendRangeTo(ltBody, b) {
     let table = ltBody.get('table');
+    b = Math.max(0, Math.min(table.get('rows.length') - 1, b));
     let ranges = this.get('ranges');
     if (ranges.get('length')) {
       let rn = ranges.objectAt(0);
@@ -164,8 +165,10 @@ export default SelectAll.extend({
     this.immediateSimplification(ltBody);
   },
 
-  onSelectNone(ltBody, ltRow, event) {
-    if (event.button === 0) {
+  onSelectNone(ltBody) {
+    let args = arguments;
+    let event = args[args.length - 1];
+    if (event && (args.length === 3 && event.button === 0 || args.length === 2)) {
       this.revertDomModifications(ltBody);
       this.resetRanges();
       this.noSimplification(ltBody);
@@ -225,7 +228,7 @@ export default SelectAll.extend({
       let ranges = this.get('ranges');
       let i = ltBody.get('table.rows').indexOf(ltRow.get('row'));
       if (
-        this._mouseNewSelectionAnchor
+        this._mouseNewSelectionAnchor !== null
         && !this._mouseNewSelectionActive
         && this._mouseNewSelectionAnchor !== i
       ) {

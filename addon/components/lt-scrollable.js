@@ -9,9 +9,10 @@ export default Component.extend({
   tagName: '',
 
   // passed in
-  virtualScrollbar: false,
+  virtual: false,
   vertical: true,
   horizontal: false,
+  classNames: ['lt-scrollable'],
 
   didInsertElement() {
     $(document).on('keydown', this._disableScrollbarKeyboardSupport);
@@ -22,7 +23,7 @@ export default Component.extend({
   },
 
   _disableScrollbarKeyboardSupport(e) {
-    if (e.target !== $('.lt-scrollable')[0]) {
+    if (e.target !== $('.lt-scrollable')[0] && [32, 33, 34, 35, 36, 38, 40].includes(e.keyCode)) {
       return false;
     }
   },

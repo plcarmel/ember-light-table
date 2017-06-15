@@ -401,16 +401,16 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
       let h = $scrollableContainer.height();
       let t = this.get('scrollTop');
       let b = t + h;
-      let extraSpace = rh / 2;
-      if (rt < t) {
+      let extraSpace = rh * 2;
+      if (rt - extraSpace <= t) {
         this.sendAction('scrollTo', rt - extraSpace);
-      } else if (rb > b) {
+      } else if (rb + extraSpace >= b) {
         this.sendAction('scrollTo', t + rb - b + extraSpace);
       }
     }
   },
 
-  _onFocusedRowChanged: Ember.observer('table.focusIndex', function() {
+  _onFocusedRowChanged: observer('table.focusIndex', function() {
     if (typeof FastBoot === 'undefined') {
       run.schedule('afterRender', null, () => this.makeRowVisible(this.$('tr.has-focus')));
     }

@@ -21,10 +21,11 @@ export default Component.extend({
   inverse: false,
 
   _initialMousePosition: null,
+  _oldUserSelect: null,
   offset: 0,
 
-  $scrollableContent: computed(function() {
-    return this.get('ltBody.$scrollableContent');
+  $ltBody: computed(function() {
+    return this.get('ltBody').$();
   }).volatile().readOnly(),
 
   ltRow: computed(function() {
@@ -53,7 +54,7 @@ export default Component.extend({
   }).volatile().readOnly(),
 
   _getMousePosition(event) {
-    return event.clientY - this.get('$scrollableContent').offset().top;
+    return event.clientY - this.get('$ltBody').offset().top;
   },
 
   _setDomEvents: on('init', function() {
@@ -69,7 +70,10 @@ export default Component.extend({
 
   _onMouseDown: on('mouseDown', function(event) {
     this._initialMousePosition = this._getMousePosition(event);
-    $('body').on(this._domEvents, this);
+    let $body = $('body');
+    $body.on(this._domEvents, this);
+    this._oldUserSelect = $body.css('user-select');
+    $body.css('user-select', 'none');
     this.sendAction('drag');
   }),
 
@@ -102,6 +106,7 @@ export default Component.extend({
     this._removeEvents();
     if (!this.get('isDestroyed')) {
       let offset = this._getMousePosition(event) - this.get('_initialMousePosition');
+      $('body').css('user-select', this._oldUserSelect);
       this._initialMousePosition = null;
       this.set('offset', 0);
       this.sendAction('drop', offset + this.get('extra') + this.get('position'), this.get('isUp') ? -1 : 1);
@@ -114,13 +119,13 @@ export default Component.extend({
   },
 
   fromBottom: computed(function() {
-    let $scrollableContent = this.get('$scrollableContent');
-    return $scrollableContent.offset().top + $scrollableContent.height() - this.get('$row').offset().top;
+    let $ltBody = this.get('$ltBody');
+    return $ltBody.offset().top + $ltBody.height() - this.get('$row').offset().top;
   }).volatile().readOnly(),
 
   fromTop: computed(function() {
     let $row = this.get('$row');
-    return $row.offset().top + $row.height() - this.get('$scrollableContent').offset().top;
+    return $row.offset().top + $row.height() - this.get('$ltBody').offset().top;
   }).volatile().readOnly(),
 
   _onResize: null,

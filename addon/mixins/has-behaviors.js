@@ -291,7 +291,13 @@ export default Mixin.create({
    */
   _updateEvents() {
     this._turnOffOldEvents();
-    let getCallback = (b, f) => (a1, a2, a3, a4) => b[f].call(b, this, a1, a2, a3, a4);
+    let getCallback
+      = (b, f) => {
+        let that = this;
+        return function() {
+          return b[f].call(b, that, ...arguments);
+        };
+      };
     let getTurnOffFunc = (name, f) => () => this.off(name, f);
     let getInnerLoop = (b, f) => (name) => {
       let g = this.on(name, getCallback(b, f));

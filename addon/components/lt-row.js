@@ -36,12 +36,12 @@ const Row = Component.extend({
 
   ltBody: null,
 
-  $scrollableContent: computed(function() {
-    return this.get('ltBody.$scrollableContent');
+  $ltBody: computed(function() {
+    return this.get('ltBody').$();
   }).volatile().readOnly(),
 
   left: computed(function() {
-    return this.$().offset().left - this.get('$scrollableContent').offset().left;
+    return this.$().offset().left - this.get('$ltBody').offset().left;
   }).volatile().readOnly(),
 
   width: computed(function() {
@@ -49,7 +49,7 @@ const Row = Component.extend({
   }).volatile().readOnly(),
 
   top: computed(function() {
-    return this.$().offset().top - this.get('$scrollableContent').offset().top;
+    return this.$().offset().top - this.get('$ltBody').offset().top;
   }).volatile().readOnly(),
 
   height: computed(function() {

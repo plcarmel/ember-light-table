@@ -485,12 +485,12 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
     return i(rN) - i(r0);
   }).volatile().readOnly(),
 
+  signalOnRowArrayChanged() {
+    this.get('behaviors').forEach((b) => b.onRowArrayChanged(this));
+  },
+
   onRowArrayChanged: observer('table.rows.[]', function() {
-    this.get('behaviors').forEach((b) => {
-      if (typeof b.onRowArrayChanged === 'function') {
-        b.onRowArrayChanged(this);
-      }
-    });
+    Ember.run.once(this, this.signalOnRowArrayChanged);
   }),
 
   actions: {

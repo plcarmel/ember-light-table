@@ -9,6 +9,8 @@ export default EmberObject.extend({
   init() {
     this._super(...arguments);
     this.events = {};
-  }
+  },
+
+  onRowArrayChanged(ltBody) {}
 
 });

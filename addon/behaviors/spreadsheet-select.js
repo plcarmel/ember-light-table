@@ -53,7 +53,7 @@ export default SelectAll.extend({
     let anchor;
     if (ranges.get('length')) {
       anchor = ranges.objectAt(0).get('a');
-      this._clearRanges();
+      this.clearRanges();
       let rn = null;
       for (let i = 0; i <= max; i++) {
         let isSel = isSelected.objectAt(i);
@@ -121,7 +121,7 @@ export default SelectAll.extend({
     );
   },
 
-  _clearRanges() {
+  clearRanges() {
     this.get('ranges').clear();
   },
 
@@ -158,6 +158,12 @@ export default SelectAll.extend({
     }
   },
 
+  onRowArrayChanged(ltBody) {
+    this._super(...arguments);
+    this._revertDomModifications(ltBody);
+    this.clearRanges();
+  },
+
   onExtendRange(ltBody, ltRow) {
     this._revertDomModifications(ltBody);
     let row = ltRow.get('row');
@@ -167,12 +173,8 @@ export default SelectAll.extend({
 
   selectNone(ltBody) {
     this._revertDomModifications(ltBody);
-    this._clearRanges();
+    this.clearRanges();
     this._noSimplification(ltBody);
-  },
-
-  onRowArrayChanged(ltBody) {
-    this.selectNone(ltBody);
   },
 
   onSelectNone(ltBody) {
@@ -240,7 +242,7 @@ export default SelectAll.extend({
         && !this._mouseNewSelectionActive
         && this._mouseNewSelectionAnchor !== i
       ) {
-        this._clearRanges();
+        this.clearRanges();
         ranges.insertAt(
           0,
           RowRange.create({

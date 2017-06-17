@@ -485,6 +485,14 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
     return i(rN) - i(r0);
   }).volatile().readOnly(),
 
+  onRowArrayChanged: observer('table.rows.[]', function() {
+    this.get('behaviors').forEach((b) => {
+      if (typeof b.onRowArrayChanged === 'function') {
+        b.onRowArrayChanged(this);
+      }
+    });
+  }),
+
   actions: {
     onRowClick() {
       this.triggerBehaviorEvent('rowClick', ...arguments);

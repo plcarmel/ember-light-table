@@ -32,14 +32,14 @@ export default SelectAll.extend({
   _mouseNewSelectionActive: false,
   _mouseAddRangeActive: false,
 
-  createNewRange(a, b = a) {
+  _createNewRange(a, b = a) {
     let rn = RowRange.create({ a, b });
     rn.on('handleMove', this, this.onHandleMove);
     rn.on('handleDrop', this, this.onHandleDrop);
     return rn;
   },
 
-  simplifyRanges() {
+  _simplifyRanges() {
     let ranges = this.get('ranges');
     let max
       = Math.max(
@@ -53,7 +53,7 @@ export default SelectAll.extend({
     let anchor;
     if (ranges.get('length')) {
       anchor = ranges.objectAt(0).get('a');
-      this.resetRanges();
+      this._clearRanges();
       let rn = null;
       for (let i = 0; i <= max; i++) {
         let isSel = isSelected.objectAt(i);
@@ -62,7 +62,7 @@ export default SelectAll.extend({
           ranges.pushObject(rn);
           rn = null;
         } else if (!rn && isSel) {
-          rn = this.createNewRange(i);
+          rn = this._createNewRange(i);
         }
       }
       if (rn) {
@@ -82,11 +82,11 @@ export default SelectAll.extend({
     }
   },
 
-  applyDomModifications(ltBody) {
+  _applyDomModifications(ltBody) {
     this.get('ranges').forEach((r) => r.applyDomModifications(ltBody));
   },
 
-  revertDomModifications(ltBody) {
+  _revertDomModifications(ltBody) {
     this.get('ranges').forEach((r) => r.revertDomModifications(ltBody));
   },
 
@@ -96,21 +96,21 @@ export default SelectAll.extend({
       .forEach((r, i) => r.set('selected', this.findRanges(i).get('length') % 2 === 1));
   },
 
-  thenSimplify(ltBody) {
-    this.revertDomModifications(ltBody);
-    this.simplifyRanges();
-    this.applyDomModifications(ltBody);
+  _thenSimplify(ltBody) {
+    this._revertDomModifications(ltBody);
+    this._simplifyRanges();
+    this._applyDomModifications(ltBody);
   },
 
-  noSimplification(ltBody) {
+  _noSimplification(ltBody) {
     this.syncSelection(ltBody.get('table'));
-    this.applyDomModifications(ltBody);
+    this._applyDomModifications(ltBody);
   },
 
-  immediateSimplification(ltBody) {
+  _immediateSimplification(ltBody) {
     this.syncSelection(ltBody.get('table'));
-    this.simplifyRanges();
-    this.applyDomModifications(ltBody);
+    this._simplifyRanges();
+    this._applyDomModifications(ltBody);
   },
 
   findRanges(i) {
@@ -121,16 +121,16 @@ export default SelectAll.extend({
     );
   },
 
-  resetRanges() {
+  _clearRanges() {
     this.get('ranges').clear();
   },
 
-  startNewRange(i) {
-    let rn = this.createNewRange(i);
+  _startNewRange(i) {
+    let rn = this._createNewRange(i);
     this.get('ranges').insertAt(0, rn);
   },
 
-  extendRangeTo(ltBody, b) {
+  _extendRangeTo(ltBody, b) {
     let table = ltBody.get('table');
     b = Math.max(0, Math.min(table.get('rows.length') - 1, b));
     let ranges = this.get('ranges');
@@ -142,57 +142,65 @@ export default SelectAll.extend({
       if (a === -1) {
         a = b;
       }
-      let rn = this.createNewRange(a, b);
+      let rn = this._createNewRange(a, b);
       ranges.pushObject(rn);
     }
     run.schedule('afterRender', null, () => ltBody.makeRowAtVisible(b));
   },
 
-  moveRange(ltBody, direction) {
+  _moveRange(ltBody, direction) {
     let ranges = this.get('ranges');
     let focusIndex = ltBody.get('table.focusIndex');
     if (ranges.get('length')) {
       ranges.objectAt(0).move(ltBody, focusIndex, direction);
     } else {
-      this.extendRangeTo(ltBody, focusIndex + direction);
+      this._extendRangeTo(ltBody, focusIndex + direction);
     }
   },
 
   onExtendRange(ltBody, ltRow) {
-    this.revertDomModifications(ltBody);
+    this._revertDomModifications(ltBody);
     let row = ltRow.get('row');
-    this.extendRangeTo(ltBody, ltBody.get('table.rows').indexOf(row));
-    this.immediateSimplification(ltBody);
+    this._extendRangeTo(ltBody, ltBody.get('table.rows').indexOf(row));
+    this._immediateSimplification(ltBody);
+  },
+
+  selectNone(ltBody) {
+    this._revertDomModifications(ltBody);
+    this._clearRanges();
+    this._noSimplification(ltBody);
+  },
+
+  onRowArrayChanged(ltBody) {
+    this.selectNone(ltBody);
   },
 
   onSelectNone(ltBody) {
     let args = arguments;
     let event = args[args.length - 1];
     if (event && (args.length === 3 && event.button === 0 || args.length === 2)) {
-      this.revertDomModifications(ltBody);
-      this.resetRanges();
-      this.noSimplification(ltBody);
+      this.selectNone(ltBody);
     }
   },
 
   onRangeDown(ltBody) {
     this._rangeUpDownActive = true;
-    this.revertDomModifications(ltBody);
-    this.moveRange(ltBody, 1);
-    this.noSimplification(ltBody);
+    this._revertDomModifications(ltBody);
+    this._moveRange(ltBody, 1);
+    this._noSimplification(ltBody);
   },
 
   onRangeUp(ltBody) {
     this._rangeUpDownActive = true;
-    this.revertDomModifications(ltBody);
-    this.moveRange(ltBody, -1);
-    this.noSimplification(ltBody);
+    this._revertDomModifications(ltBody);
+    this._moveRange(ltBody, -1);
+    this._noSimplification(ltBody);
   },
 
   onStopRangeUpDown(ltBody) {
     if (this._rangeUpDownActive) {
       this._rangeUpDownActive = false;
-      this.thenSimplify(ltBody);
+      this._thenSimplify(ltBody);
     }
   },
 
@@ -204,11 +212,11 @@ export default SelectAll.extend({
 
   onRowMouseStartAddRange(ltBody, ltRow, event) {
     if (event.button === 0) {
-      this.revertDomModifications(ltBody);
+      this._revertDomModifications(ltBody);
       let i = ltBody.get('table.rows').indexOf(ltRow.get('row'));
       this.get('ranges').insertAt(0, RowRange.create({ a: i, b: i }));
       this._mouseAddRangeActive = true;
-      this.noSimplification(ltBody);
+      this._noSimplification(ltBody);
     }
   },
 
@@ -220,7 +228,7 @@ export default SelectAll.extend({
   onRowMouseEndAddRange(ltBody) {
     this._mouseAddRangeAnchor = null;
     this._mouseAddRangeActive = false;
-    this.thenSimplify(ltBody);
+    this._thenSimplify(ltBody);
   },
 
   onRowMouseNewSelectionMove(ltBody, ltRow, event) {
@@ -232,7 +240,7 @@ export default SelectAll.extend({
         && !this._mouseNewSelectionActive
         && this._mouseNewSelectionAnchor !== i
       ) {
-        this.resetRanges();
+        this._clearRanges();
         ranges.insertAt(
           0,
           RowRange.create({
@@ -243,9 +251,9 @@ export default SelectAll.extend({
         this._mouseNewSelectionActive = true;
       }
       if (this._mouseNewSelectionActive && ranges.get('length')) {
-        this.revertDomModifications(ltBody);
+        this._revertDomModifications(ltBody);
         ranges.objectAt(0).set('b', i);
-        this.noSimplification(ltBody);
+        this._noSimplification(ltBody);
       }
     }
   },
@@ -254,9 +262,9 @@ export default SelectAll.extend({
     if (event.button === 0) {
       let ranges = this.get('ranges');
       if (this._mouseAddRangeActive && ranges.get('length')) {
-        this.revertDomModifications(ltBody);
+        this._revertDomModifications(ltBody);
         ranges.objectAt(0).set('b', ltBody.get('table.rows').indexOf(ltRow.get('row')));
-        this.noSimplification(ltBody);
+        this._noSimplification(ltBody);
       }
     }
   },
@@ -288,7 +296,7 @@ export default SelectAll.extend({
   onHandleDrop(ltBody, range) {
     this._updateRange(...arguments);
     range.normalize();
-    this.thenSimplify(ltBody);
+    this._thenSimplify(ltBody);
   }
 
 });

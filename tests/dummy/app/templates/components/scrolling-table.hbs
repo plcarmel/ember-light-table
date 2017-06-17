@@ -17,8 +17,8 @@
 
     {{#t.body
       canSelect=false
-      scrollTo=scrollTo
-      scrollToRow=scrollToRow
+      onScrollTo=onScrollTo
+      onScrollToRow=onScrollToRow
       onScroll=(action (mut currentScrollOffset))
       onScrolledToBottom=(action 'onScrolledToBottom')
       as |body|
@@ -44,14 +44,14 @@
             </div>
 
             <div class="form-group">
-              <label for="scrollTo">
+              <label for="onScrollTo">
                 Scroll To:
               </label>
               {{one-way-input
-                update=(action (mut scrollTo))
-                value=scrollTo
+                update=(action (mut onScrollTo))
+                value=onScrollTo
                 class="form-control"
-                name="scrollTo"
+                name="onScrollTo"
                 type="number"
                 min=0
                 step=10
@@ -59,15 +59,15 @@
             </div>
 
             <div class="form-group">
-              <label for="scrollToRow">
+              <label for="onScrollToRow">
                 Scroll To Row:
               </label>
               {{#one-way-select selectedValue
                 options=table.visibleRows
-                value=scrollToRow
-                update=(action (mut scrollToRow))
+                value=onScrollToRow
+                update=(action (mut onScrollToRow))
                 class="form-control"
-                name="scrollToRow"
+                name="onScrollToRow"
                 as |row|
               }}
                 {{row.id}} - {{row.firstName}} {{row.lastName}}

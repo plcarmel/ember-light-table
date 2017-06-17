@@ -8,7 +8,7 @@
     scrollToY=_scrollTopSet
     onScrollY=(action 'onScroll')
   }}
-    {{yield (hash scrollTop=_scrollTopGet scrollTo=(action 'scrollTo'))}}
+    {{yield (hash scrollTop=_scrollTopGet onScrollTo=(action 'onScrollTo'))}}
   {{/ember-scrollable}}
 {{else}}
   {{#standard-scrollable
@@ -17,6 +17,6 @@
     scrollToY=_scrollTopSet
     onScroll=(action 'onScroll')
   }}
-    {{yield (hash scrollTop=_scrollTopGet scrollTo=(action 'scrollTo'))}}
+    {{yield (hash scrollTop=_scrollTopGet onScrollTo=(action 'onScrollTo'))}}
   {{/standard-scrollable}}
 {{/if}}

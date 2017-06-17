@@ -403,9 +403,9 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
       let b = t + h;
       let extraSpace = rh * 2;
       if (rt - extraSpace <= t) {
-        this.sendAction('scrollTo', rt - extraSpace);
+        this.sendAction('onScrollTo', rt - extraSpace);
       } else if (rb + extraSpace >= b) {
-        this.sendAction('scrollTo', t + rb - b + extraSpace);
+        this.sendAction('onScrollTo', t + rb - b + extraSpace);
       }
     }
   },

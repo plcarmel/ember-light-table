@@ -49,7 +49,7 @@ export default Component.extend({
       this.sendAction('onScroll', ...arguments);
     },
 
-    scrollTo(x) {
+    onScrollTo(x) {
       this.set('_scrollTopSet', x);
     }
 

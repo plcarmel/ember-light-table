@@ -5,7 +5,7 @@ import { computed } from '@ember/object';
 
 export default Component.extend(TableCommon, {
   currentScrollOffset: 0,
-  scrollTo: 0,
+  onScrollTo: 0,
   scrollToRow: null,
 
   columns: computed(function() {

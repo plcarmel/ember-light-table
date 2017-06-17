@@ -10,16 +10,6 @@ export default EmberObject.extend(Evented, {
   anchorIsB: false,
   anchorAdjustment: 0,
 
-  /*
-  anchor: computed('a', 'b', 'anchorIsB', function() {
-    return this.get('anchorAdjustment') + (this.get('anchorIsB') ? this.get('b') : this.get('a'));
-  }),
-
-  other: computed('a', 'b', 'anchorIsB', function() {
-    return this.get('anchorIsB') ? this.get('a') : this.get('b');
-  }),
-  */
-
   realA: computed('anchorIsB', 'a', 'anchorAdjustment', {
     get() {
       let a = this.get('a');

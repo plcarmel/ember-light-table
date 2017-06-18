@@ -54,21 +54,20 @@
         {{/if}}
       </tbody>
     </table>
-      {{#if onScrolledToBottom}}
-        {{lt.infinity
-          rows=rows
-          inViewport=(action "inViewport")
-          exitViewport=(action "exitViewport")
-          scrollableContent=".lt-scrollable"
-          scrollBuffer=scrollBuffer
-        }}
-      {{/if}}
-
-      <div class='scrollable-decorations'>
-        {{#each scrollableDecorations as |decoration|}}
-          {{component decoration.component ltBody=this namedArgs=decoration.namedArgs}}
-        {{/each}}
-      </div>
+    {{#if onScrolledToBottom}}
+      {{lt.infinity
+        rows=rows
+        inViewport=(action "inViewport")
+        exitViewport=(action "exitViewport")
+        scrollableContent=".lt-scrollable"
+        scrollBuffer=scrollBuffer
+      }}
+    {{/if}}
+    <div class='body-decorations'>
+      {{#each decorations as |decoration|}}
+        {{component decoration.component ltBody=this namedArgs=decoration.namedArgs}}
+      {{/each}}
+    </div>
   {{else}}
     <div class="lt-scrollable tse-scrollable vertical-collection">
       <table class={{tableClassNames}}>

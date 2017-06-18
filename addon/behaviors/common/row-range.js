@@ -135,15 +135,15 @@ export default EmberObject.extend(Evented, {
     run.schedule('afterRender', null, () => ltBody.makeRowAtVisible(i));
   },
 
-  applyDomModifications(ltBody) {
-    ltBody.get('scrollableDecorations').pushObject({
+  addDecorations(ltBody) {
+    ltBody.get('decorations').pushObject({
       component: 'lt-row-range',
       namedArgs: { range: this }
     });
   },
 
-  revertDomModifications(ltBody) {
-    let decorations = ltBody.get('scrollableDecorations');
+  removeDecorations(ltBody) {
+    let decorations = ltBody.get('decorations');
     decorations.removeObject(decorations.findBy('namedArgs.range', this));
   },
 

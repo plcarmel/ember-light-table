@@ -5,7 +5,7 @@ import { getOwner } from '@ember/application';
 import $ from 'jquery';
 import withBackingField from 'ember-light-table/utils/with-backing-field';
 import layout from 'ember-light-table/templates/components/lt-body';
-import { run } from '@ember/runloop';
+import { run, once } from '@ember/runloop';
 import { EKMixin } from 'ember-keyboard';
 import ActivateKeyboardOnFocusMixin from 'ember-keyboard/mixins/activate-keyboard-on-focus';
 import HasBehaviorsMixin from 'ember-light-table/mixins/has-behaviors';
@@ -355,13 +355,13 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
    * @type {[ { component, namedArgs ]} ]}
    * @default []
    */
-  scrollableDecorations: null,
+  decorations: null,
 
   init() {
     this._super(...arguments);
 
-    if (this.get('scrollableDecorations') === null) {
-      this.set('scrollableDecorations', emberArray());
+    if (this.get('decorations') === null) {
+      this.set('decorations', emberArray());
     }
 
     this._initDefaultBehaviorsIfNeeded();
@@ -485,12 +485,12 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
     return i(rN) - i(r0);
   }).volatile().readOnly(),
 
-  signalOnRowArrayChanged() {
-    this.get('behaviors').forEach((b) => b.onRowArrayChanged(this));
+  signalSelectionChanged() {
+    this.get('behaviors').forEach((b) => b.onSelectionChanged(this));
   },
 
-  onRowArrayChanged: observer('table.rows.[]', function() {
-    Ember.run.once(this, this.signalOnRowArrayChanged);
+  onSelectionChanged: observer('table.rows.@each.selected', function() {
+    once(this, this.signalSelectionChanged);
   }),
 
   actions: {

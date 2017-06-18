@@ -11,6 +11,6 @@ export default EmberObject.extend({
     this.events = {};
   },
 
-  onRowArrayChanged(ltBody) {}
+  onSelectionChanged() {}
 
 });

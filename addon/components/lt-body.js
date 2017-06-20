@@ -401,9 +401,9 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
       let h = $scrollableContainer.height();
       let t = this.get('scrollTop');
       let b = t + h;
-      let extraSpace = rh * 2;
-      if (rt - extraSpace <= t) {
-        this.sendAction('onScrollTo', rt - extraSpace);
+      let extraSpace = rh * 0.5;
+      if (rt + rh - extraSpace <= t) {
+        this.sendAction('onScrollTo', rt + rh - extraSpace);
       } else if (rb + extraSpace >= b) {
         this.sendAction('onScrollTo', t + rb - b + extraSpace);
       }
@@ -574,5 +574,22 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
     lastReached(/* item, index, key */) {
       this.sendAction('lastReached', ...arguments);
     }
-  }
+  },
+
+  didInsertElement() {
+    this._super(...arguments);
+    $(document).on('keydown', this, this._preventPropagation);
+  },
+
+  willDestroyElement() {
+    this._super(...arguments);
+    $(document).off('keydown', this, this._preventPropagation);
+  },
+
+  _preventPropagation(e) {
+    if (e.target === e.data.element && [32, 33, 34, 35, 36, 38, 40].includes(e.keyCode)) {
+      return false;
+    }
+  },
+
 });

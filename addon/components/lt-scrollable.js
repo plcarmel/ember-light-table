@@ -14,20 +14,6 @@ export default Component.extend({
   horizontal: false,
   classNames: ['lt-scrollable'],
 
-  didInsertElement() {
-    $(document).on('keydown', this._disableScrollbarKeyboardSupport);
-  },
-
-  willDestroyElement() {
-    $(document).off('keydown', this._disableScrollbarKeyboardSupport);
-  },
-
-  _disableScrollbarKeyboardSupport(e) {
-    if (e.target !== $('.lt-scrollable')[0] && [32, 33, 34, 35, 36, 38, 40].includes(e.keyCode)) {
-      return false;
-    }
-  },
-
   scrollTop: computed('_scrollTopGet', {
     get() {
       return this.get('_scrollTopGet');

@@ -590,6 +590,6 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
     if (e.target === e.data.element && [32, 33, 34, 35, 36, 38, 40].includes(e.keyCode)) {
       return false;
     }
-  },
+  }
 
 });

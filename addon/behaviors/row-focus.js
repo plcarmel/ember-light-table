@@ -1,5 +1,6 @@
 import Behavior from 'ember-light-table/behaviors/behavior';
 import { keyDown } from 'ember-keyboard';
+import { rowMouseDown } from 'ember-light-table/listeners/mouse-events';
 
 export default Behavior.extend({
 
@@ -7,7 +8,7 @@ export default Behavior.extend({
 
   init() {
     this._super(...arguments);
-    this.events.onFocusToRow = ['rowMouseDown:_none', 'rowMouseDown:ctrl'];
+    this.events.onFocusToRow = [rowMouseDown('_none'), rowMouseDown('ctrl')];
     this.events.onGoDown = [keyDown('ArrowDown')];
     this.events.onGoUp = [keyDown('ArrowUp')];
     this.events.onGoPageDown = [keyDown('PageDown')];

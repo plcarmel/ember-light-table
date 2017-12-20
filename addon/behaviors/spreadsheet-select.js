@@ -1,22 +1,23 @@
 import { keyDown, keyUp } from 'ember-keyboard';
 import SelectAll from './select-all';
 import RowRanges from './common/row-ranges';
+import { rowMouseUp, rowMouseDown, rowMouseMove } from 'ember-light-table/listeners/mouse-events';
 
 export default SelectAll.extend({
 
   init() {
     this._super(...arguments);
-    this.events.onExtendRange = ['rowMouseDown:shift'];
+    this.events.onExtendRange = [rowMouseDown('shift')];
     this.events.onRangeDown = [keyDown('ArrowDown+shift')];
     this.events.onRangeUp = [keyDown('ArrowUp+shift')];
-    this.events.onDeselectAll = ['rowMouseDown:_none', keyDown('ArrowDown'), keyDown('ArrowUp'), keyDown('Escape')];
+    this.events.onDeselectAll = [rowMouseDown('_none'), keyDown('ArrowDown'), keyDown('ArrowUp'), keyDown('Escape')];
     this.events.onStopRangeUpDown = [keyUp('ShiftLeft')];
-    this.events.onRowMouseStartNewSelection = ['rowMouseDown:_none'];
-    this.events.onRowMouseStartAddRange = ['rowMouseDown:ctrl'];
-    this.events.onRowMouseEndNewSelection = ['rowMouseUp:_all'];
-    this.events.onRowMouseEndAddRange = ['rowMouseUp:_all'];
-    this.events.onRowMouseNewSelectionMove = ['rowMouseMove:_all'];
-    this.events.onRowMouseAddRangeMove = ['rowMouseMove:_all'];
+    this.events.onRowMouseStartNewSelection = [rowMouseDown('_none')];
+    this.events.onRowMouseStartAddRange = [rowMouseDown('cmd')];
+    this.events.onRowMouseEndNewSelection = [rowMouseUp('_all')];
+    this.events.onRowMouseEndAddRange = [rowMouseUp('_all')];
+    this.events.onRowMouseNewSelectionMove = [rowMouseMove('_all')];
+    this.events.onRowMouseAddRangeMove = [rowMouseMove('_all')];
     this.ranges = RowRanges.create({});
   },
 

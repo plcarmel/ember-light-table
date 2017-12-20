@@ -3,32 +3,8 @@ import { computed, observer } from '@ember/object';
 import Mixin from '@ember/object/mixin';
 import { on } from '@ember/object/evented';
 import { run } from '@ember/runloop';
-import getCmdKey from 'ember-keyboard/utils/get-cmd-key';
 import withBackingField from 'ember-light-table/utils/with-backing-field';
-
-function sortedKeys(keyArray) {
-  return keyArray.sort().join('+');
-}
-
-/*
- * Generates an event name from the type of event and the key
- * modifiers of the event.
- *
- * modified from ember-keyboard
- * _none is new
- */
-function listenerName(type, keyArray) {
-  let keys;
-  if (keyArray) {
-    if (keyArray.indexOf('cmd') > -1) {
-      keyArray[keyArray.indexOf('cmd')] = getCmdKey();
-    }
-    keys = keyArray.length === 0 ? '_none' : sortedKeys(keyArray);
-  } else {
-    keys = '_all';
-  }
-  return `${type}:${keys}`;
-}
+import listenerName from 'ember-light-table/utils/listener-name';
 
 /*
  * from ember-keyboard

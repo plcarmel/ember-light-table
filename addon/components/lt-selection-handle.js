@@ -75,7 +75,9 @@ export default Component.extend({
     $body.on(this._domEvents, this);
     this._oldUserSelect = $body.css('user-select');
     $body.css('user-select', 'none');
-    this.sendAction('drag');
+    if (this.drag) {
+      this.drag();
+    }
   }),
 
   extra: computed('direction', 'inverse', function() {
@@ -92,7 +94,9 @@ export default Component.extend({
     } else if (this._initialMousePosition) {
       let offset = this._getMousePosition(event) - this.get('_initialMousePosition');
       this.set('offset', offset);
-      this.sendAction('move', offset + this.get('extra') + this.get('position'), this.get('isUp') ? -1 : 1);
+      if (this.move) {
+        this.move(offset + this.get('extra') + this.get('position'), this.get('isUp') ? -1 : 1);
+      }
     } else {
       this._onMouseDown(event);
     }
@@ -110,7 +114,9 @@ export default Component.extend({
       $('body').css('user-select', this._oldUserSelect);
       this._initialMousePosition = null;
       this.set('offset', 0);
-      this.sendAction('drop', offset + this.get('extra') + this.get('position'), this.get('isUp') ? -1 : 1);
+      if (this.drop) {
+        this.drop(offset + this.get('extra') + this.get('position'), this.get('isUp') ? -1 : 1);
+      }
     }
   },
 

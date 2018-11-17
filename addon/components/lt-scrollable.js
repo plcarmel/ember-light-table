@@ -31,7 +31,9 @@ export default Component.extend({
 
     onScroll(scrollTop) {
       this.set('_scrollTopGet', scrollTop);
-      this.sendAction('onScroll', ...arguments);
+      if (this.onScroll) {
+        this.onScroll(...arguments);
+      }
     },
 
     onScrollTo(x) {

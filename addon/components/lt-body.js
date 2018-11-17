@@ -5,7 +5,7 @@ import { getOwner } from '@ember/application';
 import $ from 'jquery';
 import withBackingField from 'ember-light-table/utils/with-backing-field';
 import layout from 'ember-light-table/templates/components/lt-body';
-import { run, once } from '@ember/runloop';
+import { debounce, once, run } from '@ember/runloop';
 import { EKMixin } from 'ember-keyboard';
 import ActivateKeyboardOnFocusMixin from 'ember-keyboard/mixins/activate-keyboard-on-focus';
 import HasBehaviorsMixin from 'ember-light-table/mixins/has-behaviors';
@@ -403,9 +403,13 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
       let b = t + h;
       let extraSpace = rh * 0.5;
       if (rt + rh - extraSpace <= t) {
-        this.sendAction('onScrollTo', rt + rh - extraSpace);
+        if (this.onScrollTo) {
+          this.onScrollTo(rt + rh - extraSpace);
+        }
       } else if (rb + extraSpace >= b) {
-        this.sendAction('onScrollTo', t + rb - b + extraSpace);
+        if (this.onScrollTo) {
+          this.onScrollTo(t + rb - b + extraSpace);
+        }
       }
     }
   },
@@ -440,7 +444,9 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
      This debounce is needed when there is not enough delay between onScrolledToBottom calls.
      Without this debounce, all rows will be rendered causing immense performance problems
      */
-    this._debounceTimer = run.debounce(this, this.sendAction, 'onScrolledToBottom', delay);
+    if (this.onScrolledToBottom) {
+      this._debounceTimer = debounce(this, this.onScrolledToBottom, delay);
+    }
   },
 
   /**
@@ -496,52 +502,72 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
   actions: {
     onRowClick() {
       this.triggerBehaviorEvent('rowClick', ...arguments);
-      this.sendAction('onRowClick', ...arguments);
+      if (this.onRowClick) {
+        this.onRowClick(...arguments);
+      }
     },
 
     onRowDoubleClick() {
       this.triggerBehaviorEvent('rowDoubleClick', ...arguments);
-      this.sendAction('onRowDoubleClick', ...arguments);
+      if (this.onRowDoubleClick) {
+        this.onRowDoubleClick(...arguments);
+      }
     },
 
     onRowMouseDown() {
       this.triggerBehaviorEvent('rowMouseDown', ...arguments);
-      this.sendAction('onRowMouseDown', ...arguments);
+      if (this.onRowMouseDown) {
+        this.onRowMouseDown(...arguments);
+      }
     },
 
     onRowMouseUp() {
       this.triggerBehaviorEvent('rowMouseUp', ...arguments);
-      this.sendAction('onRowMouseUp', ...arguments);
+      if (this.onRowMouseUp) {
+        this.onRowMouseUp(...arguments);
+      }
     },
 
     onRowMouseMove() {
       this.triggerBehaviorEvent('rowMouseMove', ...arguments);
-      this.sendAction('onRowMouseMove', ...arguments);
+      if (this.onRowMouseMove) {
+        this.onRowMouseMove(...arguments);
+      }
     },
 
     onRowTouchStart() {
       this.triggerBehaviorEvent('rowTouchStart', ...arguments);
-      this.sendAction('onRowTouchStart', ...arguments);
+      if (this.onRowTouchStart) {
+        this.onRowTouchStart(...arguments);
+      }
     },
 
     onRowTouchEnd() {
       this.triggerBehaviorEvent('rowTouchEnd', ...arguments);
-      this.sendAction('onRowTouchEnd', ...arguments);
+      if (this.onRowTouchEnd) {
+        this.onRowTouchEnd(...arguments);
+      }
     },
 
     onRowTouchCancel() {
       this.triggerBehaviorEvent('rowTouchCancel', ...arguments);
-      this.sendAction('onRowTouchCancel', ...arguments);
+      if (this.onRowTouchCancel) {
+        this.onRowTouchCancel(...arguments);
+      }
     },
 
     onRowTouchLeave() {
       this.triggerBehaviorEvent('rowTouchLeave', ...arguments);
-      this.sendAction('onRowTouchLeave', ...arguments);
+      if (this.onRowTouchLeave) {
+        this.onRowTouchLeave(...arguments);
+      }
     },
 
     onRowTouchMove() {
       this.triggerBehaviorEvent('rowTouchMove', ...arguments);
-      this.sendAction('onRowTouchMove', ...arguments);
+      if (this.onRowTouchMove) {
+        this.onRowTouchMove(...arguments);
+      }
     },
 
     /**
@@ -560,19 +586,27 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
     },
 
     firstVisibleChanged(/* item, index, key */) {
-      this.sendAction('firstVisibleChanged', ...arguments);
+      if (this.firstVisibleChanged) {
+        this.firstVisibleChanged(...arguments);
+      }
     },
 
     lastVisibleChanged(/* item, index, key */) {
-      this.sendAction('lastVisibleChanged', ...arguments);
+      if (this.lastVisibleChanged) {
+        this.lastVisibleChanged(...arguments);
+      }
     },
 
     firstReached(/* item, index, key */) {
-      this.sendAction('firstReached', ...arguments);
+      if (this.firstReached) {
+        this.firstReached(...arguments);
+      }
     },
 
     lastReached(/* item, index, key */) {
-      this.sendAction('lastReached', ...arguments);
+      if (this.lastReached) {
+        this.lastReached(...arguments);
+      }
     }
   },
 

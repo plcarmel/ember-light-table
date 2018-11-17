@@ -34,7 +34,9 @@ export default Component.extend({
   _onScroll(event) {
     let $ = this.$();
     if ($) {
-      this.sendAction('onScroll', $.scrollTop(), event);
+      if (this.onScroll) {
+        this.onScroll($.scrollTop(), event);
+      }
     }
   },
 

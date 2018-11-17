@@ -57,43 +57,63 @@ const Row = Component.extend({
   }).volatile().readOnly(),
 
   _onClick: on('click', function() {
-    this.sendAction('rowClick', this, ...arguments);
+    if (this.rowClick) {
+      this.rowClick(this, ...arguments);
+    }
   }),
 
   _onDoubleClick: on('doubleClick', function() {
-    this.sendAction('rowDoubleClick', this, ...arguments);
+    if (this.rowDoubleClick) {
+      this.rowDoubleClick(this, ...arguments);
+    }
   }),
 
   _onMouseDown: on('mouseDown', function() {
-    this.sendAction('rowMouseDown', this, ...arguments);
+    if (this.rowMouseDown) {
+      this.rowMouseDown(this, ...arguments);
+    }
   }),
 
   _onMouseUp: on('mouseUp', function() {
-    this.sendAction('rowMouseUp', this, ...arguments);
+    if (this.rowMouseUp) {
+      this.rowMouseUp(this, ...arguments);
+    }
   }),
 
   _onMouseMove: on('mouseMove', function() {
-    this.sendAction('rowMouseMove', this, ...arguments);
+    if (this.rowMouseMove) {
+      this.rowMouseMove(this, ...arguments);
+    }
   }),
 
   _onTouchStart: on('touchStart', function() {
-    this.sendAction('rowTouchStart', this, ...arguments);
+    if (this.rowTouchStart) {
+      this.rowTouchStart(this, ...arguments);
+    }
   }),
 
   _onTouchEnd: on('touchEnd', function() {
-    this.sendAction('rowTouchEnd', this, ...arguments);
+    if (this.rowTouchEnd) {
+      this.rowTouchEnd(this, ...arguments);
+    }
   }),
 
   _onTouchCancel: on('touchCancel', function() {
-    this.sendAction('rowTouchCancel', this, ...arguments);
+    if (this.rowTouchCancel) {
+      this.rowTouchCancel(this, ...arguments);
+    }
   }),
 
   _onTouchLeave: on('touchLeave', function() {
-    this.sendAction('rowTouchLeave', this, ...arguments);
+    if (this.rowTouchLeave) {
+      this.rowTouchLeave(this, ...arguments);
+    }
   }),
 
   _onTouchMove: on('touchMove', function() {
-    this.sendAction('rowTouchMove', this, ...arguments);
+    if (this.rowTouchMove) {
+      this.rowTouchMove(this, ...arguments);
+    }
   })
 
 });

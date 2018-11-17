@@ -1,4 +1,5 @@
 /* eslint ember/no-on-calls-in-components:off */
+/* eslint ember/no-side-effects:off */
 import Component from '@ember/component';
 import { computed, observer } from '@ember/object';
 import { on } from '@ember/object/evented';

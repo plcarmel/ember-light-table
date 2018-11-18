@@ -4,7 +4,7 @@
   {{virtual-scrollbar-table-action value=virtual onChange=(action (mut virtual))}}
 </div>
 
-{{#lt-fixed-frame
+{{#lt-frame
   height='65vh'
   scrollbar=(if virtual 'virtual' 'standard') as |frame|
 }}
@@ -63,5 +63,5 @@
   {{/frame.scrollable-zone}}
 
   {{frame.fixed-foot-here}}
-{{/lt-fixed-frame}}
+{{/lt-frame}}
 {{!-- END-SNIPPET --}}

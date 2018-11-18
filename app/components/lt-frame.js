@@ -4,7 +4,7 @@ import cssStyleify from 'ember-light-table/utils/css-styleify';
 
 export default Component.extend({
 
-  classNames: ['lt-fixed-frame'],
+  classNames: ['lt-frame'],
 
   attributeBindings: ['style'],
 

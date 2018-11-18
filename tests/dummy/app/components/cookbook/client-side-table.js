@@ -10,8 +10,6 @@ export default Component.extend(TableCommon, {
   // No need for `enableSync` here
   enableSync: false,
 
-  fixed: true,
-
   isLoading: computed.or('fetchRecords.isRunning', 'setRows.isRunning').readOnly(),
 
   // Sort Logic

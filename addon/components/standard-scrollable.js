@@ -1,6 +1,5 @@
 import Component from '@ember/component';
 import { computed, observer } from '@ember/object';
-import { run } from '@ember/runloop';
 import layout from '../templates/components/standard-scrollable';
 import cssStyleify from 'ember-light-table/utils/css-styleify';
 
@@ -41,11 +40,7 @@ export default Component.extend({
   },
 
   _onScrollToY: observer('scrollToY', function() {
-    run.scheduleOnce('afterRender', this, this.__onScrollToY);
-  }),
-
-  __onScrollToY() {
     this.$().scrollTop(this.get('scrollToY'));
-  }
+  })
 
 });

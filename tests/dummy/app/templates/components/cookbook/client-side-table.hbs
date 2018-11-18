@@ -1,13 +1,16 @@
 {{!-- BEGIN-SNIPPET client-side-table --}}
 <div class='table-actions'>
-  {{fixed-header-table-action fixed=fixed onChange=(action (mut fixed))}}
+  {{virtual-scrollbar-table-action value=virtual onChange=(action (mut virtual))}}
 </div>
 
-{{#lt-fixed-frame height='65vh' as |frame|}}
-  {{frame.head-here}}
+{{#lt-fixed-frame
+  height='65vh'
+  scrollbar=(if virtual 'virtual' 'standard') as |frame|
+}}
+  {{frame.fixed-head-here}}
 
   {{#frame.scrollable-zone}}
-    {{#frame.light-table table as |t|}}
+    {{#frame.table table as |t|}}
 
       {{!--
         In order for `fa-sort-asc` and `fa-sort-desc` icons to work,
@@ -16,7 +19,7 @@
       --}}
 
       {{t.head
-        fixed=fixed
+        fixed=true
         onColumnClick=(action 'onColumnClick')
         iconSortable='fa fa-sort'
         iconAscending='fa fa-sort-asc'
@@ -32,7 +35,7 @@
       {{/t.body}}
 
       {{#t.foot
-        fixed=fixed
+        fixed=true
         to=(concat elementId '-foot-position')
         as |columns|
       }}
@@ -52,9 +55,9 @@
           </td>
         </tr>
       {{/t.foot}}
-    {{/frame.light-table}}
+    {{/frame.table}}
   {{/frame.scrollable-zone}}
 
-  {{frame.foot-here}}
+  {{frame.fixed-foot-here}}
 {{/lt-fixed-frame}}
 {{!-- END-SNIPPET --}}

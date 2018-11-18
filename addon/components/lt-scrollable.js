@@ -18,7 +18,6 @@ export default Component.extend({
       return this.get('_scrollTopGet');
     },
     set(key, value) {
-      this.set('_scrollTopGet', value);
       this.set('_scrollTopSet', value);
       return value;
     }
@@ -36,8 +35,8 @@ export default Component.extend({
       }
     },
 
-    onScrollTo(x) {
-      this.set('_scrollTopSet', x);
+    onScrollTo(y) {
+      this.set('_scrollTopSet', y);
     }
 
   }

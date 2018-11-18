@@ -9,6 +9,7 @@ export default Component.extend({
   attributeBindings: ['style'],
 
   height: null,
+  scrollbar: 'standard',
 
   style: computed('height', function() {
     return cssStyleify(this.getProperties(['height']));

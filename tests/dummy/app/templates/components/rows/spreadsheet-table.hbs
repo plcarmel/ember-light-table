@@ -1,5 +1,7 @@
-{{!-- BEGIN-SNIPPET selectable-table --}}
+{{!-- BEGIN-SNIPPET spreadsheet-table --}}
 <div class="table-actions">
+  {{fixed-header-table-action value=fixed onChange=(action (mut fixed))}}
+  {{virtual-scrollbar-table-action value=virtual onChange=(action (mut virtual))}}
   {{#if hasSelection}}
     <div class="table-action fa fa-check-square-o" title="Deselect all" {{action 'deselectAll'}}></div>
     <div class="table-action fa fa-trash-o delete" title="Delete selected" {{action 'deleteAll'}}></div>
@@ -8,32 +10,41 @@
   {{/if}}
 </div>
 
-{{#standard-scrollable height='65vh'}}
-  {{#light-table table as |t|}}
-    {{t.head
-      onColumnClick=(action 'onColumnClick')
-      iconAscending='fa fa-sort-asc'
-      iconDescending='fa fa-sort-desc'
-    }}
+{{#lt-fixed-frame
+  height='65vh'
+  scrollbar=(if virtual 'virtual' 'standard')
+  as |frame|
+}}
+  {{frame.fixed-head-here}}
 
-    {{#t.body
-      behaviors=(array (lt-row-focus) (lt-spreadsheet-select))
-      onScrolledToBottom=(action 'onScrolledToBottom')
-      as |body|
-    }}
-      {{#if isLoading}}
-        {{#body.loader}}
-          {{table-loader}}
-        {{/body.loader}}
-      {{/if}}
+  {{#frame.scrollable-zone}}
+    {{#frame.table table as |t|}}
+      {{t.head
+        fixed=fixed
+        onColumnClick=(action 'onColumnClick')
+        iconAscending='fa fa-sort-asc'
+        iconDescending='fa fa-sort-desc'
+      }}
 
-      {{#if (and (not isLoading) table.isEmpty)}}
-        {{#body.no-data}}
-          {{no-data}}
-        {{/body.no-data}}
-      {{/if}}
-    {{/t.body}}
+      {{#t.body
+        behaviors=(array (lt-row-focus) (lt-spreadsheet-select))
+        onScrolledToBottom=(action 'onScrolledToBottom')
+        as |body|
+      }}
+        {{#if isLoading}}
+          {{#body.loader}}
+            {{table-loader}}
+          {{/body.loader}}
+        {{/if}}
 
-  {{/light-table}}
-{{/standard-scrollable}}
+        {{#if (and (not isLoading) table.isEmpty)}}
+          {{#body.no-data}}
+            {{no-data}}
+          {{/body.no-data}}
+        {{/if}}
+      {{/t.body}}
+
+    {{/frame.table}}
+  {{/frame.scrollable-zone}}
+{{/lt-fixed-frame}}
 {{!-- END-SNIPPET --}}

@@ -1,5 +1,6 @@
 {{!-- BEGIN-SNIPPET client-side-table --}}
 <div class='table-actions'>
+  {{fixed-header-table-action value=fixed onChange=(action (mut fixed))}}
   {{virtual-scrollbar-table-action value=virtual onChange=(action (mut virtual))}}
 </div>
 
@@ -19,7 +20,7 @@
       --}}
 
       {{t.head
-        fixed=true
+        fixed=fixed
         onColumnClick=(action 'onColumnClick')
         iconSortable='fa fa-sort'
         iconAscending='fa fa-sort-asc'

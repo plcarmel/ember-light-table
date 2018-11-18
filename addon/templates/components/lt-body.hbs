@@ -69,7 +69,7 @@
       {{/each}}
     </div>
   {{else}}
-    <div class="lt-scrollable tse-scrollable vertical-collection">
+    <div class="vertical-collection">
       <table class={{tableClassNames}}>
         <tbody class="lt-body">
         {{#if overwrite}}
@@ -80,7 +80,16 @@
               tagName='vertical-collection'
               estimateHeight=sharedOptions.estimatedRowHeight
               bufferSize=scrollBufferRows
-              containerSelector='.lt-scrollable'
+              containerSelector=
+                (if sharedOptions.occlusionContainerSelector
+                  sharedOptions.occlusionContainerSelector
+                  (concat
+                    '#' sharedOptions.frameId
+                    ' .tse-scroll-content, '
+                    '#' sharedOptions.frameId
+                    ' .lt-scrollable'
+                  )
+                )
               firstVisibleChanged=(action 'firstVisibleChanged')
               lastVisibleChanged=(action 'lastVisibleChanged')
               firstReached=(action 'firstReached')

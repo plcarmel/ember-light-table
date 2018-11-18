@@ -14,7 +14,13 @@ function intersections(array1, array2) {
   });
 }
 
-const sharedProperties = ['height', 'frameId', 'occlusion', 'estimatedRowHeight'];
+const sharedProperties = [
+  'height',
+  'frameId',
+  'occlusion',
+  'estimatedRowHeight',
+  'occlusionContainerSelector'
+];
 
 /**
  * @module Light Table
@@ -177,6 +183,15 @@ const LightTable = Component.extend({
    * @default False
    */
   occlusion: false,
+
+  /**
+   * The container used by the "vertical-collection" component when occlusion=true
+   *
+   * @property occlusionContainerSelector
+   * @type Boolean
+   * @default '#{{frameId}} .tse-scoll-content, #{{frameId}} .lt-scrollable'
+   */
+  occlusionContainerSelector: null,
 
   /**
    * Estimated size of a row. Used in `vertical-collection` to determine roughly the number

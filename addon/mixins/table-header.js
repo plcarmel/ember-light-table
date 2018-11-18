@@ -124,7 +124,7 @@ export default Mixin.create({
    * @property to
    * @type {String}
    */
-  uniqueGroupId: null,
+  frameId: null,
 
   renderInPlace: computed.not('fixed'),
 

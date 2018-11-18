@@ -1,34 +1,49 @@
 {{!-- BEGIN-SNIPPET occluded-table --}}
-<div style='height=65vh;'>
-  {{#light-table
-    table
-    occlusion=true
-    estimatedRowHeight=50
-    as |t|
-  }}
-
-  {{!--
-    In order for `fa-sort-asc` and `fa-sort-desc` icons to work,
-    you need to have ember-font-awesome installed or manually include
-    the font-awesome assets, e.g. via a CDN.
-  --}}
-
-    {{t.head}}
-
-    {{#t.body
-      canSelect=false
-      scrollBuffer=200
-      onScrolledToBottom=(action 'onScrolledToBottom')
-    as |body|
-    }}
-      {{#if isLoading}}
-        {{#body.loader}}
-          {{table-loader}}
-        {{/body.loader}}
-      {{/if}}
-    {{/t.body}}
-
-    {{t.foot}}
-  {{/light-table}}
+<div class='table-actions'>
+  {{fixed-header-table-action value=fixed onChange=(action (mut fixed))}}
+  {{virtual-scrollbar-table-action value=virtual onChange=(action (mut virtual))}}
 </div>
+
+{{#lt-fixed-frame
+  height='65vh'
+  scrollbar=(if virtual 'virtual' 'standard') as |frame|
+}}
+  {{frame.fixed-head-here}}
+
+  {{#frame.scrollable-zone}}
+
+    {{#frame.table
+      table
+      occlusion=true
+      estimatedRowHeight=50
+      as |t|
+    }}
+      {{!--
+        In order for `fa-sort-asc` and `fa-sort-desc` icons to work,
+        you need to have ember-font-awesome installed or manually include
+        the font-awesome assets, e.g. via a CDN.
+      --}}
+
+        {{t.head fixed=fixed}}
+
+        {{#t.body
+          canSelect=false
+          scrollBuffer=200
+          onScrolledToBottom=(action 'onScrolledToBottom')
+          as |body|
+        }}
+          {{#if isLoading}}
+            {{#body.loader}}
+              {{table-loader}}
+            {{/body.loader}}
+          {{/if}}
+        {{/t.body}}
+
+        {{t.foot fixed=fixed}}
+    {{/frame.table}}
+
+  {{/frame.scrollable-zone}}
+
+  {{frame.fixed-foot-here}}
+{{/lt-fixed-frame}}
 {{!-- END-SNIPPET --}}

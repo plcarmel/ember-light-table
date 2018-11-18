@@ -11,6 +11,7 @@ export default Component.extend({
   virtual: false,
   vertical: true,
   horizontal: false,
+  autoHide: true, // only for virtual=true
   classNames: ['lt-scrollable'],
 
   scrollTop: computed('_scrollTopGet', {

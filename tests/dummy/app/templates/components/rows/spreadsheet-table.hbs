@@ -46,7 +46,35 @@
         {{/if}}
       {{/t.body}}
 
+      {{#t.foot fixed=true as |columns|}}
+        <tr>
+          <td class='align-left' colspan={{columns.length}}>
+            <div class='explanations'> 
+              <div>
+                <h4>Mouse</h4>
+                  <dl>
+                    <dt>Left</dt> <dd>Set focus</dd>
+                    <dt>Left + Move</dt> <dd>Start or expand a selection range</dd>
+                    <dt>Shift + Left</dt> <dd>Create a selection range from focus</dd>
+                    <dt>Ctrl + Left</dt> <dd>Add or expand a new inversion range</dd>
+                  </dl>
+              </div>
+              <div>
+                <h4>Keyboard</h4>
+                  <dl>
+                    <dt>Up / Down</dt> <dd>Move focus</dd>
+                    <dt>Shift Up / Down</dt> <dd>Create or expand a selection range</dd>
+                    <dt>Enter / Shift+Enter</dt> <dd> Move focus inside range </dd>
+                  </dl>
+              </div>
+            </div>
+          </td>
+        </tr>
+      {{/t.foot}}
+
     {{/frame.table}}
   {{/frame.scrollable-zone}}
+
+  {{frame.fixed-foot-here}}
 {{/lt-fixed-frame}}
 {{!-- END-SNIPPET --}}

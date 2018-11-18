@@ -17,7 +17,7 @@
 }}
   {{frame.fixed-head-here}}
 
-  {{#frame.scrollable-zone}}
+  {{#frame.scrollable-zone as |zone|}}
     {{#frame.table table as |t|}}
       {{t.head
         fixed=fixed
@@ -28,7 +28,9 @@
 
       {{#t.body
         behaviors=(array (lt-row-focus) (lt-spreadsheet-select))
+        scrollTop=zone.scrollTop
         onScrolledToBottom=(action 'onScrolledToBottom')
+        onScrollTo=zone.onScrollTo
         as |body|
       }}
         {{#if isLoading}}

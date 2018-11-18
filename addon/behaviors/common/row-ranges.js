@@ -43,6 +43,7 @@ export default EmberObject.extend({
     } finally {
       this.noSimplification(ltBody);
     }
+    run.schedule('afterRender', null, () => ltBody.makeRowAtVisible(b, 0.5));
   },
 
   moveFirstRange(ltBody, direction) {
@@ -70,7 +71,7 @@ export default EmberObject.extend({
       let rn = this._createNewRange(a, b);
       list.pushObject(rn);
     }
-    run.schedule('afterRender', null, () => ltBody.makeRowAtVisible(b));
+    run.schedule('afterRender', null, () => ltBody.makeRowAtVisible(b, 0.5));
   },
 
   removeDecorations(ltBody) {
@@ -198,7 +199,7 @@ export default EmberObject.extend({
       if (!(direction < 0 && i > realLast) && !(direction > 0 && i < realFirst)) {
         range.set(pointName, i);
         this._syncSelection(ltBody.get('table'));
-        run.schedule('afterRender', null, () => ltBody.makeRowAtVisible(i));
+        run.schedule('afterRender', null, () => ltBody.makeRowAtVisible(i, 0.5));
       }
     }
   },

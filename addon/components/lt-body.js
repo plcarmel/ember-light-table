@@ -397,8 +397,8 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
     this._cancelTimers();
   },
 
-  makeRowAtVisible(i) {
-    this.makeRowVisible(this.get('ltRows').objectAt(i).$());
+  makeRowAtVisible(i, nbExtraRows = 0) {
+    this.makeRowVisible(this.get('ltRows').objectAt(i).$(), nbExtraRows);
   },
 
   $scrollableContainer: computed(function() {
@@ -409,7 +409,7 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
     return this.$().parents('.scrollable-content');
   }).volatile().readOnly(),
 
-  makeRowVisible($row) {
+  makeRowVisible($row, nbExtraRows = 0) {
     let $scrollableContent = this.get('$scrollableContent');
     let $scrollableContainer = this.get('$scrollableContainer');
     if ($row.length !== 0 && $scrollableContent.length !== 0 && $scrollableContainer.length !== 0) {
@@ -419,7 +419,7 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
       let h = $scrollableContainer.height();
       let t = this.get('scrollTop');
       let b = t + h;
-      let extraSpace = rh * 0.0;
+      let extraSpace = rh * nbExtraRows;
       if (rt + rh - extraSpace <= t) {
         if (this.onScrollTo) {
           this.onScrollTo(rt - extraSpace);
@@ -434,7 +434,7 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
 
   _onFocusedRowChanged: observer('table.focusIndex', function() {
     if (typeof FastBoot === 'undefined') {
-      run.schedule('afterRender', null, () => this.makeRowVisible(this.$('tr.has-focus')));
+      run.schedule('afterRender', null, () => this.makeRowVisible(this.$('tr.has-focus'), 0.5));
     }
   }),
 

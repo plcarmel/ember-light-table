@@ -132,7 +132,7 @@ export default EmberObject.extend(Evented, {
         this.set('first', i);
       }
     }
-    run.schedule('afterRender', null, () => ltBody.makeRowAtVisible(i));
+    run.schedule('afterRender', null, () => ltBody.makeRowAtVisible(i, 0.5));
   },
 
   addDecorations(ltBody) {

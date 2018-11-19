@@ -19,13 +19,6 @@ module('Integration | Component | lt body', function(hooks) {
     this.send = (actionName, ...args) => this.actions[actionName].apply(this, args);
   });
 
-  hooks.beforeEach(function() {
-    this.set('sharedOptions', {
-      fixedHeader: false,
-      fixedFooter: false
-    });
-  });
-
   test('it renders', async function(assert) {
     await render(hbs `{{lt-body sharedOptions=sharedOptions}}`);
     assert.equal(find('*').textContent.trim(), '');

@@ -14,6 +14,14 @@ function intersections(array1, array2) {
   });
 }
 
+const sharedProperties = [
+  'height',
+  'frameId',
+  'occlusion',
+  'estimatedRowHeight',
+  'occlusionContainerSelector'
+];
+
 /**
  * @module Light Table
  * @main light-table
@@ -37,7 +45,7 @@ function intersections(array1, array2) {
 
 const LightTable = Component.extend({
   layout,
-  classNameBindings: [':ember-light-table', 'occlusion'],
+  classNameBindings: [':ember-light-table', ':lt-table-container', 'occlusion'],
   attributeBindings: ['style'],
 
   media: service(),
@@ -160,6 +168,12 @@ const LightTable = Component.extend({
   breakpoints: null,
 
   /**
+   * This value is passed to lt-head and lt-foot so they can create a unique ids
+   * for ember-wormhole
+   */
+  frameId: null,
+
+  /**
    * Toggles occlusion rendering functionality. Currently experimental.
    * If set to true, you must set {{#crossLink 't.body/estimatedRowHeight:property'}}{{/crossLink}} to
    * something other than the default value.
@@ -169,6 +183,15 @@ const LightTable = Component.extend({
    * @default False
    */
   occlusion: false,
+
+  /**
+   * The container used by the "vertical-collection" component when occlusion=true
+   *
+   * @property occlusionContainerSelector
+   * @type Boolean
+   * @default '#{{frameId}} .tse-scoll-content, #{{frameId}} .lt-scrollable'
+   */
+  occlusionContainerSelector: null,
 
   /**
    * Estimated size of a row. Used in `vertical-collection` to determine roughly the number
@@ -187,14 +210,8 @@ const LightTable = Component.extend({
    * @type {Object}
    * @private
    */
-  sharedOptions: computed(function() {
-    return {
-      height: this.get('height'),
-      fixedHeader: false,
-      fixedFooter: false,
-      occlusion: this.get('occlusion'),
-      estimatedRowHeight: this.get('estimatedRowHeight')
-    };
+  sharedOptions: computed(...sharedProperties, function() {
+    return this.getProperties(sharedProperties);
   }).readOnly(),
 
   visibleColumns: computed.readOnly('table.visibleColumns'),

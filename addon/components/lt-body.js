@@ -1,8 +1,11 @@
 import Component from '@ember/component';
 import { computed, observer } from '@ember/object';
+import { A as emberArray } from '@ember/array';
+import { getOwner } from '@ember/application';
+import { warn } from '@ember/debug';
+import $ from 'jquery';
 import layout from 'ember-light-table/templates/components/lt-body';
-import { run } from '@ember/runloop';
-import Row from 'ember-light-table/classes/Row';
+import { debounce, run, schedule } from '@ember/runloop';
 
 /**
  * @module Light Table
@@ -220,18 +223,11 @@ export default Component.extend({
    */
   useVirtualScrollbar: false,
 
-  /**
-   * Set this property to scroll to a specific px offset.
-   *
-   * This only works when `useVirtualScrollbar` is `true`, i.e. when you are
-   * using fixed headers / footers.
-   *
-   * @property scrollTo
-   * @type {Number}
-   * @default null
-   */
   scrollTo: null,
-  _scrollTo: null,
+
+  _onScrollTo: observer('scrollTo', function() {
+    warn('Property "scrollTo" is not supported anymore, please use lt-scrollable directly instead.');
+  }),
 
   /**
    * Set this property to a `Row` to scroll that `Row` into view.
@@ -244,7 +240,18 @@ export default Component.extend({
    * @default null
    */
   scrollToRow: null,
-  _scrollToRow: null,
+
+  _onScrollToRow: observer('scrollToRow', function() {
+    let row = this.get('scrollToRow');
+    if (row) {
+      let ltRow = this.get('ltRows').findBy('row', row);
+      if (ltRow) {
+        schedule('afterRender', () => this.makeRowVisible(ltRow.$()));
+      } else {
+        throw 'Row passed to scrollToRow() is not part of the rendered table.';
+      }
+    }
+  }),
 
   /**
    * @property targetScrollOffset
@@ -334,17 +341,10 @@ export default Component.extend({
   init() {
     this._super(...arguments);
 
-    /*
-      We can only set `useVirtualScrollbar` once all contextual components have
-      been initialized since fixedHeader and fixedFooter are set on t.head and t.foot
-      initialization.
-     */
-    run.once(this, this._setupVirtualScrollbar);
   },
 
   didReceiveAttrs() {
     this._super(...arguments);
-    this.setupScrollOffset();
   },
 
   destroy() {
@@ -352,62 +352,37 @@ export default Component.extend({
     this._cancelTimers();
   },
 
-  _setupVirtualScrollbar() {
-    let { fixedHeader, fixedFooter } = this.get('sharedOptions');
-    this.set('useVirtualScrollbar', fixedHeader || fixedFooter);
+  makeRowAtVisible(i, nbExtraRows = 0) {
+    this.makeRowVisible(this.get('ltRows').objectAt(i).$(), nbExtraRows);
   },
 
-  onRowsChange: observer('rows.[]', function() {
-    this._checkTargetOffsetTimer = run.scheduleOnce('afterRender', this, this.checkTargetScrollOffset);
-  }),
+  $scrollableContainer: computed(function() {
+    return this.$().parents('.lt-scrollable');
+  }).volatile().readOnly(),
 
-  setupScrollOffset() {
-    let {
-      scrollTo,
-      _scrollTo,
-      scrollToRow,
-      _scrollToRow
-    } = this.getProperties(['scrollTo', '_scrollTo', 'scrollToRow', '_scrollToRow']);
-    let targetScrollOffset = null;
+  $scrollableContent: computed(function() {
+    return this.$().parents('.scrollable-content');
+  }).volatile().readOnly(),
 
-    this.setProperties({ _scrollTo: scrollTo, _scrollToRow: scrollToRow });
-
-    if (scrollTo !== _scrollTo) {
-      targetScrollOffset = Number.parseInt(scrollTo, 10);
-
-      if (Number.isNaN(targetScrollOffset)) {
-        targetScrollOffset = null;
-      }
-
-      this.setProperties({
-        targetScrollOffset,
-        hasReachedTargetScrollOffset: targetScrollOffset <= 0
-      });
-    } else if (scrollToRow !== _scrollToRow) {
-      if (scrollToRow instanceof Row) {
-        let rowElement = this.element.querySelector(`[data-row-id=${scrollToRow.get('rowId')}]`);
-
-        if (rowElement instanceof Element) {
-          targetScrollOffset = rowElement.offsetTop;
+  makeRowVisible($row, nbExtraRows = 0) {
+    let $scrollableContent = this.get('$scrollableContent');
+    let $scrollableContainer = this.get('$scrollableContainer');
+    if ($row.length !== 0 && $scrollableContent.length !== 0 && $scrollableContainer.length !== 0) {
+      let rt = $row.offset().top - $scrollableContent.offset().top;
+      let rh = $row.height();
+      let rb = rt + rh;
+      let h = $scrollableContainer.height();
+      let t = this.get('scrollTop');
+      let b = t + h;
+      let extraSpace = rh * nbExtraRows;
+      if (rt + rh - extraSpace <= t) {
+        if (this.onScrollTo) {
+          this.onScrollTo(rt - extraSpace);
         }
-      }
-
-      this.setProperties({ targetScrollOffset, hasReachedTargetScrollOffset: true });
-    }
-  },
-
-  checkTargetScrollOffset() {
-    if (!this.get('hasReachedTargetScrollOffset')) {
-      let targetScrollOffset = this.get('targetScrollOffset');
-      let currentScrollOffset = this.get('currentScrollOffset');
-
-      if (targetScrollOffset > currentScrollOffset) {
-        this.set('targetScrollOffset', null);
-        this._setTargetOffsetTimer = run.schedule('render', null, () => {
-          this.set('targetScrollOffset', targetScrollOffset);
-        });
-      } else {
-        this.set('hasReachedTargetScrollOffset', true);
+      } else if (rb + extraSpace >= b) {
+        if (this.onScrollTo) {
+          this.onScrollTo(t + rb - b + extraSpace);
+        }
       }
     }
   },
@@ -433,7 +408,7 @@ export default Component.extend({
      Without this debounce, all rows will be rendered causing immense performance problems
      */
     if (this.onScrolledToBottom) {
-      this._debounceTimer = run.debounce(this, this.onScrolledToBottom, delay);
+      this._debounceTimer = debounce(this, this.onScrolledToBottom, delay);
     }
   },
 
@@ -446,6 +421,12 @@ export default Component.extend({
     run.cancel(this._schedulerTimer);
     run.cancel(this._debounceTimer);
   },
+
+  ltRows: computed(function() {
+    let vrm = getOwner(this).lookup('-view-registry:main');
+    let q = this.$('tr:not(.lt-expanded-row)');
+    return emberArray($.makeArray(q.map((i, e) => vrm[e.id])));
+  }).volatile(),
 
   actions: {
     /**
@@ -509,23 +490,6 @@ export default Component.extend({
     },
 
     /**
-     * onScroll action - sent when user scrolls in the Y direction
-     *
-     * This only works when `useVirtualScrollbar` is `true`, i.e. when you are
-     * using fixed headers / footers.
-     *
-     * @event onScroll
-     * @param {Number} scrollOffset The scroll offset in px
-     * @param {Event} event The scroll event
-     */
-    onScroll(scrollOffset /* , event */) {
-      this.set('currentScrollOffset', scrollOffset);
-      if (this.onScroll) {
-        this.onScroll(...arguments);
-      }
-    },
-
-    /**
      * lt-infinity action to determine if component is still in viewport
      * @event inViewport
      */
@@ -540,13 +504,9 @@ export default Component.extend({
       this.set('isInViewport', false);
     },
 
-    firstVisibleChanged(item, index /* , key */) {
+    firstVisibleChanged(/* item, index, key */) {
       if (this.firstVisibleChanged) {
         this.firstVisibleChanged(...arguments);
-      }
-      const estimateScrollOffset = index * this.get('sharedOptions.estimatedRowHeight');
-      if (this.onScroll) {
-        this.onScroll(estimateScrollOffset, null);
       }
     },
 
@@ -571,4 +531,5 @@ export default Component.extend({
       }
     }
   }
+
 });

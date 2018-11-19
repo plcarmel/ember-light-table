@@ -1,11 +1,19 @@
 import Component from '@ember/component';
-import { computed, observer } from '@ember/object';
 import { A as emberArray } from '@ember/array';
+import { computed, observer } from '@ember/object';
 import { getOwner } from '@ember/application';
 import { warn } from '@ember/debug';
 import $ from 'jquery';
+import withBackingField from 'ember-light-table/utils/with-backing-field';
 import layout from 'ember-light-table/templates/components/lt-body';
-import { debounce, run, schedule } from '@ember/runloop';
+import { debounce, once, run, schedule } from '@ember/runloop';
+import { EKMixin } from 'ember-keyboard';
+import ActivateKeyboardOnFocusMixin from 'ember-keyboard/mixins/activate-keyboard-on-focus';
+import HasBehaviorsMixin from 'ember-light-table/mixins/has-behaviors';
+import RowExpansionBehavior from 'ember-light-table/behaviors/row-expansion';
+import SingleSelectBehavior from 'ember-light-table/behaviors/single-select';
+import MultiSelectBehavior from 'ember-light-table/behaviors/multi-select';
+import { behaviorGroupFlag, behaviorFlag } from 'ember-light-table/mixins/has-behaviors';
 
 /**
  * @module Light Table
@@ -36,11 +44,15 @@ import { debounce, run, schedule } from '@ember/runloop';
  *
  * @class t.body
  */
+export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehaviorsMixin, {
 
-export default Component.extend({
   layout,
   classNames: ['lt-body-wrap'],
   classNameBindings: ['canSelect', 'multiSelect', 'canExpand'],
+
+  attributeBindings: ['tabindex'],
+
+  tabindex: 0,
 
   /**
    * @property table
@@ -61,6 +73,18 @@ export default Component.extend({
    * @type {Object}
    */
   tableActions: null,
+
+  singleSelectBehavior: withBackingField('_singleSelectBehavior', () => SingleSelectBehavior.create({})),
+  multiSelectBehavior: withBackingField('_multiSelectBehavior', () => MultiSelectBehavior.create({})),
+  expandRowBehavior: withBackingField('_expandRowBehavior', () => RowExpansionBehavior.create({})),
+
+  _initDefaultBehaviorsIfNeeded() {
+    if (this.get('behaviors.length') === 0 && this.get('behaviorsOff.length') === 0) {
+      this.activateBehavior(this.get('multiSelectBehavior'), true);
+      this.activateBehavior(this.get('singleSelectBehavior'), true);
+      this.activateBehavior(this.get('expandRowBehavior'), false);
+    }
+  },
 
   /**
    * @property extra
@@ -83,8 +107,9 @@ export default Component.extend({
    * @property canSelect
    * @type {Boolean}
    * @default true
+   * @deprecated Please set the value of the `behaviors` property directly.
    */
-  canSelect: true,
+  canSelect: behaviorGroupFlag('selection'),
 
   /**
    * Select a row on click. If this is set to `false` and multiSelect is
@@ -94,8 +119,9 @@ export default Component.extend({
    * @property selectOnClick
    * @type {Boolean}
    * @default true
+   * @deprecated Please set the flag directly on the `behaviors/multi-select` instance.
    */
-  selectOnClick: true,
+  selectOnClick: computed.alias('multiSelectBehavior.selectOnClick'),
 
   /**
    * Allows for expanding row. This will create a new row under the row that was
@@ -110,8 +136,9 @@ export default Component.extend({
    * @property canExpand
    * @type {Boolean}
    * @default false
+   * @deprecated Please set the value of the `behaviors` property directly.
    */
-  canExpand: false,
+  canExpand: behaviorGroupFlag('row-expansion'),
 
   /**
    * Allows a user to select multiple rows with the `ctrl`, `cmd`, and `shift` keys.
@@ -120,8 +147,9 @@ export default Component.extend({
    * @property multiSelect
    * @type {Boolean}
    * @default false
+   * @deprecated Please set the value of the `behaviors` property directly.
    */
-  multiSelect: false,
+  multiSelect: behaviorFlag('selection', 'multiSelectBehavior'),
 
   /**
    * When multiSelect is true, this property determines whether or not `ctrl`
@@ -133,8 +161,9 @@ export default Component.extend({
    * @property multiSelectRequiresKeyboard
    * @type {Boolean}
    * @default true
+   * @deprecated Please set the flag directly on the `behaviors/multi-select` instance.
    */
-  multiSelectRequiresKeyboard: true,
+  multiSelectRequiresKeyboard: computed.alias('multiSelectBehavior.requiresKeyboard'),
 
   /**
    * Hide scrollbar when not scrolling
@@ -151,8 +180,9 @@ export default Component.extend({
    * @property multiRowExpansion
    * @type {Boolean}
    * @default true
+   * @deprecated Please set the flag directly on the `behaviors/row-expansion` instance.
    */
-  multiRowExpansion: true,
+  multiRowExpansion: computed.alias('expandRowBehavior.multiRow'),
 
   /**
    * Expand a row on click
@@ -160,8 +190,9 @@ export default Component.extend({
    * @property expandOnClick
    * @type {Boolean}
    * @default true
+   * @deprecated Please set the flag directly on the `behaviors/row-expansion` instance.
    */
-  expandOnClick: true,
+  expandOnClick: computed.alias('expandRowBehavior.expandOnClick'),
 
   /**
    * If true, the body block will yield columns and rows, allowing you
@@ -336,11 +367,24 @@ export default Component.extend({
     }
   }),
 
-  _prevSelectedIndex: -1,
+  /* Components to add in the scrollable content
+   *
+   * @property
+   * @type {[ { component, namedArgs ]} ]}
+   * @default []
+   */
+  decorations: null,
 
   init() {
     this._super(...arguments);
 
+    if (this.get('decorations') === null) {
+      this.set('decorations', emberArray());
+    }
+
+    this._initDefaultBehaviorsIfNeeded();
+
+    this.get('table.focusIndex'); // so the observers are triggered
   },
 
   didReceiveAttrs() {
@@ -387,17 +431,11 @@ export default Component.extend({
     }
   },
 
-  toggleExpandedRow(row) {
-    let multiRowExpansion = this.get('multiRowExpansion');
-    let shouldExpand = !row.expanded;
-
-    if (multiRowExpansion) {
-      row.toggleProperty('expanded');
-    } else {
-      this.get('table.expandedRows').setEach('expanded', false);
-      row.set('expanded', shouldExpand);
+  _onFocusedRowChanged: observer('table.focusIndex', function() {
+    if (typeof FastBoot === 'undefined') {
+      run.schedule('afterRender', null, () => this.makeRowVisible(this.$('tr.has-focus'), 0.5));
     }
-  },
+  }),
 
   /**
    * @method _debounceScrolledToBottom
@@ -428,64 +466,108 @@ export default Component.extend({
     return emberArray($.makeArray(q.map((i, e) => vrm[e.id])));
   }).volatile(),
 
+  getLtRowAt(position) {
+    return this
+      .get('ltRows')
+      .find((ltr) => {
+        let top = ltr.get('top');
+        return top <= position && position < top + ltr.get('height');
+      });
+  },
+
+  pageSize: computed(function() {
+    let rows = this.get('table.rows');
+    if (rows.get('length') === 0) {
+      return 0;
+    }
+    let r0 = this.getLtRowAt(0);
+    if (!r0) {
+      r0 = this.get('ltRows').get('firstObject');
+    }
+    let rN = this.getLtRowAt(this.get('$scrollableContainer').height());
+    if (!rN) {
+      rN = this.get('ltRows').get('lastObject');
+    }
+    let i = (r) => rows.indexOf(r.get('row'));
+    return i(rN) - i(r0);
+  }).volatile().readOnly(),
+
+  signalSelectionChanged() {
+    this.get('behaviors').forEach((b) => b.onSelectionChanged(this));
+  },
+
+  onSelectionChanged: observer('table.rows.@each.selected', function() {
+    once(this, this.signalSelectionChanged);
+  }),
+
   actions: {
-    /**
-     * onRowClick action. Handles selection, and row expansion.
-     * @event onRowClick
-     * @param  {Row}   row The row that was clicked
-     * @param  {Event}   event   The click event
-     */
-    onRowClick(row, e) {
-      let rows = this.get('table.rows');
-      let multiSelect = this.get('multiSelect');
-      let multiSelectRequiresKeyboard = this.get('multiSelectRequiresKeyboard');
-      let canSelect = this.get('canSelect');
-      let selectOnClick = this.get('selectOnClick');
-      let canExpand = this.get('canExpand');
-      let expandOnClick = this.get('expandOnClick');
-      let isSelected = row.get('selected');
-      let currIndex = rows.indexOf(row);
-      let prevIndex = this._prevSelectedIndex === -1 ? currIndex : this._prevSelectedIndex;
-
-      this._prevSelectedIndex = currIndex;
-
-      let toggleExpandedRow = () => {
-        if (canExpand && expandOnClick) {
-          this.toggleExpandedRow(row);
-        }
-      };
-
-      if (canSelect) {
-        if (e.shiftKey && multiSelect) {
-          rows.slice(Math.min(currIndex, prevIndex), Math.max(currIndex, prevIndex) + 1).forEach((r) => r.set('selected', !isSelected));
-        } else if ((!multiSelectRequiresKeyboard || (e.ctrlKey || e.metaKey)) && multiSelect) {
-          row.toggleProperty('selected');
-        } else {
-          if (selectOnClick) {
-            this.get('table.selectedRows').setEach('selected', false);
-            row.set('selected', !isSelected);
-          }
-
-          toggleExpandedRow();
-        }
-      } else {
-        toggleExpandedRow();
-      }
-
+    onRowClick() {
+      this.triggerBehaviorEvent('rowClick', ...arguments);
       if (this.onRowClick) {
         this.onRowClick(...arguments);
       }
     },
 
-    /**
-     * onRowDoubleClick action.
-     * @event onRowDoubleClick
-     * @param  {Row}   row The row that was clicked
-     * @param  {Event}   event   The click event
-     */
-    onRowDoubleClick(/* row */) {
+    onRowDoubleClick() {
+      this.triggerBehaviorEvent('rowDoubleClick', ...arguments);
       if (this.onRowDoubleClick) {
         this.onRowDoubleClick(...arguments);
+      }
+    },
+
+    onRowMouseDown() {
+      this.triggerBehaviorEvent('rowMouseDown', ...arguments);
+      if (this.onRowMouseDown) {
+        this.onRowMouseDown(...arguments);
+      }
+    },
+
+    onRowMouseUp() {
+      this.triggerBehaviorEvent('rowMouseUp', ...arguments);
+      if (this.onRowMouseUp) {
+        this.onRowMouseUp(...arguments);
+      }
+    },
+
+    onRowMouseMove() {
+      this.triggerBehaviorEvent('rowMouseMove', ...arguments);
+      if (this.onRowMouseMove) {
+        this.onRowMouseMove(...arguments);
+      }
+    },
+
+    onRowTouchStart() {
+      this.triggerBehaviorEvent('rowTouchStart', ...arguments);
+      if (this.onRowTouchStart) {
+        this.onRowTouchStart(...arguments);
+      }
+    },
+
+    onRowTouchEnd() {
+      this.triggerBehaviorEvent('rowTouchEnd', ...arguments);
+      if (this.onRowTouchEnd) {
+        this.onRowTouchEnd(...arguments);
+      }
+    },
+
+    onRowTouchCancel() {
+      this.triggerBehaviorEvent('rowTouchCancel', ...arguments);
+      if (this.onRowTouchCancel) {
+        this.onRowTouchCancel(...arguments);
+      }
+    },
+
+    onRowTouchLeave() {
+      this.triggerBehaviorEvent('rowTouchLeave', ...arguments);
+      if (this.onRowTouchLeave) {
+        this.onRowTouchLeave(...arguments);
+      }
+    },
+
+    onRowTouchMove() {
+      this.triggerBehaviorEvent('rowTouchMove', ...arguments);
+      if (this.onRowTouchMove) {
+        this.onRowTouchMove(...arguments);
       }
     },
 
@@ -529,6 +611,22 @@ export default Component.extend({
       if (this.onScrolledToBottom) {
         this.onScrolledToBottom();
       }
+    }
+  },
+
+  didInsertElement() {
+    this._super(...arguments);
+    $(document).on('keydown', this, this._preventPropagation);
+  },
+
+  willDestroyElement() {
+    this._super(...arguments);
+    $(document).off('keydown', this, this._preventPropagation);
+  },
+
+  _preventPropagation(e) {
+    if (e.target === e.data.element && [32, 33, 34, 35, 36, 38, 40].includes(e.keyCode)) {
+      return false;
     }
   }
 

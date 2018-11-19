@@ -1,5 +1,12 @@
 @border-color: #DADADA;
 
+@range-color: #dd6a58;
+@range-border: 1px solid @range-color;
+
+@selected-background-color: lightyellow;
+
+@handle-color: lightgray;
+
 .lt-standard-scrollable {
     flex: 1 0 0;
 }
@@ -44,11 +51,20 @@
     }
   }
 
+  .lt-body-wrap:focus {
+    .lt-row.has-focus {
+      outline-color: #000;
+      outline-style: solid;
+      outline-width: 1px;
+      outline-offset: -1px;
+    }
+  }
+
   .lt-row {
     height: 50px;
 
     &.is-selected {
-      background-color: #DEDEDE;
+      background-color: @selected-background-color;
     }
 
     &:not(.is-selected):hover {
@@ -120,9 +136,67 @@ tfoot {
   }
 }
 
-
 .ember-light-table.occlusion {
   .lt-row td {
     vertical-align: middle;
+  }
+}
+
+.ember-light-table .body-decorations {
+  height: 0;
+  overflow: visible;
+}
+
+.ember-light-table .body-decorations .lt-selection-handle {
+  position: absolute;
+  width: 100%;
+  height: 0;
+  overflow: visible;
+  &.lt-selection-handle-up > div {
+    cursor: n-resize;
+    bottom: 0;
+    > div {
+      top: 1px;
+    }
+  }
+  &.lt-selection-handle-down > div {
+    cursor: s-resize;
+    top: 0;
+    > div {
+      top: -1px;
+    }
+  }
+  > div {
+    display: block;
+    width: 0px;
+    height: 10px;
+    position: absolute;
+    left: 50%;
+    > div {
+      width: 50px;
+      height: 100%;
+      position: relative;
+      left: -50%;
+      border-radius: 2px;
+      background-color: @handle-color;
+      opacity: 0.5;
+    }
+  }
+}
+
+.ember-light-table .body-decorations .lt-row-range-box {
+  pointer-events: none;
+  background: transparent;
+  position: absolute;
+  border: @range-border;
+}
+
+.explanations {
+  display: flex;
+  div {
+    margin: 15px 60px 15px 0;
+    dt {
+      margin-top: 5px;
+    }
   }
 }

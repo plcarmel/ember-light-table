@@ -3,6 +3,7 @@ import { Table, Column, Row } from 'ember-light-table';
 import { module, test } from 'qunit';
 import DS from 'ember-data';
 import EmberObject from '@ember/object';
+import { run } from '@ember/runloop';
 
 module('Unit | Classes | Table', function() {
   test('create table - default options', function(assert) {
@@ -557,26 +558,32 @@ module('Unit | Classes | Table', function() {
   });
 
   test('setRowsSynced', function(assert) {
-    let initialRows = emberArray([]);
-    let otherRows = emberArray([]);
-    let table = new Table([], initialRows, { enableSync: true });
-    let initialLength = 5;
-    let otherLength = 13;
+    run(() => {
+      let initialRows = emberArray([]);
+      let otherRows = emberArray([]);
+      let table = new Table([], initialRows, { enableSync: true });
+      let initialLength = 5;
+      let otherLength = 13;
 
-    for (let i = 0; i < initialLength; i++) {
-      initialRows.pushObject({ position: i });
-    }
-    assert.deepEqual(table.get('rows').getEach('position'), initialRows.getEach('position'), 'the table is initialized with a synced array');
+      for (let i = 0; i < initialLength; i++) {
+        initialRows.pushObject({ position: i });
+      }
 
-    table.setRowsSynced(otherRows);
-    assert.deepEqual(table.get('rows').getEach('position'), otherRows.getEach('position'), 'the synced array may be replaced');
+      assert.deepEqual(table.get('rows').getEach('position'), initialRows.getEach('position'), 'the table is initialized with a synced array');
 
-    for (let i = 0; i < otherLength; i++) {
-      otherRows.pushObject({ position: i });
-    }
-    assert.deepEqual(table.get('rows').getEach('position'), otherRows.getEach('position'), 'the replacement array is correctly synced');
+      table.setRowsSynced(otherRows);
 
-    initialRows.popObject();
-    assert.deepEqual(table.get('rows').getEach('position'), otherRows.getEach('position'), 'mutating the replaced array has no effect');
+      assert.deepEqual(table.get('rows').getEach('position'), otherRows.getEach('position'), 'the synced array may be replaced');
+
+      for (let i = 0; i < otherLength; i++) {
+        otherRows.pushObject({ position: i });
+      }
+
+      assert.deepEqual(table.get('rows').getEach('position'), otherRows.getEach('position'), 'the replacement array is correctly synced');
+
+      initialRows.popObject();
+
+      assert.deepEqual(table.get('rows').getEach('position'), otherRows.getEach('position'), 'mutating the replaced array has no effect');
+    });
   });
 });

@@ -190,7 +190,7 @@ export default Mixin.create({
    * @returns {Behavior} - The active behavior's instance or `undefined` otherwise.
    */
   getActiveBehaviorOf(exclusionGroup) {
-    return this.behaviors.findBy('exclusionGroup', exclusionGroup);
+    return A(this.behaviors).findBy('exclusionGroup', exclusionGroup);
   },
 
   /**
@@ -202,7 +202,7 @@ export default Mixin.create({
    * @returns {Behavior} - The inactive behavior's instance or `undefined` otherwise.
    */
   getInactiveBehaviorOf(exclusionGroup) {
-    return this.behaviorsOff.findBy('exclusionGroup', exclusionGroup);
+    return A(this.behaviorsOff).findBy('exclusionGroup', exclusionGroup);
   },
 
   /**

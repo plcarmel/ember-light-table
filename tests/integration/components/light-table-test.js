@@ -26,67 +26,86 @@ module('Integration | Component | light table', function(hooks) {
     assert.equal(find('*').textContent.trim(), '');
   });
 
-  test('scrolled to bottom', async function(assert) {
-    assert.expect(4);
-
-    this.set('table', Table.create({ columns: Columns, rows: this.server.createList('user', 50) }));
-
-    this.set('onScrolledToBottom', () => {
-      assert.ok(true);
-    });
-
-    await render(hbs `
-      {{#light-table table height='40vh' as |t|}}
-        {{t.head fixed=true}}
-        {{t.body onScrolledToBottom=(action onScrolledToBottom)}}
-      {{/light-table}}
-    `);
-
-    assert.equal(findAll('tbody > tr').length, 50, '50 rows are rendered');
-
-    let scrollContainer = find('.tse-scroll-content');
-    assert.ok(scrollContainer, 'scroll container was rendered');
+  async function testScrolledToBottom(selector, assert) {
+    let scrollContainer = find(`${selector} .lt-scrollable`);
+    assert.ok(scrollContainer, 'scroll container is rendered');
+    let scrollableContent = scrollContainer.querySelector('.scrollable-content');
+    assert.ok(scrollContainer, 'scrollable content is rendered');
+    assert.equal(scrollableContent.querySelectorAll('tbody > tr').length, 50, '50 rows are rendered');
     let expectedScroll = 2501;
-    assert.equal(scrollContainer.scrollHeight, expectedScroll, 'scroll height is 2500 + 1px for height of lt-infinity');
-
+    assert.equal(scrollableContent.scrollHeight, expectedScroll, 'scroll height is 2500 + 1px for height of lt-infinity');
     scrollContainer.scrollTop = expectedScroll;
     await triggerEvent(scrollContainer, 'scroll');
-  });
+  }
 
-  test('scrolled to bottom (multiple tables)', async function(assert) {
-    assert.expect(4);
-
+  async function testScrolledToBottomSingle(assert, scrollType) {
+    assert.expect(5);
     this.set('table', Table.create({ columns: Columns, rows: this.server.createList('user', 50) }));
+    this.set('onScrolledToBottom', () => {
+      assert.ok(true, 'action is called');
+    });
+    this.scrollType = scrollType;
+    await render(hbs `
+      {{#lt-frame id='frame-1' height='40vh' scroll=scrollType as |frame|}}
+        {{frame.fixed-head-here}}
+        {{#frame.scrollable-zone}}
+          {{#frame.table table as |t|}}
+            {{t.head fixed=true}}
+            {{t.body onScrolledToBottom=(action onScrolledToBottom)}}
+          {{/frame.table}}
+        {{/frame.scrollable-zone}}
+      {{/lt-frame}}
+    `);
+    await testScrolledToBottom('#frame-1', assert);
+  }
 
+  async function testScrolledToBottomMultiple(assert, scrollType) {
+    assert.expect(5);
+    this.set('table', Table.create({ columns: Columns, rows: this.server.createList('user', 50) }));
     this.set('onScrolledToBottomTable1', () => {
       assert.ok(false);
     });
-
     this.set('onScrolledToBottomTable2', () => {
       assert.ok(true);
     });
-
+    this.scrollType = scrollType;
     await render(hbs `
-      {{#light-table table height='40vh' id='table-1' as |t|}}
-        {{t.head fixed=true}}
-        {{t.body onScrolledToBottom=(action onScrolledToBottomTable1)}}
-      {{/light-table}}
-
-      {{#light-table table height='40vh' id='table-2' as |t|}}
-        {{t.head fixed=true}}
-        {{t.body onScrolledToBottom=(action onScrolledToBottomTable2)}}
-      {{/light-table}}
+      {{#lt-frame id='frame-1' height='40vh' scroll=scrollType as |frame|}}
+        {{frame.fixed-head-here}}
+        {{#frame.scrollable-zone}}
+          {{#frame.table table as |t|}}
+            {{t.head fixed=true}}
+            {{t.body onScrolledToBottom=(action onScrolledToBottomTable1)}}
+          {{/frame.table}}
+        {{/frame.scrollable-zone}}
+      {{/lt-frame}}
+      {{#lt-frame id='frame-2' height='40vh' scroll=scrollType as |frame|}}
+        {{frame.fixed-head-here}}
+        {{#frame.scrollable-zone}}
+          {{#frame.table table as |t|}}
+            {{t.head fixed=true}}
+            {{t.body onScrolledToBottom=(action onScrolledToBottomTable2)}}
+          {{/frame.table}}
+        {{/frame.scrollable-zone}}
+      {{/lt-frame}}
     `);
+    await testScrolledToBottom('#frame-2', assert);
+  }
 
-    assert.equal(findAll('#table-2 tbody > tr').length, 50, '50 rows are rendered');
+  test('scrolled to bottom (single table - standard)', async function(assert) {
+    await testScrolledToBottomSingle.call(this, assert, 'standard');
+  });
 
-    let scrollContainer = find('#table-2 .tse-scroll-content');
-    assert.ok(scrollContainer, 'scroll container was rendered');
-    let expectedScroll = 2501;
-    assert.equal(scrollContainer.scrollHeight, expectedScroll, 'scroll height is 2500 + 1px for height of lt-infinity');
+  test('scrolled to bottom (single table - virtual)', async function(assert) {
+    await testScrolledToBottomSingle.call(this, assert, 'virtual');
+  });
 
-    scrollContainer.scrollTop = expectedScroll;
-    await triggerEvent(scrollContainer, 'scroll');
+  test('scrolled to bottom (multiple tables - standard)', async function(assert) {
+    await testScrolledToBottomMultiple.call(this, assert, 'standard');
+  });
+
+  test('scrolled to bottom (multiple tables - virtual)', async function(assert) {
+    await testScrolledToBottomMultiple.call(this, assert, 'virtual');
   });
 
   test('lt-body inViewport event deprecated', async function(assert) {
@@ -102,102 +121,73 @@ module('Integration | Component | light table', function(hooks) {
     });
 
     await render(hbs `
-      {{#light-table table height='40vh' id="table" as |t|}}
-        {{t.head fixed=true}}
-        {{t.body isInViewport=isInViewport inViewport=(action inViewport) onScrolledToBottom=(action onScrolledToBottom)}}
-      {{/light-table}}
+      {{#lt-frame id='frame-1' height='40vh' as |frame|}}
+        {{frame.fixed-head-here}}
+        {{#frame.scrollable-zone}}
+          {{#frame.table table as |t|}}
+            {{t.head fixed=true}}
+            {{t.body isInViewport=isInViewport inViewport=(action inViewport) onScrolledToBottom=(action onScrolledToBottom)}}
+          {{/frame.table}}
+        {{/frame.scrollable-zone}}
+      {{/lt-frame}}
     `);
-    let scrollContainer = find('#table .tse-scroll-content');
+    let scrollContainer = find('#frame-1 .lt-scrollable');
     scrollContainer.scrollTop = 2501;
     await triggerEvent(scrollContainer, 'scroll');
   });
 
+  async function renderWithHeader() {
+    await render(hbs `
+      {{#lt-frame height='500px' scrollbar='virtual' as |frame|}}
+        {{frame.fixed-head-here}}
+        {{#frame.scrollable-zone}}
+          {{#frame.table table as |t|}}
+            {{t.head fixed=fixed}}
+            {{t.body}}
+          {{/frame.table}}
+        {{/frame.scrollable-zone}}
+      {{/lt-frame}}
+    `);
+  }
+
   test('fixed header', async function(assert) {
-    assert.expect(2);
+    assert.expect(4);
     this.set('table', Table.create({ columns: Columns, rows: this.server.createList('user', 5) }));
-
-    await render(hbs `
-      {{#light-table table height='500px' id='lightTable' as |t|}}
-        {{t.head fixed=true}}
-        {{t.body}}
-      {{/light-table}}
-    `);
-
-    assert.equal(findAll('#lightTable_inline_head thead').length, 0);
-
-    await render(hbs `
-      {{#light-table table height='500px' id='lightTable' as |t|}}
-        {{t.head fixed=false}}
-        {{t.body}}
-      {{/light-table}}
-    `);
-
-    assert.equal(findAll('#lightTable_inline_head thead').length, 1);
+    this.set('fixed', true);
+    await renderWithHeader();
+    assert.equal(findAll('.lt-frame thead').length, 1, 'fixed - thead is rendered');
+    assert.equal(findAll('.lt-scrollable thead').length, 0, 'fixed - not rendered inside scrollable zone');
+    this.set('fixed', false);
+    await renderWithHeader();
+    assert.equal(findAll('.lt-frame thead').length, 1, 'inline - thead is rendered');
+    assert.equal(findAll('.lt-scrollable thead ').length, 1, 'inline - rendered inside scrollable zone');
   });
+
+  async function renderWithFooter() {
+    await render(hbs `
+      {{#lt-frame height='500px' as |frame|}}
+        {{#frame.scrollable-zone}}
+          {{#frame.table table as |t|}}
+            {{t.body}}
+            {{t.foot fixed=fixed}}
+          {{/frame.table}}
+        {{/frame.scrollable-zone}}
+        {{frame.fixed-foot-here}}
+      {{/lt-frame}}
+    `);
+  }
 
   test('fixed footer', async function(assert) {
-    assert.expect(2);
-    this.set('table', Table.create({ columns: Columns, rows: this.server.createList('user', 5) }));
-
-    await render(hbs `
-      {{#light-table table height='500px' id='lightTable' as |t|}}
-        {{t.body}}
-        {{t.foot fixed=true}}
-      {{/light-table}}
-    `);
-
-    assert.equal(findAll('#lightTable_inline_foot tfoot').length, 0);
-
-    await render(hbs `
-      {{#light-table table height='500px' id='lightTable' as |t|}}
-        {{t.body}}
-        {{t.foot fixed=false}}
-      {{/light-table}}
-    `);
-
-    assert.equal(findAll('#lightTable_inline_foot tfoot').length, 1);
-  });
-
-  test('table assumes height of container', async function(assert) {
-
+    assert.expect(4);
     this.set('table', Table.create({ columns: Columns, rows: this.server.createList('user', 5) }));
     this.set('fixed', true);
-
-    await render(hbs `
-      <div style="height: 500px">
-        {{#light-table table id='lightTable' as |t|}}
-          {{t.body}}
-          {{t.foot fixed=fixed}}
-        {{/light-table}}
-      </div>
-    `);
-
-    assert.equal(find('#lightTable').offsetHeight, 500, 'table is 500px height');
-
-  });
-
-  test('table body should consume all available space when not enough content to fill it', async function(assert) {
-    this.set('table', Table.create({ columns: Columns, rows: this.server.createList('user', 1) }));
-    this.set('fixed', true);
-
-    await render(hbs `
-      <div style="height: 500px">
-        {{#light-table table id='lightTable' as |t|}}
-          {{t.head fixed=true}}
-          {{t.body}}
-          {{#t.foot fixed=true}}
-            Hello World
-          {{/t.foot}}
-        {{/light-table}}
-      </div>
-    `);
-
-    const bodyHeight = find('.lt-body-wrap').offsetHeight;
-    const headHeight = find('.lt-head-wrap').offsetHeight;
-    const footHeight = find('.lt-foot-wrap').offsetHeight;
-
-    assert.equal(bodyHeight + headHeight + footHeight, 500, 'combined table content is 500px tall');
-    assert.ok(bodyHeight > (headHeight + footHeight), 'body is tallest element');
+    await renderWithFooter();
+    assert.equal(findAll('.lt-frame tfoot').length, 1, 'fixed - tfoot is rendered');
+    assert.equal(findAll('.lt-scrollable tfoot').length, 0, 'fixed - not rendered inside scrollable zone');
+    this.set('fixed', false);
+    await renderWithFooter();
+    assert.equal(findAll('.lt-frame tfoot').length, 1, 'inline - tfoot is rendered');
+    assert.equal(findAll('.lt-scrollable tfoot ').length, 1, 'inline - rendered inside scrollable zone');
   });
 
   test('accepts components that are used in the body', async function(assert) {
@@ -252,33 +242,6 @@ module('Integration | Component | light table', function(hooks) {
     assert.notOk(find('.custom-row.is-active'), 'none of the items are active');
   });
 
-  test('onScroll', async function(assert) {
-    let table = Table.create({ columns: Columns, rows: this.server.createList('user', 10) });
-    let expectedScroll = 50;
-
-    this.setProperties({
-      table,
-      onScroll(actualScroll) {
-        assert.ok(true, 'onScroll worked');
-        assert.equal(actualScroll, expectedScroll, 'scroll position is correct');
-      }
-    });
-
-    await render(hbs `
-      {{#light-table table height='40vh' as |t|}}
-        {{t.head fixed=true}}
-        {{t.body
-          useVirtualScrollbar=true
-          onScroll=onScroll
-        }}
-      {{/light-table}}
-    `);
-
-    let scrollContainer = find('.tse-scroll-content');
-    scrollContainer.scrollTop = expectedScroll;
-    await triggerEvent(scrollContainer, 'scroll');
-  });
-
   test('extra data and tableActions', async function(assert) {
     assert.expect(4);
 
@@ -327,10 +290,13 @@ module('Integration | Component | light table', function(hooks) {
     let table = Table.create({ columns: ResizableColumns, rows: this.server.createList('user', 10) });
     this.setProperties({ table });
     await render(hbs `
-      {{#light-table table height='40vh' as |t|}}
-        {{t.head fixed=true}}
-        {{t.body}}
-      {{/light-table}}
+      {{#lt-frame height='40vh' as |frame|}}
+        {{frame.fixed-head-here}}
+        {{#frame.table table as |t|}}
+          {{t.head fixed=true}}
+          {{t.body}}
+        {{/frame.table}}
+      {{/lt-frame}}
     `);
     let ths = this.element.querySelectorAll('th.is-resizable');
     assert.equal(ths.length, 5);

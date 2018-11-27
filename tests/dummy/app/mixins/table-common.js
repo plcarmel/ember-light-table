@@ -17,11 +17,23 @@ export default Mixin.create({
   isLoading: computed.oneWay('fetchRecords.isRunning'),
   canLoadMore: true,
   enableSync: true,
+  fixed: true,
+  scrollbar: 'standard',
 
   model: null,
   meta: null,
   columns: null,
   table: null,
+
+  virtual: computed('scrollbar', {
+    get() {
+      return this.get('scrollbar') === 'virtual';
+    },
+    set(key, value) {
+      this.set('scrollbar', value ? 'virtual' : 'standard');
+      return value;
+    }
+  }),
 
   init() {
     this._super(...arguments);

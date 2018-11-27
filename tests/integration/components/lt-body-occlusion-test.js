@@ -47,7 +47,9 @@ module('Integration | Component | lt body | occlusion', function(hooks) {
     await click(row);
     assert.notOk(hasClass(row, 'is-selected'));
 
-    this.set('canSelect', true);
+    run(() => {
+      this.set('canSelect', true);
+    });
 
     assert.ok(hasClass(row, 'is-selectable'));
     assert.notOk(hasClass(row, 'is-selected'));

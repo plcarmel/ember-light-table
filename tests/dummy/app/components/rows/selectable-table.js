@@ -35,15 +35,15 @@ export default Component.extend(TableCommon, {
 
   actions: {
     selectAll() {
-      this.get('table.rows').setEach('selected', true);
+      this.table.selectAll();
     },
 
     deselectAll() {
-      this.get('table.selectedRows').setEach('selected', false);
+      this.table.deselectAll();
     },
 
     deleteAll() {
-      this.get('table').removeRows(this.get('table.selectedRows'));
+      this.table.removeRows(this.table.selectedRows);
     }
   }
 });

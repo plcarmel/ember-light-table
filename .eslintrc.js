@@ -31,12 +31,14 @@ module.exports = {
     'ember/no-observers': 'off',
     'ember-suave/require-access-in-comments': 'off',
     'ember-suave/no-const-outside-module-scope': 'off',
-    'ember/no-jquery': 'error',
+    'ember/no-jquery': 'warn',
     'ember/no-get': 'warn',
     'ember/no-mixins': 'warn',
     'ember/no-new-mixins': 'warn',
     'ember/use-ember-data-rfc-395-imports': 'warn',
-    'ember/require-computed-property-dependencies': 'warn'
+    'ember/require-computed-property-dependencies': 'warn',
+    'ember-suave/lines-between-object-properties': 'off',
+    'padding-line-between-statements': 'off'
   },
 
   overrides: [

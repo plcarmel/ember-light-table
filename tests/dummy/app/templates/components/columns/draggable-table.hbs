@@ -9,8 +9,8 @@
   }}
 
   {{#t.body
-    canSelect=false
-    onScrolledToBottom=(action "onScrolledToBottom")
+    useLegacyBehaviorFlags=false
+    onScrolledToBottom=(action 'onScrolledToBottom')
     as |body|
   }}
     {{#if isLoading}}

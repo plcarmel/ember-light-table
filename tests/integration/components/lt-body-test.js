@@ -1,13 +1,28 @@
-import { click, findAll, find, triggerEvent, render } from '@ember/test-helpers';
+import {
+  click,
+  findAll,
+  find,
+  triggerEvent,
+  triggerKeyEvent,
+  render
+} from '@ember/test-helpers';
+
+import hasClass from '../../helpers/has-class';
+import Columns from '../../helpers/table-columns';
+
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import hbs from 'htmlbars-inline-precompile';
 import setupMirageTest from 'ember-cli-mirage/test-support/setup-mirage';
-import Table from 'ember-light-table';
-import hasClass from '../../helpers/has-class';
-import Columns from '../../helpers/table-columns';
+
+import { A as emberArray } from '@ember/array';
 import { run } from '@ember/runloop';
 import { all } from 'rsvp';
+import getCmdKey from 'ember-keyboard/utils/get-cmd-key';
+import Table from 'ember-light-table';
+import SingleSelectBehavior from 'ember-light-table/behaviors/single-select';
+import MultiSelectBehavior from 'ember-light-table/behaviors/multi-select';
+import RowExpansionBehavior from 'ember-light-table/behaviors/row-expansion';
 
 module('Integration | Component | lt body', function(hooks) {
   setupRenderingTest(hooks);
@@ -30,102 +45,202 @@ module('Integration | Component | lt body', function(hooks) {
     assert.equal(find('*').textContent.trim(), '');
   });
 
-  test('row selection - enable or disable', async function(assert) {
-    this.set('table', Table.create({ columns: Columns, rows: this.server.createList('user', 1) }));
-    this.set('canSelect', false);
-
-    await render(hbs `{{lt-body table=table sharedOptions=sharedOptions canSelect=canSelect tableId="light-table"}}`);
-
+  async function testSelectDisabled(assert) {
     let row = find('tr');
-
     assert.notOk(hasClass(row, 'is-selectable'));
     assert.notOk(hasClass(row, 'is-selected'));
     await click(row);
     assert.notOk(hasClass(row, 'is-selected'));
+  }
 
-    this.set('canSelect', true);
-
+  async function testSelectEnabled(assert) {
+    let row = find('tr');
     assert.ok(hasClass(row, 'is-selectable'));
     assert.notOk(hasClass(row, 'is-selected'));
     await click(row);
     assert.ok(hasClass(row, 'is-selected'));
+  }
+
+  test('row selection - enable or disable (legacy)', async function(assert) {
+    this.set('table', Table.create({ columns: Columns, rows: this.server.createList('user', 1) }));
+    this.set('canSelect', false);
+    await render(hbs `
+      {{lt-body
+        table=table
+        sharedOptions=sharedOptions
+        canSelect=canSelect
+        tableId="light-table"
+      }}`
+    );
+    await testSelectDisabled(assert);
+    run(() => {
+      this.set('canSelect', true);
+    });
+    await testSelectEnabled(assert);
+  });
+
+  test('row selection - enable or disable', async function(assert) {
+    this.set('table', Table.create({ columns: Columns, rows: this.server.createList('user', 1) }));
+    this.set('behaviors', emberArray());
+    await render(hbs `
+      {{lt-body
+        table=table
+        sharedOptions=sharedOptions
+        useLegacyBehaviorFlags=false
+        behaviors=behaviors
+        tableId="light-table"
+      }}`
+    );
+    await testSelectDisabled(assert);
+    run(() => {
+      this.set('behaviors', emberArray([SingleSelectBehavior.create({})]));
+    });
+    await testSelectEnabled(assert);
+  });
+
+  async function testSelectCtrlClick(assert) {
+    let firstRow = find('tr:first-child');
+    let middleRow = find('tr:nth-child(4)');
+    let lastRow = find('tr:last-child');
+    assert.equal(findAll('tbody > tr').length, 5);
+    await click(firstRow);
+    assert.equal(findAll('tr.is-selected').length, 1, 'clicking a row selects it');
+    await click(lastRow, { shiftKey: true });
+    assert.equal(findAll('tr.is-selected').length, 5, 'shift-clicking another row selects it and all rows between');
+    await click(middleRow, { ctrlKey: true });
+    assert.equal(findAll('tr.is-selected').length, 4, 'ctrl-clicking a selected row deselects it');
+    await click(firstRow);
+    assert.equal(findAll('tr.is-selected').length, 0, 'clicking a selected row deselects all rows');
+  }
+
+  test('row selection - ctrl-click to modify selection (legacy)', async function(assert) {
+    this.set('table', Table.create({ columns: Columns, rows: this.server.createList('user', 5) }));
+    await render(hbs `
+      {{lt-body
+        table=table
+        sharedOptions=sharedOptions
+        canSelect=true
+        multiSelect=true
+        tableId="light-table"
+      }}`
+    );
+    await testSelectCtrlClick(assert);
   });
 
   test('row selection - ctrl-click to modify selection', async function(assert) {
     this.set('table', Table.create({ columns: Columns, rows: this.server.createList('user', 5) }));
+    this.set('behaviors', emberArray([MultiSelectBehavior.create()]));
+    await render(hbs `
+      {{lt-body
+        table=table
+        sharedOptions=sharedOptions
+        useLegacyBehaviorFlags=false
+        behaviors=behaviors
+        tableId="light-table"
+      }}`
+    );
+    await testSelectCtrlClick(assert);
+  });
 
-    await render(hbs `{{lt-body table=table sharedOptions=sharedOptions canSelect=true multiSelect=true tableId="light-table"}}`);
+  async function testSelectClick(assert) {
     let firstRow = find('tr:first-child');
     let middleRow = find('tr:nth-child(4)');
     let lastRow = find('tr:last-child');
-
     assert.equal(findAll('tbody > tr').length, 5);
-
     await click(firstRow);
     assert.equal(findAll('tr.is-selected').length, 1, 'clicking a row selects it');
-
     await click(lastRow, { shiftKey: true });
     assert.equal(findAll('tr.is-selected').length, 5, 'shift-clicking another row selects it and all rows between');
+    await click(middleRow);
+    assert.equal(findAll('tr.is-selected').length, 4, 'clicking a selected row deselects it without affecting other selected rows');
+    await click(middleRow);
+    assert.equal(findAll('tr.is-selected').length, 5, 'clicking a deselected row selects it without affecting other selected rows');
+  }
 
-    await click(middleRow, { ctrlKey: true });
-    assert.equal(findAll('tr.is-selected').length, 4, 'ctrl-clicking a selected row deselects it');
+  async function triggerSelectAll() {
+    let options = {};
+    options[`${getCmdKey()}Key`] = true;
+    await triggerKeyEvent(document.body, 'keydown', 65, options);
+  }
 
-    await click(firstRow);
-    assert.equal(findAll('tr.is-selected').length, 0, 'clicking a selected row deselects all rows');
+  test('row selection - select all key', async function(assert) {
+    this.set('table', Table.create({ columns: Columns, rows: this.server.createList('user', 3) }));
+    await render(hbs `
+      {{lt-body
+        table=table
+        sharedOptions=sharedOptions
+        canSelect=true
+        multiSelect=true
+        tableId="light-table"
+      }}`
+    );
+    await click('.lt-body-wrap');
+    await triggerSelectAll();
+    assert.equal(findAll('tr.is-selected').length, 3, 'cmd+a selects all rows');
+  });
+
+  test('row selection - select all key - single select', async function(assert) {
+    this.set('table', Table.create({ columns: Columns, rows: this.server.createList('user', 3) }));
+    await render(hbs `{{lt-body table=table sharedOptions=sharedOptions canSelect=true tableId="light-table"}}`);
+    await click('.lt-body-wrap');
+    await triggerSelectAll();
+    assert.equal(this.element.querySelectorAll('tr.is-selected').length, 0, 'cmd+a selects no row');
+  });
+
+  test('row selection - select all key - select disabled', async function(assert) {
+    this.set('table', Table.create({ columns: Columns, rows: this.server.createList('user', 3) }));
+    await render(hbs `{{lt-body table=table sharedOptions=sharedOptions canSelect=false tableId="light-table"}}`);
+    await click('.lt-body-wrap');
+    await triggerSelectAll();
+    assert.equal(this.element.querySelectorAll('tr.is-selected').length, 0, 'cmd+a selects no row');
+  });
+
+  test('row selection - click to modify selection (legacy)', async function(assert) {
+    this.set('table', Table.create({ columns: Columns, rows: this.server.createList('user', 5) }));
+    await render(hbs `
+      {{lt-body
+        table=table
+        sharedOptions=sharedOptions
+        canSelect=true
+        multiSelect=true
+        multiSelectRequiresKeyboard=false
+        tableId="light-table"
+      }}`
+    );
+    await testSelectClick(assert);
   });
 
   test('row selection - click to modify selection', async function(assert) {
     this.set('table', Table.create({ columns: Columns, rows: this.server.createList('user', 5) }));
-
-    await render(
-      hbs `{{lt-body table=table sharedOptions=sharedOptions canSelect=true multiSelect=true multiSelectRequiresKeyboard=false tableId="light-table"}}`
+    this.set('behaviors', emberArray([MultiSelectBehavior.create({ requiresKeyboard: false })]));
+    await render(hbs `
+      {{lt-body
+        table=table
+        sharedOptions=sharedOptions
+        useLegacyBehaviorFlags=false
+        behaviors=behaviors
+        tableId="light-table"
+      }}`
     );
-
-    let firstRow = find('tr:first-child');
-    let middleRow = find('tr:nth-child(4)');
-    let lastRow = find('tr:last-child');
-
-    assert.equal(findAll('tbody > tr').length, 5);
-
-    await click(firstRow);
-    assert.equal(findAll('tr.is-selected').length, 1, 'clicking a row selects it');
-
-    await click(lastRow, { shiftKey: true });
-    assert.equal(findAll('tr.is-selected').length, 5, 'shift-clicking another row selects it and all rows between');
-
-    await click(middleRow);
-    assert.equal(findAll('tr.is-selected').length, 4, 'clicking a selected row deselects it without affecting other selected rows');
-
-    await click(middleRow);
-    assert.equal(findAll('tr.is-selected').length, 5, 'clicking a deselected row selects it without affecting other selected rows');
+    await testSelectClick(assert);
   });
 
-  test('row expansion', async function(assert) {
-    this.set('table', Table.create({ columns: Columns, rows: this.server.createList('user', 2) }));
-    this.set('canExpand', false);
-
-    await render(hbs `
-      {{#lt-body table=table sharedOptions=sharedOptions canSelect=false canExpand=canExpand multiRowExpansion=false tableId="light-table" as |b|}}
-        {{#b.expanded-row}} Hello {{/b.expanded-row}}
-      {{/lt-body}}
-    `);
-
+  async function testRowExpansionDisabled(assert) {
     let row = find('tr');
-
     assert.notOk(hasClass(row, 'is-expandable'));
     await click(row);
     assert.equal(findAll('tr.lt-expanded-row').length, 0);
     assert.equal(findAll('tbody > tr').length, 2);
     assert.notOk(find('tr.lt-expanded-row'));
+  }
 
-    this.set('canExpand', true);
-
+  async function testRowExpansionEnabled(assert) {
+    let row = find('tr');
     assert.ok(hasClass(row, 'is-expandable'));
     await click(row);
     assert.equal(findAll('tr.lt-expanded-row').length, 1);
     assert.equal(findAll('tbody > tr').length, 3);
     assert.equal(row.nextElementSibling.textContent.trim(), 'Hello');
-
     let allRows = findAll('tr');
     row = allRows[allRows.length - 1];
     assert.ok(hasClass(row, 'is-expandable'));
@@ -133,19 +248,63 @@ module('Integration | Component | lt body', function(hooks) {
     assert.equal(findAll('tr.lt-expanded-row').length, 1);
     assert.equal(findAll('tbody > tr').length, 3);
     assert.equal(row.nextElementSibling.textContent.trim(), 'Hello');
+  }
+
+  test('row expansion (legacy)', async function(assert) {
+    this.set('table', Table.create({ columns: Columns, rows: this.server.createList('user', 2) }));
+    this.set('canExpand', false);
+    await render(hbs `
+      {{#lt-body
+        table=table
+        sharedOptions=sharedOptions
+        canSelect=false
+        canExpand=canExpand
+        multiRowExpansion=false
+        tableId="light-table"
+        as |b|
+      }}
+        {{#b.expanded-row}} Hello {{/b.expanded-row}}
+      {{/lt-body}}`
+    );
+    await testRowExpansionDisabled(assert);
+    run(() => {
+      this.set('canExpand', true);
+    });
+    await testRowExpansionEnabled(assert);
   });
 
-  test('row expansion - multiple', async function(assert) {
+  test('row expansion', async function(assert) {
     this.set('table', Table.create({ columns: Columns, rows: this.server.createList('user', 2) }));
+    this.set('canExpand', false);
+    this.set(
+      'behaviors',
+      emberArray()
+    );
     await render(hbs `
-      {{#lt-body table=table sharedOptions=sharedOptions canExpand=true tableId="light-table" as |b|}}
+      {{#lt-body
+        table=table
+        sharedOptions=sharedOptions
+        useLegacyBehaviorFlags=false
+        behaviors=behaviors
+        tableId="light-table"
+        as |b|
+      }}
         {{#b.expanded-row}} Hello {{/b.expanded-row}}
-      {{/lt-body}}
-    `);
+      {{/lt-body}}`
+    );
+    await testRowExpansionDisabled(assert);
+    run(() => {
+      this.set(
+        'behaviors',
+        emberArray([RowExpansionBehavior.create({ multiRow: false })])
+      );
+    });
+    await testRowExpansionEnabled(assert);
+  });
 
+  async function testRowExpansionMultiple(assert) {
     let rows = findAll('tr');
     assert.equal(rows.length, 2);
-
     await all(
       rows.map(async(row) => {
         assert.ok(hasClass(row, 'is-expandable'));
@@ -153,8 +312,44 @@ module('Integration | Component | lt body', function(hooks) {
         assert.equal(row.nextElementSibling.textContent.trim(), 'Hello');
       })
     );
-
     assert.equal(findAll('tr.lt-expanded-row').length, 2);
+  }
+
+  test('row expansion - multiple (legacy)', async function(assert) {
+    this.set('table', Table.create({ columns: Columns, rows: this.server.createList('user', 2) }));
+    await render(hbs `
+      {{#lt-body
+        table=table
+        sharedOptions=sharedOptions
+        canExpand=true
+        tableId="light-table"
+        as |b|
+      }}
+        {{#b.expanded-row}} Hello {{/b.expanded-row}}
+      {{/lt-body}}
+    `);
+    await testRowExpansionMultiple(assert);
+  });
+
+  test('row expansion - multiple', async function(assert) {
+    this.set('table', Table.create({ columns: Columns, rows: this.server.createList('user', 2) }));
+    this.set(
+      'behaviors',
+      emberArray([RowExpansionBehavior.create()])
+    );
+    await render(hbs `
+      {{#lt-body
+        table=table
+        sharedOptions=sharedOptions
+        useLegacyBehaviorFlags=false
+        behaviors=behaviors
+        tableId="light-table"
+        as |b|
+      }}
+        {{#b.expanded-row}} Hello {{/b.expanded-row}}
+      {{/lt-body}}
+    `);
+    await testRowExpansionMultiple(assert);
   });
 
   test('row actions', async function(assert) {

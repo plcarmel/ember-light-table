@@ -28,14 +28,23 @@
             }}
               {{lt.row row columns
                        data-row-id=row.rowId
-                       table=table
+                       ltBody=this
                        tableActions=tableActions
                        extra=extra
                        enableScaffolding=enableScaffolding
                        canExpand=canExpand
                        canSelect=canSelect
-                       click=(action "onRowClick" row)
-                       doubleClick=(action "onRowDoubleClick" row)}}
+                       rowClick=(action 'onRowClick')
+                       rowDoubleClick=(action 'onRowDoubleClick')
+                       rowMouseDown=(action 'onRowMouseDown')
+                       rowMouseUp=(action 'onRowMouseUp')
+                       rowMouseMove=(action 'onRowMouseMove')
+                       rowTouchStart=(action 'onRowTouchStart')
+                       rowTouchEnd=(action 'onRowTouchEnd')
+                       rowTouchCancel=(action 'onRowTouchCancel')
+                       rowTouchLeave=(action 'onRowTouchLeave')
+                       rowTouchMove=(action 'onRowTouchMove')}}
+
             {{/vertical-collection}}
             {{yield (hash
                       loader=(component lt.spanned-row classes="lt-is-loading")
@@ -77,14 +86,22 @@
             {{#each (if scrollbar (compute scrollbar.update rows) rows) as |row|}}
               {{lt.row row columns
                        data-row-id=row.rowId
-                       table=table
+                       ltBody=this
                        tableActions=tableActions
                        extra=extra
                        enableScaffolding=enableScaffolding
                        canExpand=canExpand
                        canSelect=canSelect
-                       click=(action "onRowClick" row)
-                       doubleClick=(action "onRowDoubleClick" row)}}
+                       rowClick=(action 'onRowClick')
+                       rowDoubleClick=(action 'onRowDoubleClick')
+                       rowMouseDown=(action 'onRowMouseDown')
+                       rowMouseUp=(action 'onRowMouseUp')
+                       rowMouseMove=(action 'onRowMouseMove')
+                       rowTouchStart=(action 'onRowTouchStart')
+                       rowTouchEnd=(action 'onRowTouchEnd')
+                       rowTouchCancel=(action 'onRowTouchCancel')
+                       rowTouchLeave=(action 'onRowTouchLeave')
+                       rowTouchMove=(action 'onRowTouchMove')}}
 
               {{yield (hash
                         expanded-row=(component lt.spanned-row classes="lt-expanded-row" colspan=colspan yield=row visible=row.expanded)

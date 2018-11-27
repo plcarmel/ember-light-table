@@ -1,8 +1,15 @@
 import Component from '@ember/component';
 import { deprecate } from '@ember/application/deprecations';
 import { computed, observer } from '@ember/object';
+import { debounce, once, run } from '@ember/runloop';
+import $ from 'jquery';
 import layout from 'ember-light-table/templates/components/lt-body';
-import { run } from '@ember/runloop';
+import { EKMixin } from 'ember-keyboard';
+import ActivateKeyboardOnFocusMixin from 'ember-keyboard/mixins/activate-keyboard-on-focus';
+import HasBehaviorsMixin, { behaviorGroupFlag, behaviorFlag, behaviorInstanceOf } from 'ember-light-table/mixins/has-behaviors';
+import RowExpansionBehavior from 'ember-light-table/behaviors/row-expansion';
+import SingleSelectBehavior from 'ember-light-table/behaviors/single-select';
+import MultiSelectBehavior from 'ember-light-table/behaviors/multi-select';
 import Row from 'ember-light-table/classes/Row';
 
 /**
@@ -34,11 +41,14 @@ import Row from 'ember-light-table/classes/Row';
  *
  * @class t.body
  */
+export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehaviorsMixin, {
 
-export default Component.extend({
   layout,
   classNames: ['lt-body-wrap'],
-  classNameBindings: ['canSelect', 'multiSelect', 'canExpand'],
+
+  attributeBindings: ['tabindex'],
+
+  tabindex: 0,
 
   /**
    * @property table
@@ -59,6 +69,14 @@ export default Component.extend({
    * @type {Object}
    */
   tableActions: null,
+
+  /**
+   * Turn this off to use the new way of specifying behaviors.
+   *
+   * @property useLegacyBehaviors
+   * @type {Object}
+   */
+  useLegacyBehaviorFlags: true,
 
   /**
    * @property extra
@@ -82,7 +100,7 @@ export default Component.extend({
    * @type {Boolean}
    * @default true
    */
-  canSelect: true,
+  canSelect: behaviorGroupFlag('can-select'),
 
   /**
    * Select a row on click. If this is set to `false` and multiSelect is
@@ -93,7 +111,7 @@ export default Component.extend({
    * @type {Boolean}
    * @default true
    */
-  selectOnClick: true,
+  selectOnClick: computed.alias('_multiSelectBehavior.selectOnClick'),
 
   /**
    * Allows for expanding row. This will create a new row under the row that was
@@ -109,7 +127,7 @@ export default Component.extend({
    * @type {Boolean}
    * @default false
    */
-  canExpand: false,
+  canExpand: behaviorGroupFlag('can-expand'),
 
   /**
    * Allows a user to select multiple rows with the `ctrl`, `cmd`, and `shift` keys.
@@ -119,7 +137,7 @@ export default Component.extend({
    * @type {Boolean}
    * @default false
    */
-  multiSelect: false,
+  multiSelect: behaviorFlag('can-select', '_multiSelectBehavior'),
 
   /**
    * When multiSelect is true, this property determines whether or not `ctrl`
@@ -132,7 +150,7 @@ export default Component.extend({
    * @type {Boolean}
    * @default true
    */
-  multiSelectRequiresKeyboard: true,
+  multiSelectRequiresKeyboard: computed.alias('_multiSelectBehavior.requiresKeyboard'),
 
   /**
    * Hide scrollbar when not scrolling
@@ -150,7 +168,7 @@ export default Component.extend({
    * @type {Boolean}
    * @default true
    */
-  multiRowExpansion: true,
+  multiRowExpansion: computed.alias('_rowExpansionBehavior.multiRow'),
 
   /**
    * Expand a row on click
@@ -159,7 +177,7 @@ export default Component.extend({
    * @type {Boolean}
    * @default true
    */
-  expandOnClick: true,
+  expandOnClick: computed.alias('_rowExpansionBehavior.expandOnClick'),
 
   /**
    * If true, the body block will yield columns and rows, allowing you
@@ -209,7 +227,7 @@ export default Component.extend({
    */
   scrollBufferRows: computed('scrollBuffer', 'sharedOptions.estimatedRowHeight', function() {
     return Math.ceil(
-      this.get('scrollBuffer') / (this.get('sharedOptions.estimatedRowHeight') || 1)
+      this.scrollBuffer / (this.sharedOptions.estimatedRowHeight || 1)
     );
   }),
 
@@ -322,7 +340,7 @@ export default Component.extend({
    * @property scheduleScrolledToBottom
    */
   scheduleScrolledToBottom: observer('isInViewport', function() {
-    if (this.get('isInViewport')) {
+    if (this.isInViewport) {
       /*
        Continue scheduling onScrolledToBottom until no longer in viewport
        */
@@ -340,7 +358,10 @@ export default Component.extend({
       been initialized since fixedHeader and fixedFooter are set on t.head and t.foot
       initialization.
      */
-    run.once(this, this._setupVirtualScrollbar);
+    once(this, this._setupVirtualScrollbar);
+
+    this.__preventPropagation = (e) => this._preventPropagation(e);
+    this._initDefaultBehaviorsIfNeeded();
   },
 
   didReceiveAttrs() {
@@ -353,8 +374,36 @@ export default Component.extend({
     this._cancelTimers();
   },
 
+  didInsertElement() {
+    this._super(...arguments);
+    $(document).on('keydown', this, this._preventPropagation);
+  },
+
+  willDestroyElement() {
+    this._super(...arguments);
+    $(document).off('keydown', this, this._preventPropagation);
+  },
+
+  _preventPropagation(e) {
+    if (e.target === e.data.element && [32, 33, 34, 35, 36, 38, 40].includes(e.keyCode)) {
+      return false;
+    }
+  },
+
+  _multiSelectBehavior: behaviorInstanceOf(MultiSelectBehavior),
+  _rowExpansionBehavior: behaviorInstanceOf(RowExpansionBehavior),
+
+  _initDefaultBehaviorsIfNeeded() {
+    this._initDefaultBehaviorsIfNeeded = function() {};
+    if (this.useLegacyBehaviorFlags) {
+      this.activateBehavior(MultiSelectBehavior.create({}), true);
+      this.activateBehavior(SingleSelectBehavior.create({}), true);
+      this.activateBehavior(RowExpansionBehavior.create({}), false);
+    }
+  },
+
   _setupVirtualScrollbar() {
-    let { fixedHeader, fixedFooter } = this.get('sharedOptions');
+    let { fixedHeader, fixedFooter } = this.sharedOptions;
     this.set('useVirtualScrollbar', fixedHeader || fixedFooter);
   },
 
@@ -393,9 +442,9 @@ export default Component.extend({
   },
 
   checkTargetScrollOffset() {
-    if (!this.get('hasReachedTargetScrollOffset')) {
-      let targetScrollOffset = this.get('targetScrollOffset');
-      let currentScrollOffset = this.get('currentScrollOffset');
+    if (!this.hasReachedTargetScrollOffset) {
+      let { targetScrollOffset } = this;
+      let { currentScrollOffset } = this;
 
       if (targetScrollOffset > currentScrollOffset) {
         this.set('targetScrollOffset', null);
@@ -409,7 +458,7 @@ export default Component.extend({
   },
 
   toggleExpandedRow(row) {
-    let multiRowExpansion = this.get('multiRowExpansion');
+    let { multiRowExpansion } = this;
     let shouldExpand = !row.expanded;
 
     if (multiRowExpansion) {
@@ -428,7 +477,7 @@ export default Component.extend({
      This debounce is needed when there is not enough delay between onScrolledToBottom calls.
      Without this debounce, all rows will be rendered causing immense performance problems
      */
-    this._debounceTimer = run.debounce(this, this.onScrolledToBottom, delay);
+    this._debounceTimer = debounce(this, this.onScrolledToBottom, delay);
   },
 
   /**
@@ -439,6 +488,10 @@ export default Component.extend({
     run.cancel(this._setTargetOffsetTimer);
     run.cancel(this._schedulerTimer);
     run.cancel(this._debounceTimer);
+  },
+
+  signalSelectionChanged() {
+    this.behaviors.forEach((b) => b.onSelectionChanged(this));
   },
 
   // Noop for closure actions
@@ -452,60 +505,74 @@ export default Component.extend({
   onScrolledToBottom() {},
 
   actions: {
-    /**
-     * onRowClick action. Handles selection, and row expansion.
-     * @event onRowClick
-     * @param  {Row}   row The row that was clicked
-     * @param  {Event}   event   The click event
-     */
-    onRowClick(row, e) {
-      let rows = this.get('table.rows');
-      let multiSelect = this.get('multiSelect');
-      let multiSelectRequiresKeyboard = this.get('multiSelectRequiresKeyboard');
-      let canSelect = this.get('canSelect');
-      let selectOnClick = this.get('selectOnClick');
-      let canExpand = this.get('canExpand');
-      let expandOnClick = this.get('expandOnClick');
-      let isSelected = row.get('selected');
-      let currIndex = rows.indexOf(row);
-      let prevIndex = this._prevSelectedIndex === -1 ? currIndex : this._prevSelectedIndex;
-
-      this._prevSelectedIndex = currIndex;
-
-      let toggleExpandedRow = () => {
-        if (canExpand && expandOnClick) {
-          this.toggleExpandedRow(row);
-        }
-      };
-
-      if (canSelect) {
-        if (e.shiftKey && multiSelect) {
-          rows.slice(Math.min(currIndex, prevIndex), Math.max(currIndex, prevIndex) + 1).forEach((r) => r.set('selected', !isSelected));
-        } else if ((!multiSelectRequiresKeyboard || (e.ctrlKey || e.metaKey)) && multiSelect) {
-          row.toggleProperty('selected');
-        } else {
-          if (selectOnClick) {
-            this.get('table.selectedRows').setEach('selected', false);
-            row.set('selected', !isSelected);
-          }
-
-          toggleExpandedRow();
-        }
-      } else {
-        toggleExpandedRow();
+    onRowClick() {
+      this.triggerBehaviorEvent('rowClick', ...arguments);
+      if (this.onRowClick) {
+        this.onRowClick(...arguments);
       }
-
-      this.onRowClick(...arguments);
     },
 
-    /**
-     * onRowDoubleClick action.
-     * @event onRowDoubleClick
-     * @param  {Row}   row The row that was clicked
-     * @param  {Event}   event   The click event
-     */
-    onRowDoubleClick(/* row */) {
-      this.onRowDoubleClick(...arguments);
+    onRowDoubleClick() {
+      this.triggerBehaviorEvent('rowDoubleClick', ...arguments);
+      if (this.onRowDoubleClick) {
+        this.onRowDoubleClick(...arguments);
+      }
+    },
+
+    onRowMouseDown() {
+      this.triggerBehaviorEvent('rowMouseDown', ...arguments);
+      if (this.onRowMouseDown) {
+        this.onRowMouseDown(...arguments);
+      }
+    },
+
+    onRowMouseUp() {
+      this.triggerBehaviorEvent('rowMouseUp', ...arguments);
+      if (this.onRowMouseUp) {
+        this.onRowMouseUp(...arguments);
+      }
+    },
+
+    onRowMouseMove() {
+      this.triggerBehaviorEvent('rowMouseMove', ...arguments);
+      if (this.onRowMouseMove) {
+        this.onRowMouseMove(...arguments);
+      }
+    },
+
+    onRowTouchStart() {
+      this.triggerBehaviorEvent('rowTouchStart', ...arguments);
+      if (this.onRowTouchStart) {
+        this.onRowTouchStart(...arguments);
+      }
+    },
+
+    onRowTouchEnd() {
+      this.triggerBehaviorEvent('rowTouchEnd', ...arguments);
+      if (this.onRowTouchEnd) {
+        this.onRowTouchEnd(...arguments);
+      }
+    },
+
+    onRowTouchCancel() {
+      this.triggerBehaviorEvent('rowTouchCancel', ...arguments);
+      if (this.onRowTouchCancel) {
+        this.onRowTouchCancel(...arguments);
+      }
+    },
+
+    onRowTouchLeave() {
+      this.triggerBehaviorEvent('rowTouchLeave', ...arguments);
+      if (this.onRowTouchLeave) {
+        this.onRowTouchLeave(...arguments);
+      }
+    },
+
+    onRowTouchMove() {
+      this.triggerBehaviorEvent('rowTouchMove', ...arguments);
+      if (this.onRowTouchMove) {
+        this.onRowTouchMove(...arguments);
+      }
     },
 
     /**
@@ -535,7 +602,7 @@ export default Component.extend({
      * @event enterViewport
      */
     enterViewport() {
-      const inViewport = this.get('inViewport');
+      const { inViewport } = this;
       if (inViewport) {
         deprecate('lt-infinity inViewport event is deprecated please use enterViewport instead', false, {
           id: 'ember-light-table.inViewport',

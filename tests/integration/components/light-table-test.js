@@ -37,15 +37,16 @@ module('Integration | Component | light table', function(hooks) {
     });
 
     await render(hbs `
-      {{#light-table table height='40vh' as |t|}}
-        {{t.head fixed=true}}
-        {{t.body onScrolledToBottom=(action onScrolledToBottom)}}
-      {{/light-table}}
+      {{#lt-standard-scrollable height='40vh;'}}
+        {{#light-table table as |t|}}
+          {{t.body onScrolledToBottom=(action onScrolledToBottom)}}
+        {{/light-table}}
+      {{/lt-standard-scrollable}}
     `);
 
     assert.equal(findAll('tbody > tr').length, 50, '50 rows are rendered');
 
-    let scrollContainer = '.tse-scroll-content';
+    let scrollContainer = '.lt-standard-scrollable';
     let { scrollHeight } = find(scrollContainer);
 
     assert.ok(findAll(scrollContainer).length > 0, 'scroll container was rendered');
@@ -54,62 +55,15 @@ module('Integration | Component | light table', function(hooks) {
     await scrollTo(scrollContainer, 0, scrollHeight);
   });
 
-  test('fixed header', async function(assert) {
-    assert.expect(2);
-    this.set('table', new Table(Columns, this.server.createList('user', 5)));
-
-    await render(hbs `
-      {{#light-table table height='500px' id='lightTable' as |t|}}
-        {{t.head fixed=true}}
-        {{t.body}}
-      {{/light-table}}
-    `);
-
-    assert.equal(findAll('#lightTable_inline_head thead').length, 0);
-
-    await render(hbs `
-      {{#light-table table height='500px' id='lightTable' as |t|}}
-        {{t.head fixed=false}}
-        {{t.body}}
-      {{/light-table}}
-    `);
-
-    assert.equal(findAll('#lightTable_inline_head thead').length, 1);
-  });
-
-  test('fixed footer', async function(assert) {
-    assert.expect(2);
-    this.set('table', new Table(Columns, this.server.createList('user', 5)));
-
-    await render(hbs `
-      {{#light-table table height='500px' id='lightTable' as |t|}}
-        {{t.body}}
-        {{t.foot fixed=true}}
-      {{/light-table}}
-    `);
-
-    assert.equal(findAll('#lightTable_inline_foot tfoot').length, 0);
-
-    await render(hbs `
-      {{#light-table table height='500px' id='lightTable' as |t|}}
-        {{t.body}}
-        {{t.foot fixed=false}}
-      {{/light-table}}
-    `);
-
-    assert.equal(findAll('#lightTable_inline_foot tfoot').length, 1);
-  });
-
   test('table assumes height of container', async function(assert) {
 
     this.set('table', new Table(Columns, this.server.createList('user', 5)));
-    this.set('fixed', true);
 
     await render(hbs `
       <div style="height: 500px">
         {{#light-table table id='lightTable' as |t|}}
           {{t.body}}
-          {{t.foot fixed=fixed}}
+          {{t.foot}}
         {{/light-table}}
       </div>
     `);
@@ -120,14 +74,13 @@ module('Integration | Component | light table', function(hooks) {
 
   test('table body should consume all available space when not enough content to fill it', async function(assert) {
     this.set('table', new Table(Columns, this.server.createList('user', 1)));
-    this.set('fixed', true);
 
     await render(hbs `
       <div style="height: 500px">
         {{#light-table table id='lightTable' as |t|}}
-          {{t.head fixed=true}}
+          {{t.head}}
           {{t.body}}
-          {{#t.foot fixed=true}}
+          {{#t.foot}}
             Hello World
           {{/t.foot}}
         {{/light-table}}
@@ -192,31 +145,6 @@ module('Integration | Component | light table', function(hooks) {
     this.set('current', null);
 
     assert.notOk(find('.custom-row.is-active'), 'none of the items are active');
-  });
-
-  test('onScroll', async function(assert) {
-    let table = new Table(Columns, this.server.createList('user', 10));
-    let expectedScroll = 50;
-
-    this.setProperties({
-      table,
-      onScroll(actualScroll) {
-        assert.ok(true, 'onScroll worked');
-        assert.equal(actualScroll, expectedScroll, 'scroll position is correct');
-      }
-    });
-
-    await render(hbs `
-      {{#light-table table height='40vh' as |t|}}
-        {{t.head fixed=true}}
-        {{t.body
-          useVirtualScrollbar=true
-          onScroll=onScroll
-        }}
-      {{/light-table}}
-    `);
-
-    await scrollTo('.tse-scroll-content', 0, expectedScroll);
   });
 
   test('extra data and tableActions', async function(assert) {

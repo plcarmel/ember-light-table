@@ -36,8 +36,16 @@
                      enableScaffolding=enableScaffolding
                      canExpand=canExpand
                      canSelect=canSelect
-                     click=(action 'onRowClick' row)
-                     doubleClick=(action 'onRowDoubleClick' row)}}
+                     rowClick=(action 'onRowClick')
+                     rowDoubleClick=(action 'onRowDoubleClick')
+                     rowMouseDown=(action 'onRowMouseDown')
+                     rowMouseUp=(action 'onRowMouseUp')
+                     rowMouseMove=(action 'onRowMouseMove')
+                     rowTouchStart=(action 'onRowTouchStart')
+                     rowTouchEnd=(action 'onRowTouchEnd')
+                     rowTouchCancel=(action 'onRowTouchCancel')
+                     rowTouchLeave=(action 'onRowTouchLeave')
+                     rowTouchMove=(action 'onRowTouchMove')}}
 
             {{yield (hash
                       expanded-row=(component lt.spanned-row classes='lt-expanded-row' colspan=colspan yield=row visible=row.expanded)

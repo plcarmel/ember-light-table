@@ -1,6 +1,6 @@
 /* eslint ember/no-on-calls-in-components:off */
 import Component from '@ember/component';
-import { computed } from '@ember/object';
+import { reads } from '@ember/object/computed';
 import { on } from '@ember/object/evented';
 import layout from 'ember-light-table/templates/components/lt-row';
 
@@ -8,7 +8,17 @@ const Row = Component.extend({
   layout,
   tagName: 'tr',
   classNames: ['lt-row'],
-  classNameBindings: ['isSelected', 'isExpanded', 'canExpand:is-expandable', 'canSelect:is-selectable', 'row.classNames'],
+
+  classNameBindings: [
+    'isSelected',
+    'isExpanded',
+    'hasFocus',
+    'canExpand:is-expandable',
+    'canSelect:is-selectable',
+    'canFocus:is-focusable',
+    'row.classNames'
+  ],
+
   attributeBindings: ['colspan', 'data-row-id'],
 
   columns: null,
@@ -17,16 +27,30 @@ const Row = Component.extend({
   extra: null,
   canExpand: false,
   canSelect: false,
+  canFocus: false,
   colspan: 1,
 
-  isSelected: computed.readOnly('row.selected'),
-  isExpanded: computed.readOnly('row.expanded'),
+  isSelected: reads('row.selected'),
+  isExpanded: reads('row.expanded'),
+  hasFocus: reads('row.hasFocus'),
 
   ltBody: null,
 
-  $ltBody: computed('ltBody.element', function() {
-    return this.ltBody.$();
-  }).readOnly(),
+  left() {
+    return this.element.offsetLeft;
+  },
+
+  width() {
+    return this.element.offsetWidth;
+  },
+
+  top() {
+    return this.element.offsetTop;
+  },
+
+  height() {
+    return this.element.offsetHeight;
+  },
 
   _onClick: on('click', function() {
     if (this.rowClick) {

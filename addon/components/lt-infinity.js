@@ -8,7 +8,7 @@ export default Component.extend({
   inViewport: service(),
 
   classNames: ['lt-infinity'],
-  scrollableContent: null,
+  scrollableContainer: null,
   scrollBuffer: 50,
 
   didInsertElement() {
@@ -21,7 +21,7 @@ export default Component.extend({
         bottom: this.scrollBuffer
       },
 
-      scrollableArea: this.scrollableContent
+      scrollableArea: this.scrollableContainer
     };
 
     const { onEnter, onExit } = this.inViewport.watchElement(this.element, options);

@@ -17,7 +17,7 @@
                 estimateHeight=sharedOptions.estimatedRowHeight
                 shouldRecycle=sharedOptions.shouldRecycle
                 bufferSize=scrollBufferRows
-                containerSelector=scrollableContainer
+                containerSelector=scrollableContainerSelector
                 firstVisibleChanged=(action "firstVisibleChanged")
                 lastVisibleChanged=(action "lastVisibleChanged")
                 firstReached=(action "firstReached")
@@ -32,6 +32,7 @@
                        enableScaffolding=enableScaffolding
                        canExpand=canExpand
                        canSelect=canSelect
+                       canFocus=canFocus
                        rowClick=(action "onRowClick")
                        rowDoubleClick=(action "onRowDoubleClick")
                        rowMouseDown=(action "onRowMouseDown")
@@ -59,7 +60,7 @@
         rows=rows
         enterViewport=(action "enterViewport")
         exitViewport=(action "exitViewport")
-        scrollableContent=scrollableContent
+        scrollableContainer=scrollableContainer
         scrollBuffer=scrollBuffer
       }}
     {{/if}}
@@ -90,6 +91,7 @@
                      enableScaffolding=enableScaffolding
                      canExpand=canExpand
                      canSelect=canSelect
+                     canFocus=canFocus
                      rowClick=(action "onRowClick")
                      rowDoubleClick=(action "onRowDoubleClick")
                      rowMouseDown=(action "onRowMouseDown")
@@ -100,7 +102,6 @@
                      rowTouchCancel=(action "onRowTouchCancel")
                      rowTouchLeave=(action "onRowTouchLeave")
                      rowTouchMove=(action "onRowTouchMove")}}
-
             {{yield (hash
                       expanded-row=(component lt.spanned-row classes="lt-expanded-row" colspan=colspan yield=row visible=row.expanded)
                       loader=(component lt.spanned-row visible=false)
@@ -121,7 +122,7 @@
       {{lt.infinity
         enterViewport=(action "enterViewport")
         exitViewport=(action "exitViewport")
-        scrollableContent=scrollableContent
+        scrollableContainer=scrollableContainer
         scrollBuffer=scrollBuffer}}
     {{/if}}
 

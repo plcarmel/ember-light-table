@@ -3,9 +3,8 @@ import { deprecate } from '@ember/application/deprecations';
 import { A as emberArray } from '@ember/array';
 import { computed, observer } from '@ember/object';
 import { getOwner } from '@ember/application';
-import { run, schedule } from '@ember/runloop';
+import { once, run, schedule, scheduleOnce } from '@ember/runloop';
 import { warn } from '@ember/debug';
-import $ from 'jquery';
 import layout from 'ember-light-table/templates/components/lt-body';
 import { EKMixin } from 'ember-keyboard';
 import ActivateKeyboardOnFocusMixin from 'ember-keyboard/mixins/activate-keyboard-on-focus';
@@ -296,9 +295,9 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
   _onScrollToRow: observer('scrollToRow', function() {
     let row = this.scrollToRow;
     if (row) {
-      let ltRow = this.ltRows.findBy('row', row);
+      let ltRow = this.ltRows().findBy('row', row);
       if (ltRow) {
-        schedule('afterRender', () => this.makeRowVisible(ltRow.$()));
+        schedule('afterRender', () => this.makeRowVisible(ltRow.element));
       } else {
         throw 'Row passed to scrollToRow() is not part of the rendered table.';
       }
@@ -375,21 +374,25 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
   columns: computed.readOnly('table.visibleColumns'),
   colspan: computed.readOnly('columns.length'),
 
-  _lastNbRows: null,
-
   /**
    * fills the screen with row items until lt-infinity component has exited the viewport
    * @property scheduleScrolledToBottom
    */
   triggerScrolledToBottom: observer('isInViewport', 'rows.length', function() {
     if (this.get('isInViewport')) {
-      this.onScrolledToBottom();
+      scheduleOnce('afterRender', this, this.onScrolledToBottom);
     }
   }),
 
-  _prevSelectedIndex: -1,
+  /* Components to add in the scrollable content
+   *
+   * @property
+   * @type {[ { component, namedArgs ]} ]}
+   * @default []
+   */
+  decorations: null,
 
-  scrollableContainer: computed('sharedOptions.frameId', function() {
+  scrollableContainerSelector: computed('sharedOptions.frameId', function() {
     // TODO: FIX: lt-body should not know about .tse-scroll-content
     const id = this.get('sharedOptions.frameId');
     return `#${id} .tse-scroll-content, #${id} .lt-scrollable`;
@@ -397,6 +400,12 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
 
   init() {
     this._super(...arguments);
+
+    if (this.get('decorations') === null) {
+      this.set('decorations', emberArray());
+    }
+
+    this.get('table.focusIndex'); // so the observers are triggered
     this.__preventPropagation = (e) => this._preventPropagation(e);
     this._initDefaultBehaviorsIfNeeded();
   },
@@ -412,17 +421,17 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
 
   didInsertElement() {
     this._super(...arguments);
-    $(document).on('keydown', this, this._preventPropagation);
+    document.addEventListener('keydown', this.__preventPropagation);
   },
 
   willDestroyElement() {
     this._super(...arguments);
-    $(document).off('keydown', this, this._preventPropagation);
+    document.removeEventListener('keydown', this.__preventPropagation);
   },
 
   _preventPropagation(e) {
-    if (e.target === e.data.element && [32, 33, 34, 35, 36, 38, 40].includes(e.keyCode)) {
-      return false;
+    if (e.target === this.element && [32, 33, 34, 35, 36, 38, 40].includes(e.keyCode)) {
+      return e.preventDefault();
     }
   },
 
@@ -439,25 +448,25 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
   },
 
   makeRowAtVisible(i, nbExtraRows = 0) {
-    this.makeRowVisible(this.ltRows.objectAt(i).$(), nbExtraRows);
+    this.makeRowVisible(this.ltRows().objectAt(i).element, nbExtraRows);
   },
 
-  $scrollableContainer: computed('element', function() {
-    return this.$().parents('.lt-scrollable');
+  scrollableContainer: computed('element', function() {
+    return this.element.closest('.lt-scrollable');
   }).readOnly(),
 
-  $scrollableContent: computed('element', function() {
-    return this.$().parents('.scrollable-content');
+  scrollableContent: computed('element', function() {
+    return this.element.closest('.scrollable-content');
   }).readOnly(),
 
-  makeRowVisible($row, nbExtraRows = 0) {
-    let { $scrollableContent } = this;
-    let { $scrollableContainer } = this;
-    if ($row.length !== 0 && $scrollableContent.length !== 0 && $scrollableContainer.length !== 0) {
-      let rt = $row.offset().top - $scrollableContent.offset().top;
-      let rh = $row.height();
+  makeRowVisible(row, nbExtraRows = 0) {
+    let { scrollableContent } = this;
+    let { scrollableContainer } = this;
+    if (row && scrollableContent && scrollableContainer) {
+      let rt = row.offsetTop - scrollableContent.offsetTop;
+      let rh = row.offsetHeight;
       let rb = rt + rh;
-      let h = $scrollableContainer.height();
+      let h = scrollableContainer.offsetHeight;
       let t = this.scrollTop;
       let b = t + h;
       let extraSpace = rh * nbExtraRows;
@@ -473,6 +482,16 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
     }
   },
 
+  _onFocusedRowChanged: observer('table.focusIndex', function() {
+    if (typeof FastBoot === 'undefined') {
+      run.schedule(
+        'afterRender',
+        null,
+        () => this.makeRowVisible(this.element.querySelector('tr.has-focus'), 0.5)
+      );
+    }
+  }),
+
   /**
    * @method _cancelTimers
    */
@@ -482,15 +501,45 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
     run.cancel(this._schedulerTimer);
   },
 
-  ltRows: computed('element', function() {
+  ltRows() {
     let vrm = getOwner(this).lookup('-view-registry:main');
-    let q = this.$('tr:not(.lt-expanded-row)');
-    return emberArray($.makeArray(q.map((i, e) => vrm[e.id])));
-  }),
+    let q = this.element.querySelectorAll('tr:not(.lt-expanded-row)');
+    return emberArray(Array.prototype.slice.call(q).map((e) => vrm[e.id])).compact();
+  },
+
+  getLtRowAt(position) {
+    return this
+      .ltRows()
+      .find((ltr) => {
+        let top = ltr.top();
+        return top <= position && position < top + ltr.height();
+      });
+  },
+
+  pageSize: computed('scrollableContainer', function() {
+    let rows = this.get('table.rows');
+    if (rows.get('length') === 0) {
+      return 0;
+    }
+    let r0 = this.getLtRowAt(0);
+    if (!r0) {
+      r0 = this.ltRows().firstObject;
+    }
+    let rN = this.getLtRowAt(this.get('scrollableContainer.clientHeight'));
+    if (!rN) {
+      rN = this.ltRows().lastObject;
+    }
+    let i = (r) => rows.indexOf(r.get('row'));
+    return i(rN) - i(r0);
+  }).readOnly(),
 
   signalSelectionChanged() {
     this.behaviors.forEach((b) => b.onSelectionChanged(this));
   },
+
+  onSelectionChanged: observer('table.rows.@each.selected', function() {
+    once(this, this.signalSelectionChanged);
+  }),
 
   // Noop for closure actions
   onRowClick() {},

@@ -448,7 +448,7 @@ export default Component.extend(EKMixin, ActivateKeyboardOnFocusMixin, HasBehavi
   },
 
   makeRowAtVisible(i, nbExtraRows = 0) {
-    this.makeRowVisible(this.ltRows().objectAt(i).element, nbExtraRows);
+    this.makeRowVisible(this.ltRows()[i].element, nbExtraRows);
   },
 
   scrollableContainer: computed('element', function() {

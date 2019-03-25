@@ -126,5 +126,11 @@
         scrollBuffer=scrollBuffer}}
     {{/if}}
 
+    <div class='body-decorations'>
+      {{#each decorations as |decoration|}}
+        {{component decoration.component ltBody=this namedArgs=decoration.namedArgs}}
+      {{/each}}
+    </div>
+
   {{/if}}
 {{/with}}

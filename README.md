@@ -17,5 +17,5 @@
 - Easy override to table header, body, and footer
 - Contextual component for header, body, and footer, as well as loading, no data, and expanded row
 
-[demo]: https://plcarmel.github.io/ember-lighter-table/
+[demo]: https://plcarmel.github.io/ember-lighter-table/#/rows/spreadsheet
 

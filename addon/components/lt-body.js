@@ -363,12 +363,7 @@ export default Component.extend({
   }),
 
   setupScrollOffset() {
-    let {
-      scrollTo,
-      _scrollTo,
-      scrollToRow,
-      _scrollToRow
-    } = this.getProperties(['scrollTo', '_scrollTo', 'scrollToRow', '_scrollToRow']);
+    let { scrollTo, _scrollTo, scrollToRow, _scrollToRow } = this;
     let targetScrollOffset = null;
 
     this.setProperties({ _scrollTo: scrollTo, _scrollToRow: scrollToRow });
@@ -420,7 +415,7 @@ export default Component.extend({
     if (multiRowExpansion) {
       row.toggleProperty('expanded');
     } else {
-      this.get('table.expandedRows').setEach('expanded', false);
+      this.table.expandedRows.setEach('expanded', false);
       row.set('expanded', shouldExpand);
     }
   },
@@ -562,7 +557,7 @@ export default Component.extend({
 
     firstVisibleChanged(item, index /* , key */) {
       this.firstVisibleChanged(...arguments);
-      const estimateScrollOffset = index * this.get('sharedOptions.estimatedRowHeight');
+      const estimateScrollOffset = index * this.sharedOptions.estimatedRowHeight;
       this.onScroll(estimateScrollOffset, null);
     },
 

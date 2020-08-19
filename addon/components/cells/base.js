@@ -25,10 +25,10 @@ const Cell = Component.extend({
   isSorted: computed.readOnly('column.sorted'),
 
   style: computed('enableScaffolding', 'column.width', function() {
-    let column = this.get('column');
+    let { column } = this;
     let columnWidth = column.get('width');
 
-    if (this.get('enableScaffolding') || !column) {
+    if (this.enableScaffolding || !column) {
       return;
     }
 
@@ -39,7 +39,7 @@ const Cell = Component.extend({
   }),
 
   align: computed('column.align', function() {
-    return `align-${this.get('column.align')}`;
+    return `align-${this.column.align}`;
   }),
 
   /**
@@ -82,9 +82,9 @@ const Cell = Component.extend({
    * @property value
    * @type {Mixed}
    */
-  value: computed('rawValue', function() {
-    let rawValue = this.get('rawValue');
-    let format = this.get('column.format');
+  value: computed('column.format', 'rawValue', function() {
+    let { rawValue } = this;
+    let { format } = this.column;
 
     if (format && typeof format === 'function') {
       return format.call(this, rawValue);

@@ -133,12 +133,12 @@ export default Mixin.create({
   columns: computed.readOnly('table.visibleColumns'),
 
   sortIcons: computed('iconSortable', 'iconAscending', 'iconDescending', 'iconComponent', function() {
-    return this.getProperties(['iconSortable', 'iconAscending', 'iconDescending', 'iconComponent']);
+    return { iconSortable: this.iconSortable, iconAscending: this.iconAscending, iconDescending: this.iconDescending, iconComponent: this.iconComponent };
   }).readOnly(),
 
-  style: computed('sharedOptions.occlusion', function() {
-    if (this.get('sharedOptions.occlusion')) {
-      const scrollbarThickness = this.get('scrollbarThickness.thickness');
+  style: computed('scrollbarThickness.thickness', 'sharedOptions.occlusion', function() {
+    if (this.sharedOptions && this.sharedOptions.occlusion) {
+      const scrollbarThickness = this.scrollbarThickness.thickness;
       return cssStyleify({ paddingRight: `${scrollbarThickness}px` });
     }
 
@@ -148,11 +148,11 @@ export default Mixin.create({
   init() {
     this._super(...arguments);
 
-    const fixed = this.get('fixed');
-    const sharedOptionsFixedPath = `sharedOptions.${this.get('sharedOptionsFixedKey')}`;
+    const { fixed } = this;
+    const sharedOptionsFixedPath = `sharedOptions.${this.sharedOptionsFixedKey}`;
     trySet(this, sharedOptionsFixedPath, fixed);
 
-    const height = this.get('sharedOptions.height');
+    const height = this.sharedOptions ? this.sharedOptions.height : this.sharedOptions;
 
     warn(
       'You did not set a `height` attribute for your table, but marked a header or footer to be fixed. This means that you have to set the table height via CSS. For more information please refer to:  https://github.com/offirgolan/ember-light-table/issues/446',
@@ -170,12 +170,12 @@ export default Mixin.create({
      * @param  {Event} event The click event
      */
     onColumnClick(column) {
-      if (column.sortable && this.get('sortOnClick')) {
+      if (column.sortable && this.sortOnClick) {
         if (column.sorted) {
           column.toggleProperty('ascending');
         } else {
-          if (!this.get('multiColumnSort')) {
-            this.get('table.sortedColumns').setEach('sorted', false);
+          if (!this.multiColumnSort) {
+            this.table.sortedColumns.setEach('sorted', false);
           }
 
           column.set('sorted', true);

@@ -38,16 +38,16 @@ export default Component.extend(TableCommon, {
 
   actions: {
     setPage(page) {
-      let totalPages = this.get('meta.totalPages');
-      let currPage = this.get('page');
+      let { totalPages } = this.meta;
+      let currPage = this.page;
 
       if (page < 1 || page > totalPages || page === currPage) {
         return;
       }
 
       this.set('page', page);
-      this.get('model').clear();
-      this.get('fetchRecords').perform();
+      this.model.clear();
+      this.fetchRecords.perform();
     }
   }
 });

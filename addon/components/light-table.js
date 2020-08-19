@@ -198,14 +198,14 @@ const LightTable = Component.extend({
    * @type {Object}
    * @private
    */
-  sharedOptions: computed(function() {
+  sharedOptions: computed('estimatedRowHeight', 'height', 'occlusion', 'shouldRecycle', function() {
     return {
-      height: this.get('height'),
+      height: this.height,
       fixedHeader: false,
       fixedFooter: false,
-      occlusion: this.get('occlusion'),
-      estimatedRowHeight: this.get('estimatedRowHeight'),
-      shouldRecycle: this.get('shouldRecycle')
+      occlusion: this.occlusion,
+      estimatedRowHeight: this.estimatedRowHeight,
+      shouldRecycle: this.shouldRecycle
     };
   }).readOnly(),
 
@@ -225,7 +225,7 @@ const LightTable = Component.extend({
    * @private
    */
   totalWidth: computed('visibleColumns.@each.width', function() {
-    let visibleColumns = this.get('visibleColumns');
+    let { visibleColumns } = this;
     let widths = visibleColumns.getEach('width');
     let unit = (widths[0] || '').match(/\D+$/);
     let totalWidth = 0;
@@ -253,13 +253,13 @@ const LightTable = Component.extend({
     return `${totalWidth}${unit}`;
   }),
 
-  style: computed('totalWidth', 'height', 'occlusion', function() {
-    let totalWidth = this.get('totalWidth');
-    let style = this.getProperties(['height']);
+  style: computed('height', 'occlusion', 'scrollbarThickness.thickness', 'totalWidth', function() {
+    let { totalWidth } = this;
+    let style = { height: this.height };
 
     if (totalWidth) {
-      if (this.get('occlusion')) {
-        const scrollbarThickness = this.get('scrollbarThickness.thickness');
+      if (this.occlusion) {
+        const scrollbarThickness = this.scrollbarThickness.thickness;
         style.width = `calc(${totalWidth} + ${scrollbarThickness}px)`;
       } else {
         style.width = totalWidth;
@@ -274,8 +274,8 @@ const LightTable = Component.extend({
   init() {
     this._super(...arguments);
 
-    let table = this.get('table');
-    let media = this.get('media');
+    let { table } = this;
+    let { media } = this;
 
     assert('[ember-light-table] table must be an instance of Table', table instanceof Table);
 
@@ -287,10 +287,10 @@ const LightTable = Component.extend({
   },
 
   onMediaChange: observer('media.matches.[]', 'table.allColumns.[]', function() {
-    let responsive = this.get('responsive');
-    let matches = this.get('media.matches');
-    let breakpoints = this.get('breakpoints');
-    let table = this.get('table');
+    let { responsive } = this;
+    let { matches } = this.media;
+    let { breakpoints } = this;
+    let { table } = this;
     let numColumns = 0;
 
     if (!responsive) {
@@ -319,7 +319,7 @@ const LightTable = Component.extend({
   }),
 
   _displayColumns(numColumns) {
-    let table = this.get('table');
+    let { table } = this;
     let hiddenColumns = table.get('responsiveHiddenColumns');
     let visibleColumns = table.get('visibleColumns');
 

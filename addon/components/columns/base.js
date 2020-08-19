@@ -31,11 +31,11 @@ const Column = Component.extend(DraggableColumnMixin, {
   isResizing: false,
 
   style: computed('column.width', function() {
-    return cssStyleify(this.get('column').getProperties(['width']));
+    return cssStyleify(this.column.getProperties(['width']));
   }),
 
   align: computed('column.align', function() {
-    return `align-${this.get('column.align')}`;
+    return `align-${this.column.align}`;
   }),
 
   /**
@@ -80,14 +80,14 @@ const Column = Component.extend(DraggableColumnMixin, {
    * @private
    */
   sortIconProperty: computed('column.{sortable,sorted,ascending}', function() {
-    let sorted = this.get('column.sorted');
+    let { sorted } = this.column;
 
     if (sorted) {
-      let ascending = this.get('column.ascending');
+      let { ascending } = this.column;
       return ascending ? 'iconAscending' : 'iconDescending';
     }
 
-    let sortable = this.get('column.sortable');
+    let { sortable } = this.column;
     return sortable ? 'iconSortable' : null;
   }),
 
@@ -96,7 +96,7 @@ const Column = Component.extend(DraggableColumnMixin, {
    * @type {Number}
    */
   colspan: computed('column', 'column.visibleSubColumns.[]', function() {
-    let subColumns = this.get('column.visibleSubColumns');
+    let subColumns = this.column.visibleSubColumns;
     return !isEmpty(subColumns) ? subColumns.length : 1;
   }),
 
@@ -110,7 +110,7 @@ const Column = Component.extend(DraggableColumnMixin, {
         return this._rowspan;
       }
 
-      let subColumns = this.get('column.visibleSubColumns');
+      let subColumns = this.column.visibleSubColumns;
       return !isEmpty(subColumns) ? 1 : 2;
     },
 

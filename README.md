@@ -23,7 +23,7 @@ Current exclusion groups are:
 
 Ember follows an *actions up, data down* philosophy. Usually, a component has actions that can be routed through parent components, manually, and each component along the way has the possibility to act on the action. Here, instead of having to plug each action handled by the behavior manually, this is done automatically. When a keyboard or a mouse event is received, the behavior *engine* look for an active behavior that can handle the event and calls the specified behavior method.
 
-A behavior specifies a list of events for which a given method should be called. The notation is inspired from **[Ember Keyboard][https://github.com/adopted-ember-addons/ember-keyboard]**. It is possible to specify combinations of mouse clicks and keys. Wildcards are supported.
+A behavior specifies a list of events for which a given method should be called. The notation is inspired from **[Ember Keyboard][ember-keyboard]**. It is possible to specify combinations of mouse clicks and keys. Wildcards are supported.
 
 This is a part of the project that might change as I am not completely satisfied with the behavior interface.
 
@@ -56,4 +56,5 @@ The advantages of using scrolling outside the component are enormous. It makes i
 
 [demo]: https://plcarmel.github.io/ember-lighter-table/#/rows/spreadsheet
 [ember-light-table]: https://github.com/offirgolan/ember-light-table
+[ember-keyboard]: https://github.com/adopted-ember-addons/ember-keyboard
 

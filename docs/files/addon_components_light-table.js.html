@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>addon/components/light-table.js - Ember Light Table</title>
+    <meta name="description" content="Lightweight, component based table for Ember 3.4+">
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/vendor/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="../assets/vendor/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../assets/css/theme.css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,700' rel='stylesheet' type='text/css'>
+    
+
+</head>
+<body>
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a href="../" class="navbar-brand">
+              <img src="../assets/img/ember-logo.png" alt="enterprise logo">
+            <span>Light Table</span>
+          </a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="nav">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="https://github.com/offirgolan/ember-light-table" class="fa fa-github github"></a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div id="main-wrapper" class="row">
+        <div id="content-wrapper">
+            <ol class="panel-group" id="sidebar" role="tablist" aria-multiselectable="true">
+                <li class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="sidebar-search-heading">
+                        <h4 class="panel-title">
+                      <a role="button" data-toggle="collapse" href="#sidebar-search" aria-expanded="true" aria-controls="collapseOne">
+                        Search
+                      </a>
+                    </h4>
+                    </div>
+                    <div id="sidebar-search" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="sidebar-search-heading">
+                        <div class="panel-body">
+                            <div id="api-tabview-filter">
+                                <input type="search" id="api-filter" placeholder="Search...">
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                    <li class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="sidebar-version-heading">
+                            <h4 class="panel-title">
+                                <a role="button" href="https://github.com/offirgolan/ember-light-table/commits/023109c2" target="_blank">
+                                  Tag: 2.0.0-beta.5.023109c2
+                                </a>
+                            </h4>
+                        </div>
+                    </li>
+                <li class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="sidebar-modules-heading">
+                        <h4 class="panel-title">
+                    <a role="button" data-toggle="collapse" href="#sidebar-modules" aria-expanded="true" aria-controls="collapseOne">
+                      Modules
+                    </a>
+                  </h4>
+                    </div>
+                    <div id="sidebar-modules" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="sidebar-modules-heading">
+                        <div class="panel-body">
+                                <ol>
+                                        <li>
+                                            <a href="../modules/Light Table.html">Light Table</a>
+                                                    <li class="sub"><a href="../modules/Cell Types.html">Cell Types</a></li>
+                                                    <li class="sub"><a href="../modules/Column Types.html">Column Types</a></li>
+                                        </li>
+                                        <li>
+                                            <a href="../modules/Table.html">Table</a>
+                                        </li>
+                                        <li>
+                                            <a href="../modules/Usage.html">Usage</a>
+                                                    <li class="sub"><a href="../modules/Table Declaration.html">Table Declaration</a></li>
+                                                    <li class="sub"><a href="../modules/Component Declaration.html">Component Declaration</a></li>
+                                        </li>
+                                        <li>
+                                            <a href="../modules/Utils.html">Utils</a>
+                                        </li>
+                                </ol>
+                        </div>
+                    </div>
+                </li>
+            
+                <li class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="sidebar-classes-heading">
+                        <h4 class="panel-title">
+                      <a role="button" data-toggle="collapse" href="#sidebar-classes" aria-expanded="true" aria-controls="collapseOne">
+                        Classes
+                      </a>
+                    </h4>
+                    </div>
+                    <div id="sidebar-classes" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="sidebar-classes-heading">
+                        <div class="panel-body">
+                            <ol>
+                                    <li>
+                                        <a href="../classes/Base Cell.html">Base Cell</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/Base Column.html">Base Column</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/Column.html">Column</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/fixProto.html">fixProto</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/light-table.html">light-table</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/Row.html">Row</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/t.body.html">t.body</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/t.foot.html">t.foot</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/t.head.html">t.head</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/Table.html">Table</a>
+                                    </li>
+                            </ol>
+                        </div>
+                    </div>
+                </li>
+            </ol>
+            <div class="content-container">
+                <div class="apidocs">
+                    <div id="docs-main">
+                        <div class="content">
+<div class="page-header">
+    <h1><i class="fa fa-file-code-o" aria-hidden="true"></i>  File</h1>
+</div>
+
+<div class="file">
+    <pre class="prettyprint linenums">
+import { A as emberArray } from &#x27;@ember/array&#x27;;
+import Component from &#x27;@ember/component&#x27;;
+import { computed, observer } from &#x27;@ember/object&#x27;;
+import { isEmpty, isNone } from &#x27;@ember/utils&#x27;;
+import { assert } from &#x27;@ember/debug&#x27;;
+import { inject as service } from &#x27;@ember/service&#x27;;
+import layout from &#x27;ember-light-table/templates/components/light-table&#x27;;
+import Table from &#x27;ember-light-table/classes/Table&#x27;;
+import cssStyleify from &#x27;ember-light-table/utils/css-styleify&#x27;;
+
+function intersections(array1, array2) {
+  return array1.filter((n) =&gt; {
+    return array2.indexOf(n) &gt; -1;
+  });
+}
+
+const sharedProperties = [
+  &#x27;height&#x27;,
+  &#x27;frameId&#x27;,
+  &#x27;occlusion&#x27;,
+  &#x27;estimatedRowHeight&#x27;,
+  &#x27;occlusionContainerSelector&#x27;,
+  &#x27;shouldRecycle&#x27;
+];
+
+/**
+ * @module Light Table
+ * @main light-table
+ */
+
+/**
+ * &#x60;&#x60;&#x60;hbs
+ * {{#light-table table as |t|}}
+ *   {{t.head}}
+ *   {{t.body}}
+ *   {{t.foot}}
+ * {{/light-table}}
+ * &#x60;&#x60;&#x60;
+ *
+ * Please see the documentation for the [Head](../classes/t.head.html), [Body](../classes/t.body.html), and [Foot](../classes/t.foot.html) components
+ * for more details on all possible options and actions.
+ *
+ * @class light-table
+ * @main Components
+ */
+
+const LightTable = Component.extend({
+  layout,
+  classNameBindings: [&#x27;:ember-light-table&#x27;, &#x27;:lt-table-container&#x27;, &#x27;occlusion&#x27;],
+  attributeBindings: [&#x27;style&#x27;],
+
+  media: service(),
+  scrollbarThickness: service(),
+
+  /**
+   * @property table
+   * @type {Table}
+   */
+  table: null,
+
+  /**
+   * This is used to propagate custom user defined actions to custom cell and header components.
+   * As an example, lets say I have a table with a column defined with &#x60;cellComponent: &#x27;delete-user&#x27;&#x60;
+   *
+   * &#x60;&#x60;&#x60;hbs
+   * {{#light-table table tableActions=(hash
+   *   deleteUser=(action &#x27;deleteUser&#x27;)
+   *  ) as |t|}}
+   *   {{t.head}}
+   *   {{t.body}}
+   *   {{t.foot}}
+   * {{/light-table}}
+   * &#x60;&#x60;&#x60;
+   *
+   * Now in the &#x60;delete-user&#x60; component, we can access that &#x60;deleteUser&#x60; action and pass it the
+   * row object which will bubble all the way to where you defined that action.
+   *
+   * &#x60;&#x60;&#x60;hbs
+   * &lt;button {{action tableActions.deleteUser row}}&gt;Delete Me&lt;/button&gt;
+   * &#x60;&#x60;&#x60;
+   *
+   *
+   * @property tableActions
+   * @type {Object}
+   */
+  tableActions: null,
+
+  /**
+   * Object to store any arbitrary configuration meant to be used by custom
+   * components.
+   *
+   * &#x60;&#x60;&#x60;hbs
+   * {{#light-table table
+   *   extra=(hash
+   *     highlightColor=&quot;yellow&quot;
+   *    )
+   *    as |t|
+   *  }}
+   *   {{t.head}}
+   *   {{t.body}}
+   *   {{t.foot}}
+   * {{/light-table}}
+   * &#x60;&#x60;&#x60;
+   *
+   * Now in all custom components, you can access this value like so:
+   *
+   * &#x60;&#x60;&#x60;hbs
+   * &lt;span style=&quot;background: {{extra.highlightColor}}&quot;&gt;{{value}}&lt;span&gt;
+   * &#x60;&#x60;&#x60;
+   *
+   * @property extra
+   * @type {Object}
+   */
+  extra: null,
+
+  /**
+   * Table height.
+   *
+   * @property height
+   * @type {String}
+   * @default null
+   */
+  height: null,
+
+  /**
+   * Class names that will be added to all &lt;table&gt; tags
+   *
+   * @property tableClassNames
+   * @type {String}
+   * @default &#x27;&#x27;
+   */
+  tableClassNames: &#x27;&#x27;,
+
+  /**
+   * Enable responsive behavior
+   *
+   * @property responsive
+   * @type {Boolean}
+   * @default false
+   */
+  responsive: false,
+
+  /**
+   * A hash to determine the number of columns to show per given breakpoint.
+   * If this is specified, it will override any column specific breakpoints.
+   *
+   * If we have the following breakpoints defined in &#x60;app/breakpoints.js&#x60;:
+   *
+   * - mobile
+   * - tablet
+   * - desktop
+   *
+   * The following hash can be passed in:
+   *
+   * &#x60;&#x60;&#x60;js
+   * {
+   *  mobile: 2,
+   *  tablet: 4
+   * }
+   * &#x60;&#x60;&#x60;
+   *
+   * If there is no rule specified for a given breakpoint (i.e. &#x60;desktop&#x60;),
+   * all columns will be shown.
+   *
+   * @property breakpoints
+   * @type {Object}
+   * @default null
+   */
+  breakpoints: null,
+
+  /**
+   * This value is passed to lt-head and lt-foot so they can create a unique ids
+   * for ember-wormhole
+   */
+  frameId: null,
+
+  /**
+   * Toggles occlusion rendering functionality. Currently experimental.
+   * If set to true, you must set {{#crossLink &#x27;t.body/estimatedRowHeight:property&#x27;}}{{/crossLink}} to
+   * something other than the default value.
+   *
+   * @property occlusion
+   * @type Boolean
+   * @default False
+   */
+  occlusion: false,
+
+  /**
+   * Estimated size of a row. Used in &#x60;vertical-collection&#x60; to determine roughly the number
+   * of rows exist out of the viewport.
+   *
+   * @property estimatedRowHeight
+   * @type Number
+   * @default false
+   */
+  estimatedRowHeight: 0,
+
+  /**
+   * Whether &#x60;vertical-collection&#x60; should recycle table rows. This speeds up performance with occlusion
+   * rendering but may cause problems if any components expect to reset their state to the initial state
+   * with every rerender of the list.
+   *
+   * @property shouldRecycle
+   * @type Boolean
+   * @default true
+   */
+  shouldRecycle: true,
+
+  sharedOptions: computed(...sharedProperties, function() {
+    return this.getProperties(sharedProperties);
+  }).readOnly(),
+
+  visibleColumns: computed.readOnly(&#x27;table.visibleColumns&#x27;),
+
+  /**
+   * Calculates the total width of the visible columns via their &#x60;width&#x60;
+   * propert.
+   *
+   * Returns 0 for the following conditions
+   *  - All widths are not set
+   *  - Widths are not the same unit
+   *  - Unit cannot be determined
+   *
+   * @property totalWidth
+   * @type {Number}
+   * @private
+   */
+  totalWidth: computed(&#x27;visibleColumns.@each.width&#x27;, function() {
+    let { visibleColumns } = this;
+    let widths = visibleColumns.getEach(&#x27;width&#x27;);
+    let unit = (widths[0] || &#x27;&#x27;).match(/\D+$/);
+    let totalWidth = 0;
+
+    if (isEmpty(unit)) {
+      return 0;
+    }
+
+    unit = unit[0];
+
+    /*
+     1. Check if all widths are present
+     2. Check if all widths are the same unit
+     */
+    for (let i = 0; i &lt; widths.length; i++) {
+      let width = widths[i];
+
+      if (isNone(width) || width.indexOf(unit) === -1) {
+        return 0;
+      }
+
+      totalWidth += parseInt(width, 10);
+    }
+
+    return &#x60;${totalWidth}${unit}&#x60;;
+  }),
+
+  style: computed(&#x27;height&#x27;, &#x27;occlusion&#x27;, &#x27;scrollbarThickness.thickness&#x27;, &#x27;totalWidth&#x27;, function() {
+    let { totalWidth } = this;
+    let style = { height: this.height };
+
+    if (totalWidth) {
+      if (this.occlusion) {
+        const scrollbarThickness = this.scrollbarThickness.thickness;
+        style.width = &#x60;calc(${totalWidth} + ${scrollbarThickness}px)&#x60;;
+      } else {
+        style.width = totalWidth;
+      }
+
+      style.overflowX = &#x27;auto&#x27;;
+    }
+
+    return cssStyleify(style);
+  }),
+
+  init() {
+    this._super(...arguments);
+
+    let { table } = this;
+    let { media } = this;
+
+    assert(&#x27;[ember-light-table] table must be an instance of Table&#x27;, table instanceof Table);
+
+    if (isNone(media)) {
+      this.set(&#x27;responsive&#x27;, false);
+    }
+
+    this.onMediaChange();
+  },
+
+  onMediaChange: observer(&#x27;media.matches.[]&#x27;, &#x27;table.allColumns.[]&#x27;, function() {
+    let { responsive } = this;
+    let { matches } = this.media;
+    let { breakpoints } = this;
+    let { table } = this;
+    let numColumns = 0;
+
+    if (!responsive) {
+      return;
+    }
+
+    this.send(&#x27;onBeforeResponsiveChange&#x27;, matches);
+
+    if (!isNone(breakpoints)) {
+      Object.keys(breakpoints).forEach((b) =&gt; {
+        if (matches.indexOf(b) &gt; -1) {
+          numColumns = Math.max(numColumns, breakpoints[b]);
+        }
+      });
+
+      this._displayColumns(numColumns);
+    } else {
+      table.get(&#x27;allColumns&#x27;).forEach((c) =&gt; {
+        let breakpoints = c.get(&#x27;breakpoints&#x27;);
+        let isMatch = isEmpty(breakpoints) || intersections(matches, breakpoints).length &gt; 0;
+        c.set(&#x27;responsiveHidden&#x27;, !isMatch);
+      });
+    }
+
+    this.send(&#x27;onAfterResponsiveChange&#x27;, matches);
+  }),
+
+  _displayColumns(numColumns) {
+    let { table } = this;
+    let hiddenColumns = table.get(&#x27;responsiveHiddenColumns&#x27;);
+    let visibleColumns = table.get(&#x27;visibleColumns&#x27;);
+
+    if (!numColumns) {
+      hiddenColumns.setEach(&#x27;responsiveHidden&#x27;, false);
+    } else if (visibleColumns.length &gt; numColumns) {
+      emberArray(visibleColumns.slice(numColumns, visibleColumns.length)).setEach(&#x27;responsiveHidden&#x27;, true);
+    } else if (visibleColumns.length &lt; numColumns) {
+      emberArray(hiddenColumns.slice(0, numColumns - visibleColumns.length)).setEach(&#x27;responsiveHidden&#x27;, false);
+    }
+  },
+
+  // No-ops for closure actions
+  onBeforeResponsiveChange() {},
+  onAfterResponsiveChange() {},
+
+  actions: {
+    /**
+     * onBeforeResponsiveChange action.
+     * Called before any column visibility is altered.
+     *
+     * @event onBeforeResponsiveChange
+     * @param  {Array} matches list of matching breakpoints
+     */
+    onBeforeResponsiveChange(/* matches */) {
+      this.onBeforeResponsiveChange(...arguments);
+    },
+
+    /**
+     * onAfterResponsiveChange action.
+     * Called after all column visibility has been altered.
+     *
+     * @event onAfterResponsiveChange
+     * @param  {Array} matches list of matching breakpoints
+     */
+    onAfterResponsiveChange(/* matches */) {
+      this.onAfterResponsiveChange(...arguments);
+    }
+  }
+});
+
+LightTable.reopenClass({
+  positionalParams: [&#x27;table&#x27;]
+});
+
+export default LightTable;
+
+    </pre>
+</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../assets/vendor/prettify/prettify-min.js"></script>
+    <script>prettyPrint();</script>
+    <script src="../assets/vendor/jquery/jquery.min.js"></script>
+    <script src="../assets/vendor/jquery-ui/jquery-ui.min.js"></script>
+    <script src="../assets/vendor/bootstrap/js/bootstrap.js"></script>
+    <script src="../assets/vendor/github-slugger/slugger.js"></script>
+    <script src="../assets/js/yuidoc-bootstrap.js"></script>
+</body>
+</html>

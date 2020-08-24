@@ -1,0 +1,1908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>TableHeaderMixin - Ember Light Table</title>
+    <meta name="description" content="Lightweight, component based table for Ember 3.4+">
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/vendor/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="../assets/vendor/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../assets/css/theme.css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,700' rel='stylesheet' type='text/css'>
+    
+
+</head>
+<body>
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a href="../" class="navbar-brand">
+              <img src="../assets/img/ember-logo.png" alt="enterprise logo">
+            <span>Light Table</span>
+          </a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="nav">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="https://github.com/offirgolan/ember-light-table" class="fa fa-github github"></a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div id="main-wrapper" class="row">
+        <div id="content-wrapper">
+            <ol class="panel-group" id="sidebar" role="tablist" aria-multiselectable="true">
+                <li class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="sidebar-search-heading">
+                        <h4 class="panel-title">
+                      <a role="button" data-toggle="collapse" href="#sidebar-search" aria-expanded="true" aria-controls="collapseOne">
+                        Search
+                      </a>
+                    </h4>
+                    </div>
+                    <div id="sidebar-search" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="sidebar-search-heading">
+                        <div class="panel-body">
+                            <div id="api-tabview-filter">
+                                <input type="search" id="api-filter" placeholder="Search...">
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                    <li class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="sidebar-version-heading">
+                            <h4 class="panel-title">
+                                <a role="button" href="https://github.com/offirgolan/ember-light-table/commits/023109c2" target="_blank">
+                                  Tag: 2.0.0-beta.5.023109c2
+                                </a>
+                            </h4>
+                        </div>
+                    </li>
+                <li class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="sidebar-modules-heading">
+                        <h4 class="panel-title">
+                    <a role="button" data-toggle="collapse" href="#sidebar-modules" aria-expanded="true" aria-controls="collapseOne">
+                      Modules
+                    </a>
+                  </h4>
+                    </div>
+                    <div id="sidebar-modules" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="sidebar-modules-heading">
+                        <div class="panel-body">
+                                <ol>
+                                        <li>
+                                            <a href="../modules/Light Table.html">Light Table</a>
+                                                    <li class="sub"><a href="../modules/Cell Types.html">Cell Types</a></li>
+                                                    <li class="sub"><a href="../modules/Column Types.html">Column Types</a></li>
+                                        </li>
+                                        <li>
+                                            <a href="../modules/Table.html">Table</a>
+                                        </li>
+                                        <li>
+                                            <a href="../modules/Usage.html">Usage</a>
+                                                    <li class="sub"><a href="../modules/Table Declaration.html">Table Declaration</a></li>
+                                                    <li class="sub"><a href="../modules/Component Declaration.html">Component Declaration</a></li>
+                                        </li>
+                                        <li>
+                                            <a href="../modules/Utils.html">Utils</a>
+                                        </li>
+                                </ol>
+                        </div>
+                    </div>
+                </li>
+            
+                <li class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="sidebar-classes-heading">
+                        <h4 class="panel-title">
+                      <a role="button" data-toggle="collapse" href="#sidebar-classes" aria-expanded="true" aria-controls="collapseOne">
+                        Classes
+                      </a>
+                    </h4>
+                    </div>
+                    <div id="sidebar-classes" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="sidebar-classes-heading">
+                        <div class="panel-body">
+                            <ol>
+                                    <li>
+                                        <a href="../classes/Base Cell.html">Base Cell</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/Base Column.html">Base Column</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/Column.html">Column</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/fixProto.html">fixProto</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/light-table.html">light-table</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/Row.html">Row</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/t.body.html">t.body</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/t.foot.html">t.foot</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/t.head.html">t.head</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/Table.html">Table</a>
+                                    </li>
+                            </ol>
+                        </div>
+                    </div>
+                </li>
+            </ol>
+            <div class="content-container">
+                <div class="apidocs">
+                    <div id="docs-main">
+                        <div class="content">
+
+
+<div class="page-header">
+    <h1> <i class="fa fa-bookmark-o" aria-hidden="true"></i> TableHeaderMixin Class
+            <a class="pull-right file-edit" href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/mixins/table-header.js#L10" target="_blank">
+              <i class="fa fa-pencil" aria-hidden="true"></i>
+            </a>
+    </h1>
+</div>
+
+  <p class="private-class">Private</p>
+
+<div class="content-meta">
+
+        <div class="extends">
+            Extends: <a href="http://emberjs.com/api/classes/Ember.Mixin.html" class="crosslink external" target="_blank">Ember.Mixin</a>
+        </div>
+
+            Module: <a href="../modules/Light Table.html">Light Table</a>
+
+
+        <div class="foundat">
+            Defined In: <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/mixins/table-header.js#L10">addon/mixins/table-header.js:10</a>
+        </div>
+</div>
+
+
+
+
+<div>
+    <div class="page-section">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+          <li role="presentation" class="active"><a href="#tab_index" aria-controls="tab_index" role="tab" data-toggle="tab">Index</a></li>
+            <li role="presentation"><a href="#tab_methods" aria-controls="tab_methods" role="tab" data-toggle="tab">Methods</a></li>
+
+            <li role="presentation"><a href="#tab_properties" aria-controls="tab_properties" role="tab" data-toggle="tab">Properties</a></li>
+
+
+            <li role="presentation"><a href="#tab_events" aria-controls="tab_events" role="tab" data-toggle="tab">Events</a></li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+
+              <form id="options-form" class="form-inline">
+                  Show:
+                  <label for="api-show-inherited" class="checkbox">
+                      <input type="checkbox" id="api-show-inherited" checked>
+                      Inherited
+                  </label>
+          
+                  <label for="api-show-protected" class="checkbox">
+                      <input type="checkbox" id="api-show-protected">
+                      Protected
+                  </label>
+          
+                  <label for="api-show-private" class="checkbox">
+                      <input type="checkbox" id="api-show-private">
+                      Private
+                  </label>
+                  <label for="api-show-deprecated" class="checkbox">
+                      <input type="checkbox" id="api-show-deprecated">
+                      Deprecated
+                  </label>
+          
+              </form>
+
+          <div id="tab_index" role="tabpanel" class="tab-pane active" >
+                  <div class="index-section methods">
+                      <h3>Methods</h3>
+
+                      <ul class="index-list methods extends">
+                              <li class="index-item method">
+                                  <a href="#method_"></a>
+
+                              </li>
+                              <li class="index-item method">
+                                  <a href="#method_"></a>
+
+                              </li>
+                              <li class="index-item method">
+                                  <a href="#method_"></a>
+
+                              </li>
+                              <li class="index-item method">
+                                  <a href="#method_"></a>
+
+                              </li>
+                              <li class="index-item method">
+                                  <a href="#method_"></a>
+
+                              </li>
+                              <li class="index-item method">
+                                  <a href="#method_"></a>
+
+                              </li>
+                              <li class="index-item method">
+                                  <a href="#method_"></a>
+
+                              </li>
+                              <li class="index-item method">
+                                  <a href="#method_"></a>
+
+                              </li>
+                              <li class="index-item method">
+                                  <a href="#method_"></a>
+
+                              </li>
+                              <li class="index-item method">
+                                  <a href="#method_"></a>
+
+                              </li>
+                              <li class="index-item method">
+                                  <a href="#method_"></a>
+
+                              </li>
+                              <li class="index-item method private inherited">
+                                  <a href="#method_apply">apply</a>
+
+                              </li>
+                              <li class="index-item method private inherited">
+                                  <a href="#method_detect">detect</a>
+
+                              </li>
+                              <li class="index-item method private inherited">
+                                  <a href="#method_reopen">reopen</a>
+
+                              </li>
+                      </ul>
+                  </div>
+
+                  <div class="index-section properties">
+                      <h3>Properties</h3>
+
+                      <ul class="index-list properties extends">
+                              <li class="index-item property">
+                                  <a href="#property_dragColumnGroup">dragColumnGroup</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_extra">extra</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_fixed">fixed</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_iconAscending">iconAscending</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_iconComponent">iconComponent</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_iconDescending">iconDescending</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_iconSortable">iconSortable</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_multiColumnSort">multiColumnSort</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_resizeOnDrag">resizeOnDrag</a>
+
+                              </li>
+                              <li class="index-item property private">
+                                  <a href="#property_sharedOptions">sharedOptions</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_sortOnClick">sortOnClick</a>
+
+                              </li>
+                              <li class="index-item property private">
+                                  <a href="#property_table">table</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_tableActions">tableActions</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_to">to</a>
+
+                              </li>
+                      </ul>
+                  </div>
+
+
+                  <div class="index-section events">
+                      <h3>Events</h3>
+
+                      <ul class="index-list events extends">
+                              <li class="index-item event">
+                                  <a href="#event_onColumnClick">onColumnClick</a>
+
+                              </li>
+                              <li class="index-item event">
+                                  <a href="#event_onColumnDoubleClick">onColumnDoubleClick</a>
+
+                              </li>
+                              <li class="index-item event">
+                                  <a href="#event_onColumnDrag">onColumnDrag</a>
+
+                              </li>
+                              <li class="index-item event">
+                                  <a href="#event_onColumnDrop">onColumnDrop</a>
+
+                              </li>
+                              <li class="index-item event">
+                                  <a href="#event_onColumnResized">onColumnResized</a>
+
+                              </li>
+                      </ul>
+                  </div>
+          </div>
+
+              <div id="tab_methods" role="tabpanel" class="tab-pane">
+                  <div class="item-list">
+  <div id="method_" class="method item">
+  	<span class="method-signature">
+  	<span class="name anchorable-toc">
+  		<a class="fa fa-link toc-anchor" href="#method_"></a>
+  		
+  	</span>
+  
+  		<div class="args">
+  			<span class="paren">(</span><ul class="args-list inline commas">
+  				<li class="arg">
+  						<code>exclusionGroup</code>
+  				</li>
+  			</ul><span class="paren">)</span>
+  		</div>
+  	</span>
+  
+  
+  
+  
+  
+  
+  
+  	<div class="meta">
+  				<p>
+  				Defined in
+  		<a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/mixins/has-behaviors.js#L27">addon/mixins/has-behaviors.js:27</a>
+  		</p>
+  
+  
+  
+  	</div>
+  
+  	<div class="description"><p>Returns a computed property flag that turns on or off a group of
+  mutually exclusive behaviors.</p>
+  </div>
+  
+  		<div class="params">
+  			<h4>Parameters:</h4>
+  
+  			<ul class="params-list">
+  				<li class="param">
+  						<code class="param-name">exclusionGroup</code>
+  						<span class="type"><a href="http://emberjs.com/api/classes/String.html" class="crosslink external" target="_blank">String</a></span>
+  
+  
+  					<div class="param-description"><ul>
+  <li>If present, it is
+  the name of the mutually exclusive group of behaviors for
+  which all behaviors should be turned off or for which the
+  behavior having the higher priority should be turned on,
+  based on the value of the property.</li>
+  </ul>
+  </div>
+  
+  				</li>
+  			</ul>
+  		</div>
+  
+  
+  </div>
+  <div id="method_" class="method item">
+  	<span class="method-signature">
+  	<span class="name anchorable-toc">
+  		<a class="fa fa-link toc-anchor" href="#method_"></a>
+  		
+  	</span>
+  
+  		<div class="args">
+  			<span class="paren">(</span><ul class="args-list inline commas">
+  				<li class="arg">
+  						<code>exclusionGroup</code>
+  				</li>
+  				<li class="arg">
+  						<code>behaviorPropertyName</code>
+  				</li>
+  			</ul><span class="paren">)</span>
+  		</div>
+  	</span>
+  
+  
+  
+  
+  
+  
+  
+  	<div class="meta">
+  				<p>
+  				Defined in
+  		<a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/mixins/has-behaviors.js#L56">addon/mixins/has-behaviors.js:56</a>
+  		</p>
+  
+  
+  
+  	</div>
+  
+  	<div class="description"><p>Returns a computed property flag that prioritize or not a specific
+  behavior in a group of mutually exclusive behaviors.</p>
+  </div>
+  
+  		<div class="params">
+  			<h4>Parameters:</h4>
+  
+  			<ul class="params-list">
+  				<li class="param">
+  						<code class="param-name">exclusionGroup</code>
+  						<span class="type"><a href="http://emberjs.com/api/classes/String.html" class="crosslink external" target="_blank">String</a></span>
+  
+  
+  					<div class="param-description"><ul>
+  <li>The name of the mutually exclusive
+  group of behaviors.</li>
+  </ul>
+  </div>
+  
+  				</li>
+  				<li class="param">
+  						<code class="param-name">behaviorPropertyName</code>
+  						<span class="type"><a href="http://emberjs.com/api/classes/String.html" class="crosslink external" target="_blank">String</a></span>
+  
+  
+  					<div class="param-description"><ul>
+  <li>The name of the property that
+  contains the instance of the behavior to prioritize or not.</li>
+  </ul>
+  </div>
+  
+  				</li>
+  			</ul>
+  		</div>
+  
+  
+  </div>
+  <div id="method_" class="method item">
+  	<span class="method-signature">
+  	<span class="name anchorable-toc">
+  		<a class="fa fa-link toc-anchor" href="#method_"></a>
+  		
+  	</span>
+  
+  		<div class="args">
+  			<span class="paren">(</span><ul class="args-list inline commas">
+  				<li class="arg">
+  						<code>behaviorClass</code>
+  				</li>
+  			</ul><span class="paren">)</span>
+  		</div>
+  	</span>
+  
+  
+  
+  
+  
+  
+  
+  	<div class="meta">
+  				<p>
+  				Defined in
+  		<a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/mixins/has-behaviors.js#L87">addon/mixins/has-behaviors.js:87</a>
+  		</p>
+  
+  
+  
+  	</div>
+  
+  	<div class="description"><p>Returns a computed property that is the first behavior of a given type if one is present.</p>
+  </div>
+  
+  		<div class="params">
+  			<h4>Parameters:</h4>
+  
+  			<ul class="params-list">
+  				<li class="param">
+  						<code class="param-name">behaviorClass</code>
+  						<span class="type"><a href="http://emberjs.com/api/classes/String.html" class="crosslink external" target="_blank">String</a></span>
+  
+  
+  					<div class="param-description"><ul>
+  <li>The class of the behavior to be returned.</li>
+  </ul>
+  </div>
+  
+  				</li>
+  			</ul>
+  		</div>
+  
+  
+  </div>
+  <div id="method_" class="method item">
+  	<span class="method-signature">
+  	<span class="name anchorable-toc">
+  		<a class="fa fa-link toc-anchor" href="#method_"></a>
+  		
+  	</span>
+  
+  		<div class="args">
+  			<span class="paren">(</span><ul class="args-list inline commas">
+  				<li class="arg">
+  						<code>behavior</code>
+  				</li>
+  			</ul><span class="paren">)</span>
+  		</div>
+  	</span>
+  
+  
+  
+  
+  
+  
+  
+  	<div class="meta">
+  				<p>
+  				Defined in
+  		<a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/mixins/has-behaviors.js#L130">addon/mixins/has-behaviors.js:130</a>
+  		</p>
+  
+  
+  
+  	</div>
+  
+  	<div class="description"><p>Moves a behavior in front of other behaviors.</p>
+  </div>
+  
+  		<div class="params">
+  			<h4>Parameters:</h4>
+  
+  			<ul class="params-list">
+  				<li class="param">
+  						<code class="param-name">behavior</code>
+  						<span class="type">Behavior</span>
+  
+  
+  					<div class="param-description"><ul>
+  <li>Instance of the behavior to prioritize.</li>
+  </ul>
+  </div>
+  
+  				</li>
+  			</ul>
+  		</div>
+  
+  
+  </div>
+  <div id="method_" class="method item">
+  	<span class="method-signature">
+  	<span class="name anchorable-toc">
+  		<a class="fa fa-link toc-anchor" href="#method_"></a>
+  		
+  	</span>
+  
+  		<div class="args">
+  			<span class="paren">(</span><ul class="args-list inline commas">
+  				<li class="arg">
+  						<code>behavior</code>
+  				</li>
+  			</ul><span class="paren">)</span>
+  		</div>
+  	</span>
+  
+  
+  
+  
+  
+  
+  
+  	<div class="meta">
+  				<p>
+  				Defined in
+  		<a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/mixins/has-behaviors.js#L150">addon/mixins/has-behaviors.js:150</a>
+  		</p>
+  
+  
+  
+  	</div>
+  
+  	<div class="description"><p>Turns off a behavior.</p>
+  </div>
+  
+  		<div class="params">
+  			<h4>Parameters:</h4>
+  
+  			<ul class="params-list">
+  				<li class="param">
+  						<code class="param-name">behavior</code>
+  						<span class="type">Behavior</span>
+  
+  
+  					<div class="param-description"><ul>
+  <li>Instance of the behavior to inactivate.</li>
+  </ul>
+  </div>
+  
+  				</li>
+  			</ul>
+  		</div>
+  
+  
+  </div>
+  <div id="method_" class="method item">
+  	<span class="method-signature">
+  	<span class="name anchorable-toc">
+  		<a class="fa fa-link toc-anchor" href="#method_"></a>
+  		
+  	</span>
+  
+  		<div class="args">
+  			<span class="paren">(</span><ul class="args-list inline commas">
+  				<li class="arg">
+  						<code>behavior</code>
+  				</li>
+  				<li class="arg">
+  						<code class="optional">value=true</code>
+  				</li>
+  			</ul><span class="paren">)</span>
+  		</div>
+  	</span>
+  
+  
+  
+  
+  
+  
+  
+  	<div class="meta">
+  				<p>
+  				Defined in
+  		<a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/mixins/has-behaviors.js#L166">addon/mixins/has-behaviors.js:166</a>
+  		</p>
+  
+  
+  
+  	</div>
+  
+  	<div class="description"><p>Turns on or off a behavior.</p>
+  </div>
+  
+  		<div class="params">
+  			<h4>Parameters:</h4>
+  
+  			<ul class="params-list">
+  				<li class="param">
+  						<code class="param-name">behavior</code>
+  						<span class="type">Behavior</span>
+  
+  
+  					<div class="param-description"><ul>
+  <li>Behavior instance to activate/inactivate.</li>
+  </ul>
+  </div>
+  
+  				</li>
+  				<li class="param">
+  						<code class="param-name optional">[value=true]</code>
+  						<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+  						<span class="flag optional" title="This parameter is optional.">optional</span>
+  
+  
+  					<div class="param-description"><ul>
+  <li>Whether the behavior is activated (true) or inactivated (false).</li>
+  </ul>
+  </div>
+  
+  				</li>
+  			</ul>
+  		</div>
+  
+  
+  </div>
+  <div id="method_" class="method item">
+  	<span class="method-signature">
+  	<span class="name anchorable-toc">
+  		<a class="fa fa-link toc-anchor" href="#method_"></a>
+  		
+  	</span>
+  
+  		<div class="args">
+  			<span class="paren">(</span><ul class="args-list inline commas">
+  				<li class="arg">
+  						<code>exclusionGroup</code>
+  				</li>
+  			</ul><span class="paren">)</span>
+  		</div>
+  		<span class="returns-inline">
+  			<span class="type">Behavior</span>
+  		</span>
+  	</span>
+  
+  
+  
+  
+  
+  
+  
+  	<div class="meta">
+  				<p>
+  				Defined in
+  		<a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/mixins/has-behaviors.js#L185">addon/mixins/has-behaviors.js:185</a>
+  		</p>
+  
+  
+  
+  	</div>
+  
+  	<div class="description"><p>Returns the active behavior of a multually exclusive group.</p>
+  </div>
+  
+  		<div class="params">
+  			<h4>Parameters:</h4>
+  
+  			<ul class="params-list">
+  				<li class="param">
+  						<code class="param-name">exclusionGroup</code>
+  						<span class="type"><a href="http://emberjs.com/api/classes/String.html" class="crosslink external" target="_blank">String</a></span>
+  
+  
+  
+  				</li>
+  			</ul>
+  		</div>
+  
+  		<div class="returns">
+  			<h4>Returns:</h4>
+  
+  			<div class="returns-description">
+  						<span class="type">Behavior</span>:
+  					<ul>
+  <li>The active behavior's instance or <code>undefined</code> otherwise.</li>
+  </ul>
+  
+  			</div>
+  		</div>
+  
+  </div>
+  <div id="method_" class="method item">
+  	<span class="method-signature">
+  	<span class="name anchorable-toc">
+  		<a class="fa fa-link toc-anchor" href="#method_"></a>
+  		
+  	</span>
+  
+  		<div class="args">
+  			<span class="paren">(</span><ul class="args-list inline commas">
+  				<li class="arg">
+  						<code>exclusionGroup</code>
+  				</li>
+  				<li class="arg">
+  						<code class="optional">value=true</code>
+  				</li>
+  			</ul><span class="paren">)</span>
+  		</div>
+  		<span class="returns-inline">
+  			<span class="type">Behavior</span>
+  		</span>
+  	</span>
+  
+  
+  
+  
+  
+  
+  
+  	<div class="meta">
+  				<p>
+  				Defined in
+  		<a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/mixins/has-behaviors.js#L196">addon/mixins/has-behaviors.js:196</a>
+  		</p>
+  
+  
+  
+  	</div>
+  
+  	<div class="description"><p>Returns the inactive behavior of a multually exclusive group having the highest priority.</p>
+  </div>
+  
+  		<div class="params">
+  			<h4>Parameters:</h4>
+  
+  			<ul class="params-list">
+  				<li class="param">
+  						<code class="param-name">exclusionGroup</code>
+  						<span class="type"><a href="http://emberjs.com/api/classes/String.html" class="crosslink external" target="_blank">String</a></span>
+  
+  
+  
+  				</li>
+  				<li class="param">
+  						<code class="param-name optional">[value=true]</code>
+  						<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+  						<span class="flag optional" title="This parameter is optional.">optional</span>
+  
+  
+  					<div class="param-description"><ul>
+  <li>Whether the behavior is activated (true) or inactivated (false).</li>
+  </ul>
+  </div>
+  
+  				</li>
+  			</ul>
+  		</div>
+  
+  		<div class="returns">
+  			<h4>Returns:</h4>
+  
+  			<div class="returns-description">
+  						<span class="type">Behavior</span>:
+  					<ul>
+  <li>The inactive behavior's instance or <code>undefined</code> otherwise.</li>
+  </ul>
+  
+  			</div>
+  		</div>
+  
+  </div>
+  <div id="method_" class="method item">
+  	<span class="method-signature">
+  	<span class="name anchorable-toc">
+  		<a class="fa fa-link toc-anchor" href="#method_"></a>
+  		
+  	</span>
+  
+  		<div class="args">
+  			<span class="paren">(</span><ul class="args-list inline commas">
+  				<li class="arg">
+  						<code>exclusionGroup</code>
+  				</li>
+  			</ul><span class="paren">)</span>
+  		</div>
+  		<span class="returns-inline">
+  			<span class="type">Behavior</span>
+  		</span>
+  	</span>
+  
+  
+  
+  
+  
+  
+  
+  	<div class="meta">
+  				<p>
+  				Defined in
+  		<a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/mixins/has-behaviors.js#L208">addon/mixins/has-behaviors.js:208</a>
+  		</p>
+  
+  
+  
+  	</div>
+  
+  	<div class="description"><p>Returns the behavior of a multually exclusive having the highest priority.</p>
+  </div>
+  
+  		<div class="params">
+  			<h4>Parameters:</h4>
+  
+  			<ul class="params-list">
+  				<li class="param">
+  						<code class="param-name">exclusionGroup</code>
+  						<span class="type"><a href="http://emberjs.com/api/classes/String.html" class="crosslink external" target="_blank">String</a></span>
+  
+  
+  
+  				</li>
+  			</ul>
+  		</div>
+  
+  		<div class="returns">
+  			<h4>Returns:</h4>
+  
+  			<div class="returns-description">
+  						<span class="type">Behavior</span>:
+  					<ul>
+  <li>The behavior's instance or <code>undefined</code> otherwise.</li>
+  </ul>
+  
+  			</div>
+  		</div>
+  
+  </div>
+  <div id="method_" class="method item">
+  	<span class="method-signature">
+  	<span class="name anchorable-toc">
+  		<a class="fa fa-link toc-anchor" href="#method_"></a>
+  		
+  	</span>
+  
+  		<div class="args">
+  			<span class="paren">(</span><ul class="args-list inline commas">
+  				<li class="arg">
+  						<code>exclusionGroup</code>
+  				</li>
+  			</ul><span class="paren">)</span>
+  		</div>
+  	</span>
+  
+  
+  
+  
+  
+  
+  
+  	<div class="meta">
+  				<p>
+  				Defined in
+  		<a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/mixins/has-behaviors.js#L219">addon/mixins/has-behaviors.js:219</a>
+  		</p>
+  
+  
+  
+  	</div>
+  
+  	<div class="description"><p>Turns off the active behavior of a mutually exclusive group of behaviors.</p>
+  </div>
+  
+  		<div class="params">
+  			<h4>Parameters:</h4>
+  
+  			<ul class="params-list">
+  				<li class="param">
+  						<code class="param-name">exclusionGroup</code>
+  						<span class="type"><a href="http://emberjs.com/api/classes/String.html" class="crosslink external" target="_blank">String</a></span>
+  
+  
+  
+  				</li>
+  			</ul>
+  		</div>
+  
+  
+  </div>
+  <div id="method_" class="method item">
+  	<span class="method-signature">
+  	<span class="name anchorable-toc">
+  		<a class="fa fa-link toc-anchor" href="#method_"></a>
+  		
+  	</span>
+  
+  		<span class="paren">()</span>
+  	</span>
+  
+  
+  
+  
+  
+  
+  
+  	<div class="meta">
+  				<p>
+  				Defined in
+  		<a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/mixins/has-behaviors.js#L276">addon/mixins/has-behaviors.js:276</a>
+  		</p>
+  
+  
+  
+  	</div>
+  
+  	<div class="description"><p>This function attach or detach event listeners based on the behaviors present in
+  <code>behaviors</code></p>
+  </div>
+  
+  
+  
+  </div>
+  <div id="method_apply" class="method item private inherited">
+  	<span class="method-signature">
+  	<span class="name anchorable-toc">
+  		<a class="fa fa-link toc-anchor" href="#method_apply"></a>
+  		apply
+  	</span>
+  
+  		<div class="args">
+  			<span class="paren">(</span><ul class="args-list inline commas">
+  				<li class="arg">
+  						<code>obj</code>
+  				</li>
+  			</ul><span class="paren">)</span>
+  		</div>
+  		<span class="returns-inline">
+  			<span class="type"></span>
+  		</span>
+  	</span>
+  
+  
+  
+  		<span class="flag private">private</span>
+  
+  
+  
+  
+  	<div class="meta">
+  				<p>Inherited from
+  				<a href="http://emberjs.com/api/classes/Ember.Mixin.html#method_apply">Ember.Mixin</a>:
+  		<a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/packages/ember-metal/lib/mixin.js#L632">packages/ember-metal/lib/mixin.js:632</a>
+  		</p>
+  
+  
+  
+  	</div>
+  
+  
+  		<div class="params">
+  			<h4>Parameters:</h4>
+  
+  			<ul class="params-list">
+  				<li class="param">
+  						<code class="param-name">obj</code>
+  						<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+  
+  
+  
+  				</li>
+  			</ul>
+  		</div>
+  
+  		<div class="returns">
+  			<h4>Returns:</h4>
+  
+  			<div class="returns-description">
+  					applied object
+  			</div>
+  		</div>
+  
+  </div>
+  <div id="method_detect" class="method item private inherited">
+  	<span class="method-signature">
+  	<span class="name anchorable-toc">
+  		<a class="fa fa-link toc-anchor" href="#method_detect"></a>
+  		detect
+  	</span>
+  
+  		<div class="args">
+  			<span class="paren">(</span><ul class="args-list inline commas">
+  				<li class="arg">
+  						<code>obj</code>
+  				</li>
+  			</ul><span class="paren">)</span>
+  		</div>
+  		<span class="returns-inline">
+  			<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+  		</span>
+  	</span>
+  
+  
+  
+  		<span class="flag private">private</span>
+  
+  
+  
+  
+  	<div class="meta">
+  				<p>Inherited from
+  				<a href="http://emberjs.com/api/classes/Ember.Mixin.html#method_detect">Ember.Mixin</a>:
+  		<a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/packages/ember-metal/lib/mixin.js#L661">packages/ember-metal/lib/mixin.js:661</a>
+  		</p>
+  
+  
+  
+  	</div>
+  
+  
+  		<div class="params">
+  			<h4>Parameters:</h4>
+  
+  			<ul class="params-list">
+  				<li class="param">
+  						<code class="param-name">obj</code>
+  						<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+  
+  
+  
+  				</li>
+  			</ul>
+  		</div>
+  
+  		<div class="returns">
+  			<h4>Returns:</h4>
+  
+  			<div class="returns-description">
+  						<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+  			</div>
+  		</div>
+  
+  </div>
+  <div id="method_reopen" class="method item private inherited">
+  	<span class="method-signature">
+  	<span class="name anchorable-toc">
+  		<a class="fa fa-link toc-anchor" href="#method_reopen"></a>
+  		reopen
+  	</span>
+  
+  		<div class="args">
+  			<span class="paren">(</span><ul class="args-list inline commas">
+  				<li class="arg">
+  						<code>arguments</code>
+  				</li>
+  			</ul><span class="paren">)</span>
+  		</div>
+  	</span>
+  
+  
+  
+  		<span class="flag private">private</span>
+  
+  
+  
+  
+  	<div class="meta">
+  				<p>Inherited from
+  				<a href="http://emberjs.com/api/classes/Ember.Mixin.html#method_reopen">Ember.Mixin</a>:
+  		<a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/packages/ember-metal/lib/mixin.js#L596">packages/ember-metal/lib/mixin.js:596</a>
+  		</p>
+  
+  
+  
+  	</div>
+  
+  
+  		<div class="params">
+  			<h4>Parameters:</h4>
+  
+  			<ul class="params-list">
+  				<li class="param">
+  						<code class="param-name">arguments</code>
+  						<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+  
+  						<span class="flag multiple" title="This argument may occur one or more times.">multiple</span>
+  
+  
+  				</li>
+  			</ul>
+  		</div>
+  
+  
+  </div>
+                  </div>
+              </div>
+
+              <div id="tab_properties" role="tabpanel" class="tab-pane">
+                  <div class="item-list">
+  <div id="property_dragColumnGroup" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_dragColumnGroup"></a>
+          dragColumnGroup
+      </h3>
+      <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/mixins/draggable-column.js#L27">addon/mixins/draggable-column.js:27</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>Array of Columns indicating where the column can be potentially dragged.
+  If the column is part of a group (has a parent column), this will be all of the columns in that group,
+  otherwise it's all of the columns in the table.</p>
+  
+      </div>
+  
+  
+  
+  </div>
+  <div id="property_extra" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_extra"></a>
+          extra
+      </h3>
+      <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/mixins/table-header.js#L41">addon/mixins/table-header.js:41</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          
+      </div>
+  
+  
+  
+  </div>
+  <div id="property_fixed" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_fixed"></a>
+          fixed
+      </h3>
+      <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/mixins/table-header.js#L47">addon/mixins/table-header.js:47</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          
+      </div>
+  
+          <p><br><strong>Default:</strong> false</p>
+  
+  
+  </div>
+  <div id="property_iconAscending" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_iconAscending"></a>
+          iconAscending
+      </h3>
+      <span class="type"><a href="http://emberjs.com/api/classes/String.html" class="crosslink external" target="_blank">String</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/mixins/table-header.js#L93">addon/mixins/table-header.js:93</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>See <code>iconSortable</code>.  CSS classes to apply to <code>&lt;i class="lt-sort-icon"&gt;&lt;/i&gt;</code>
+  when the column is sorted ascending.</p>
+  
+      </div>
+  
+          <p><br><strong>Default:</strong> &#x27;&#x27;</p>
+  
+  
+  </div>
+  <div id="property_iconComponent" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_iconComponent"></a>
+          iconComponent
+      </h3>
+      <span class="type"><a href="http://emberjs.com/api/classes/String.html" class="crosslink external" target="_blank">String</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/mixins/table-header.js#L113">addon/mixins/table-header.js:113</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>Custom sorting component name to use instead of the default <code>&lt;i class="lt-sort-icon"&gt;&lt;/i&gt;</code> template.
+  See <code>iconSortable</code>, <code>iconAsending</code>, or <code>iconDescending</code>.</p>
+  
+      </div>
+  
+          <p><br><strong>Default:</strong> false</p>
+  
+  
+  </div>
+  <div id="property_iconDescending" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_iconDescending"></a>
+          iconDescending
+      </h3>
+      <span class="type"><a href="http://emberjs.com/api/classes/String.html" class="crosslink external" target="_blank">String</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/mixins/table-header.js#L103">addon/mixins/table-header.js:103</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>See <code>iconSortable</code>.  CSS classes to apply to <code>&lt;i class="lt-sort-icon"&gt;&lt;/i&gt;</code>
+  when the column is sorted descending.</p>
+  
+      </div>
+  
+          <p><br><strong>Default:</strong> &#x27;&#x27;</p>
+  
+  
+  </div>
+  <div id="property_iconSortable" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_iconSortable"></a>
+          iconSortable
+      </h3>
+      <span class="type"><a href="http://emberjs.com/api/classes/String.html" class="crosslink external" target="_blank">String</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/mixins/table-header.js#L77">addon/mixins/table-header.js:77</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>CSS classes to be applied to an <code>&lt;i class="lt-sort-icon"&gt;&lt;/i&gt;</code> tag that is
+  inserted into the column's <code>&lt;th&gt;</code> element when the column is sortable but
+  not yet sorted.</p>
+  <p>For instance, if you have installed <code>ember-font-awesome</code> or include the
+  <code>font-awesome</code> assets manually (e.g. via a CDN), you can set
+  <code>iconSortable</code> to <code>'fa fa-sort'</code>, which would yield this markup:
+  <code>&lt;i class="lt-sort-icon fa fa-sort"&gt;&lt;/i&gt;</code></p>
+  
+      </div>
+  
+          <p><br><strong>Default:</strong> &#x27;&#x27;</p>
+  
+  
+  </div>
+  <div id="property_multiColumnSort" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_multiColumnSort"></a>
+          multiColumnSort
+      </h3>
+      <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/mixins/table-header.js#L61">addon/mixins/table-header.js:61</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          
+      </div>
+  
+          <p><br><strong>Default:</strong> false</p>
+  
+  
+  </div>
+  <div id="property_resizeOnDrag" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_resizeOnDrag"></a>
+          resizeOnDrag
+      </h3>
+      <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/mixins/table-header.js#L68">addon/mixins/table-header.js:68</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>Resize all cells in the column instead of just the header / footer</p>
+  
+      </div>
+  
+          <p><br><strong>Default:</strong> false</p>
+  
+  
+  </div>
+  <div id="property_sharedOptions" class="property item private">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_sharedOptions"></a>
+          sharedOptions
+      </h3>
+      <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+  
+  
+          <span class="flag private">private</span>
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/mixins/table-header.js#L28">addon/mixins/table-header.js:28</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          
+      </div>
+  
+  
+  
+  </div>
+  <div id="property_sortOnClick" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_sortOnClick"></a>
+          sortOnClick
+      </h3>
+      <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/mixins/table-header.js#L54">addon/mixins/table-header.js:54</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          
+      </div>
+  
+          <p><br><strong>Default:</strong> true</p>
+  
+  
+  </div>
+  <div id="property_table" class="property item private">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_table"></a>
+          table
+      </h3>
+      <span class="type"><a href="../classes/Table.html" class="crosslink">Table</a></span>
+  
+  
+          <span class="flag private">private</span>
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/mixins/table-header.js#L21">addon/mixins/table-header.js:21</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          
+      </div>
+  
+  
+  
+  </div>
+  <div id="property_tableActions" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_tableActions"></a>
+          tableActions
+      </h3>
+      <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/mixins/table-header.js#L35">addon/mixins/table-header.js:35</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          
+      </div>
+  
+  
+  
+  </div>
+  <div id="property_to" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_to"></a>
+          to
+      </h3>
+      <span class="type"><a href="http://emberjs.com/api/classes/String.html" class="crosslink external" target="_blank">String</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/mixins/table-header.js#L122">addon/mixins/table-header.js:122</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>Id used to figure out where to render the content</p>
+  
+      </div>
+  
+  
+  
+  </div>
+                  </div>
+              </div>
+
+
+              <div id="tab_events" role="tabpanel" class="tab-pane">
+                  <div class="item-list">
+  <div id="event_onColumnClick" class="events item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#event_onColumnClick"></a>
+          onColumnClick
+      </h3>
+      <span class="type"></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/mixins/table-header.js#L148">addon/mixins/table-header.js:148</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>onColumnClick action. Handles column sorting.</p>
+  
+      </div>
+  
+          <div class="params">
+              <h4>Event Payload:</h4>
+  
+              <ul class="params-list">
+                  <li class="param">
+                          <code class="param-name">column</code>
+                          <span class="type"><a href="../classes/Column.html" class="crosslink">Column</a></span>
+  
+  
+                      <div class="param-description">
+                          <p>The column that was clicked</p>
+  
+                      </div>
+  
+                  </li>
+                  <li class="param">
+                          <code class="param-name">event</code>
+                          <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/API/Event" class="crosslink external" target="_blank">Event</a></span>
+  
+  
+                      <div class="param-description">
+                          <p>The click event</p>
+  
+                      </div>
+  
+                  </li>
+              </ul>
+          </div>
+  
+  
+  </div>
+  <div id="event_onColumnDoubleClick" class="events item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#event_onColumnDoubleClick"></a>
+          onColumnDoubleClick
+      </h3>
+      <span class="type"></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/mixins/table-header.js#L171">addon/mixins/table-header.js:171</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>onColumnDoubleClick action.</p>
+  
+      </div>
+  
+          <div class="params">
+              <h4>Event Payload:</h4>
+  
+              <ul class="params-list">
+                  <li class="param">
+                          <code class="param-name">column</code>
+                          <span class="type"><a href="../classes/Column.html" class="crosslink">Column</a></span>
+  
+  
+                      <div class="param-description">
+                          <p>The column that was clicked</p>
+  
+                      </div>
+  
+                  </li>
+                  <li class="param">
+                          <code class="param-name">event</code>
+                          <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/API/Event" class="crosslink external" target="_blank">Event</a></span>
+  
+  
+                      <div class="param-description">
+                          <p>The click event</p>
+  
+                      </div>
+  
+                  </li>
+              </ul>
+          </div>
+  
+  
+  </div>
+  <div id="event_onColumnDrag" class="events item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#event_onColumnDrag"></a>
+          onColumnDrag
+      </h3>
+      <span class="type"></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/mixins/table-header.js#L193">addon/mixins/table-header.js:193</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>onColumnDrag action.</p>
+  
+      </div>
+  
+          <div class="params">
+              <h4>Event Payload:</h4>
+  
+              <ul class="params-list">
+                  <li class="param">
+                          <code class="param-name">column</code>
+                          <span class="type"><a href="../classes/Column.html" class="crosslink">Column</a></span>
+  
+  
+                      <div class="param-description">
+                          <p>The column that is being dragged</p>
+  
+                      </div>
+  
+                  </li>
+              </ul>
+          </div>
+  
+  
+  </div>
+  <div id="event_onColumnDrop" class="events item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#event_onColumnDrop"></a>
+          onColumnDrop
+      </h3>
+      <span class="type"></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/mixins/table-header.js#L203">addon/mixins/table-header.js:203</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>onColumnDrop action.</p>
+  
+      </div>
+  
+          <div class="params">
+              <h4>Event Payload:</h4>
+  
+              <ul class="params-list">
+                  <li class="param">
+                          <code class="param-name">column</code>
+                          <span class="type"><a href="../classes/Column.html" class="crosslink">Column</a></span>
+  
+  
+                      <div class="param-description">
+                          <p>The column that was dropped</p>
+  
+                      </div>
+  
+                  </li>
+                  <li class="param">
+                          <code class="param-name">isSuccess</code>
+                          <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+  
+  
+                      <div class="param-description">
+                          <p>The column was successfully dropped and sorted</p>
+  
+                      </div>
+  
+                  </li>
+              </ul>
+          </div>
+  
+  
+  </div>
+  <div id="event_onColumnResized" class="events item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#event_onColumnResized"></a>
+          onColumnResized
+      </h3>
+      <span class="type"></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/mixins/table-header.js#L182">addon/mixins/table-header.js:182</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>onColumnResized action.</p>
+  
+      </div>
+  
+          <div class="params">
+              <h4>Event Payload:</h4>
+  
+              <ul class="params-list">
+                  <li class="param">
+                          <code class="param-name">column</code>
+                          <span class="type"><a href="../classes/Column.html" class="crosslink">Column</a></span>
+  
+  
+                      <div class="param-description">
+                          <p>The column that was resized</p>
+  
+                      </div>
+  
+                  </li>
+                  <li class="param">
+                          <code class="param-name">width</code>
+                          <span class="type"><a href="http://emberjs.com/api/classes/String.html" class="crosslink external" target="_blank">String</a></span>
+  
+  
+                      <div class="param-description">
+                          <p>The final width of the column</p>
+  
+                      </div>
+  
+                  </li>
+              </ul>
+          </div>
+  
+  
+  </div>
+                  </div>
+              </div>
+      </div>
+    </div>
+</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../assets/vendor/prettify/prettify-min.js"></script>
+    <script>prettyPrint();</script>
+    <script src="../assets/vendor/jquery/jquery.min.js"></script>
+    <script src="../assets/vendor/jquery-ui/jquery-ui.min.js"></script>
+    <script src="../assets/vendor/bootstrap/js/bootstrap.js"></script>
+    <script src="../assets/vendor/github-slugger/slugger.js"></script>
+    <script src="../assets/js/yuidoc-bootstrap.js"></script>
+</body>
+</html>

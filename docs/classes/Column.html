@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Column - Ember Light Table</title>
+    <meta name="description" content="Lightweight, component based table for Ember 3.4+">
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/vendor/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="../assets/vendor/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../assets/css/theme.css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,700' rel='stylesheet' type='text/css'>
+    
+
+</head>
+<body>
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a href="../" class="navbar-brand">
+              <img src="../assets/img/ember-logo.png" alt="enterprise logo">
+            <span>Light Table</span>
+          </a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="nav">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="https://github.com/offirgolan/ember-light-table" class="fa fa-github github"></a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div id="main-wrapper" class="row">
+        <div id="content-wrapper">
+            <ol class="panel-group" id="sidebar" role="tablist" aria-multiselectable="true">
+                <li class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="sidebar-search-heading">
+                        <h4 class="panel-title">
+                      <a role="button" data-toggle="collapse" href="#sidebar-search" aria-expanded="true" aria-controls="collapseOne">
+                        Search
+                      </a>
+                    </h4>
+                    </div>
+                    <div id="sidebar-search" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="sidebar-search-heading">
+                        <div class="panel-body">
+                            <div id="api-tabview-filter">
+                                <input type="search" id="api-filter" placeholder="Search...">
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                    <li class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="sidebar-version-heading">
+                            <h4 class="panel-title">
+                                <a role="button" href="https://github.com/offirgolan/ember-light-table/commits/023109c2" target="_blank">
+                                  Tag: 2.0.0-beta.5.023109c2
+                                </a>
+                            </h4>
+                        </div>
+                    </li>
+                <li class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="sidebar-modules-heading">
+                        <h4 class="panel-title">
+                    <a role="button" data-toggle="collapse" href="#sidebar-modules" aria-expanded="true" aria-controls="collapseOne">
+                      Modules
+                    </a>
+                  </h4>
+                    </div>
+                    <div id="sidebar-modules" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="sidebar-modules-heading">
+                        <div class="panel-body">
+                                <ol>
+                                        <li>
+                                            <a href="../modules/Light Table.html">Light Table</a>
+                                                    <li class="sub"><a href="../modules/Cell Types.html">Cell Types</a></li>
+                                                    <li class="sub"><a href="../modules/Column Types.html">Column Types</a></li>
+                                        </li>
+                                        <li>
+                                            <a href="../modules/Table.html">Table</a>
+                                        </li>
+                                        <li>
+                                            <a href="../modules/Usage.html">Usage</a>
+                                                    <li class="sub"><a href="../modules/Table Declaration.html">Table Declaration</a></li>
+                                                    <li class="sub"><a href="../modules/Component Declaration.html">Component Declaration</a></li>
+                                        </li>
+                                        <li>
+                                            <a href="../modules/Utils.html">Utils</a>
+                                        </li>
+                                </ol>
+                        </div>
+                    </div>
+                </li>
+            
+                <li class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="sidebar-classes-heading">
+                        <h4 class="panel-title">
+                      <a role="button" data-toggle="collapse" href="#sidebar-classes" aria-expanded="true" aria-controls="collapseOne">
+                        Classes
+                      </a>
+                    </h4>
+                    </div>
+                    <div id="sidebar-classes" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="sidebar-classes-heading">
+                        <div class="panel-body">
+                            <ol>
+                                    <li>
+                                        <a href="../classes/Base Cell.html">Base Cell</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/Base Column.html">Base Column</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/Column.html">Column</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/fixProto.html">fixProto</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/light-table.html">light-table</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/Row.html">Row</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/t.body.html">t.body</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/t.foot.html">t.foot</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/t.head.html">t.head</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/Table.html">Table</a>
+                                    </li>
+                            </ol>
+                        </div>
+                    </div>
+                </li>
+            </ol>
+            <div class="content-container">
+                <div class="apidocs">
+                    <div id="docs-main">
+                        <div class="content">
+
+
+<div class="page-header">
+    <h1> <i class="fa fa-bookmark-o" aria-hidden="true"></i> Column Class
+            <a class="pull-right file-edit" href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/classes/Column.js#L7" target="_blank">
+              <i class="fa fa-pencil" aria-hidden="true"></i>
+            </a>
+    </h1>
+</div>
+
+
+<div class="content-meta">
+
+
+            Module: <a href="../modules/Table.html">Table</a>
+
+
+        <div class="foundat">
+            Defined In: <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/classes/Column.js#L7">addon/classes/Column.js:7</a>
+        </div>
+</div>
+
+
+
+
+<div>
+    <div class="page-section">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+          <li role="presentation" class="active"><a href="#tab_index" aria-controls="tab_index" role="tab" data-toggle="tab">Index</a></li>
+            <li role="presentation"><a href="#tab_methods" aria-controls="tab_methods" role="tab" data-toggle="tab">Methods</a></li>
+
+            <li role="presentation"><a href="#tab_properties" aria-controls="tab_properties" role="tab" data-toggle="tab">Properties</a></li>
+
+
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+
+              <form id="options-form" class="form-inline">
+                  Show:
+                  <label for="api-show-inherited" class="checkbox">
+                      <input type="checkbox" id="api-show-inherited" checked>
+                      Inherited
+                  </label>
+          
+                  <label for="api-show-protected" class="checkbox">
+                      <input type="checkbox" id="api-show-protected">
+                      Protected
+                  </label>
+          
+                  <label for="api-show-private" class="checkbox">
+                      <input type="checkbox" id="api-show-private">
+                      Private
+                  </label>
+                  <label for="api-show-deprecated" class="checkbox">
+                      <input type="checkbox" id="api-show-deprecated">
+                      Deprecated
+                  </label>
+          
+              </form>
+
+          <div id="tab_index" role="tabpanel" class="tab-pane active" >
+                  <div class="index-section methods">
+                      <h3>Methods</h3>
+
+                      <ul class="index-list methods">
+                              <li class="index-item method">
+                                  <a href="#method_serializeContentObjects">serializeContentObjects</a>
+
+                              </li>
+                              <li class="index-item method">
+                                  <a href="#method_serializeSyncArrayObjects">serializeSyncArrayObjects</a>
+
+                              </li>
+                      </ul>
+                  </div>
+
+                  <div class="index-section properties">
+                      <h3>Properties</h3>
+
+                      <ul class="index-list properties">
+                              <li class="index-item property">
+                                  <a href="#property_align">align</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_ascending">ascending</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_breakpoints">breakpoints</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_cellClassNames">cellClassNames</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_cellComponent">cellComponent</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_cellType">cellType</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_classNames">classNames</a>
+
+                              </li>
+                              <li class="index-item property private">
+                                  <a href="#property_columnId">columnId</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_component">component</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_draggable">draggable</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_droppable">droppable</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_format">format</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_hidden">hidden</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_hideable">hideable</a>
+
+                              </li>
+                              <li class="index-item property private">
+                                  <a href="#property_isGroupColumn">isGroupColumn</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_isHidden">isHidden</a>
+
+                              </li>
+                              <li class="index-item property private">
+                                  <a href="#property_isVisibleGroupColumn">isVisibleGroupColumn</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_label">label</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_minResizeWidth">minResizeWidth</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_parent">parent</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_resizable">resizable</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_responsiveHidden">responsiveHidden</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_sortable">sortable</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_sorted">sorted</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_subColumns">subColumns</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_syncArray">syncArray</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_syncEnabled">syncEnabled</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_type">type</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_valuePath">valuePath</a>
+
+                              </li>
+                              <li class="index-item property private">
+                                  <a href="#property_visibleSubColumns">visibleSubColumns</a>
+
+                              </li>
+                              <li class="index-item property">
+                                  <a href="#property_width">width</a>
+
+                              </li>
+                      </ul>
+                  </div>
+
+
+          </div>
+
+              <div id="tab_methods" role="tabpanel" class="tab-pane">
+                  <div class="item-list">
+  <div id="method_serializeContentObjects" class="method item">
+  	<span class="method-signature">
+  	<span class="name anchorable-toc">
+  		<a class="fa fa-link toc-anchor" href="#method_serializeContentObjects"></a>
+  		serializeContentObjects
+  	</span>
+  
+  		<div class="args">
+  			<span class="paren">(</span><ul class="args-list inline commas">
+  				<li class="arg">
+  						<code>objects</code>
+  				</li>
+  			</ul><span class="paren">)</span>
+  		</div>
+  		<span class="returns-inline">
+  			<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+  		</span>
+  	</span>
+  
+  
+  
+  
+  
+  
+  
+  	<div class="meta">
+  				<p>
+  				Defined in
+  		<a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/-private/sync-array-proxy.js#L46">addon/-private/sync-array-proxy.js:46</a>
+  		</p>
+  
+  
+  
+  	</div>
+  
+  	<div class="description"><p>Serialize objects before they are inserted into the content array</p>
+  </div>
+  
+  		<div class="params">
+  			<h4>Parameters:</h4>
+  
+  			<ul class="params-list">
+  				<li class="param">
+  						<code class="param-name">objects</code>
+  						<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+  
+  
+  
+  				</li>
+  			</ul>
+  		</div>
+  
+  		<div class="returns">
+  			<h4>Returns:</h4>
+  
+  			<div class="returns-description">
+  						<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+  			</div>
+  		</div>
+  
+  </div>
+  <div id="method_serializeSyncArrayObjects" class="method item">
+  	<span class="method-signature">
+  	<span class="name anchorable-toc">
+  		<a class="fa fa-link toc-anchor" href="#method_serializeSyncArrayObjects"></a>
+  		serializeSyncArrayObjects
+  	</span>
+  
+  		<div class="args">
+  			<span class="paren">(</span><ul class="args-list inline commas">
+  				<li class="arg">
+  						<code>objects</code>
+  				</li>
+  			</ul><span class="paren">)</span>
+  		</div>
+  		<span class="returns-inline">
+  			<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+  		</span>
+  	</span>
+  
+  
+  
+  
+  
+  
+  
+  	<div class="meta">
+  				<p>
+  				Defined in
+  		<a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/-private/sync-array-proxy.js#L56">addon/-private/sync-array-proxy.js:56</a>
+  		</p>
+  
+  
+  
+  	</div>
+  
+  	<div class="description"><p>Serialize objects before they are inserted into the sync array</p>
+  </div>
+  
+  		<div class="params">
+  			<h4>Parameters:</h4>
+  
+  			<ul class="params-list">
+  				<li class="param">
+  						<code class="param-name">objects</code>
+  						<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+  
+  
+  
+  				</li>
+  			</ul>
+  		</div>
+  
+  		<div class="returns">
+  			<h4>Returns:</h4>
+  
+  			<div class="returns-description">
+  						<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+  			</div>
+  		</div>
+  
+  </div>
+                  </div>
+              </div>
+
+              <div id="tab_properties" role="tabpanel" class="tab-pane">
+                  <div class="item-list">
+  <div id="property_align" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_align"></a>
+          align
+      </h3>
+      <span class="type"><a href="http://emberjs.com/api/classes/String.html" class="crosslink external" target="_blank">String</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/classes/Column.js#L122">addon/classes/Column.js:122</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>Text alignment. Possible values are ['left', 'right', 'center']</p>
+  
+      </div>
+  
+          <p><br><strong>Default:</strong> &#x27;left&#x27;</p>
+  
+  
+  </div>
+  <div id="property_ascending" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_ascending"></a>
+          ascending
+      </h3>
+      <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/classes/Column.js#L45">addon/classes/Column.js:45</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          
+      </div>
+  
+          <p><br><strong>Default:</strong> true</p>
+  
+  
+  </div>
+  <div id="property_breakpoints" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_breakpoints"></a>
+          breakpoints
+      </h3>
+      <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/classes/Column.js#L157">addon/classes/Column.js:157</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>An array of media breakpoints that determine when this column will be shown</p>
+  <p>If we have the following breakpoints defined in <code>app/breakpoints.js</code>:</p>
+  <ul>
+  <li>mobile</li>
+  <li>tablet</li>
+  <li>desktop</li>
+  </ul>
+  <p>And we want to show this column only for tablet and desktop media, the following
+  array should be specified: <code>['tablet', 'desktop']</code>.</p>
+  <p>If this property is <code>null</code>, <code>undefined</code>, or <code>[]</code>, then this column will always
+  be shown, regardless of the current media type.</p>
+  
+      </div>
+  
+  
+  
+  </div>
+  <div id="property_cellClassNames" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_cellClassNames"></a>
+          cellClassNames
+      </h3>
+      <span class="type"><a href="http://emberjs.com/api/classes/String.html" class="crosslink external" target="_blank">String</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/classes/Column.js#L255">addon/classes/Column.js:255</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>Class names to be applied to all cells of this column</p>
+  
+      </div>
+  
+  
+  
+  </div>
+  <div id="property_cellComponent" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_cellComponent"></a>
+          cellComponent
+      </h3>
+      <span class="type"><a href="http://emberjs.com/api/classes/String.html" class="crosslink external" target="_blank">String</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/classes/Column.js#L225">addon/classes/Column.js:225</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>Component name for the column cells. This component is automatically passed row,
+  column, and value variables, and you can specify a valuePath to set what property
+  the value is set to.</p>
+  
+      </div>
+  
+  
+  
+  </div>
+  <div id="property_cellType" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_cellType"></a>
+          cellType
+      </h3>
+      <span class="type"><a href="http://emberjs.com/api/classes/String.html" class="crosslink external" target="_blank">String</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/classes/Column.js#L198">addon/classes/Column.js:198</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>Type of cell component</p>
+  <p>You can create your own cell types by running the blueprint:
+  <code>ember g cell-type my-cell-type</code></p>
+  <p>This will generate a component for you which represents the <code>&lt;td&gt;</code>
+  cells in the column. If you want to apply custom actions to the <code>td</code>,
+  or do some custom styling of the <code>td</code> with classNameBindings, all of that is
+  available to you in this component.</p>
+  <p>You can then specify the custom type you created as a string here, to use it.</p>
+  
+      </div>
+  
+          <p><br><strong>Default:</strong> &#x27;base&#x27;</p>
+  
+  
+  </div>
+  <div id="property_classNames" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_classNames"></a>
+          classNames
+      </h3>
+      <span class="type"><a href="http://emberjs.com/api/classes/String.html" class="crosslink external" target="_blank">String</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/classes/Column.js#L247">addon/classes/Column.js:247</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>Class names to be applied to header and footer cells of this column</p>
+  
+      </div>
+  
+  
+  
+  </div>
+  <div id="property_columnId" class="property item private">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_columnId"></a>
+          columnId
+      </h3>
+      <span class="type"><a href="http://emberjs.com/api/classes/String.html" class="crosslink external" target="_blank">String</a></span>
+  
+  
+          <span class="flag private">private</span>
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/classes/Column.js#L272">addon/classes/Column.js:272</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>Column's unique ID.</p>
+  
+      </div>
+  
+  
+  
+  </div>
+  <div id="property_component" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_component"></a>
+          component
+      </h3>
+      <span class="type"><a href="http://emberjs.com/api/classes/String.html" class="crosslink external" target="_blank">String</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/classes/Column.js#L217">addon/classes/Column.js:217</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>Component name for the column</p>
+  
+      </div>
+  
+  
+  
+  </div>
+  <div id="property_draggable" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_draggable"></a>
+          draggable
+      </h3>
+      <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/classes/Column.js#L77">addon/classes/Column.js:77</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>Whether the column can be reorder via drag and drop.</p>
+  <p>CSS Classes:</p>
+  <ul>
+  <li><code>is-draggable</code></li>
+  <li><code>is-dragging</code></li>
+  <li><code>is-drag-target</code>
+  <ul>
+  <li><code>drag-left</code></li>
+  <li><code>drag-right</code></li>
+  </ul>
+  </li>
+  </ul>
+  
+      </div>
+  
+          <p><br><strong>Default:</strong> false</p>
+  
+  
+  </div>
+  <div id="property_droppable" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_droppable"></a>
+          droppable
+      </h3>
+      <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/classes/Column.js#L93">addon/classes/Column.js:93</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>Whether the column is a valid drop target.</p>
+  
+      </div>
+  
+          <p><br><strong>Default:</strong> true</p>
+  
+  
+  </div>
+  <div id="property_format" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_format"></a>
+          format
+      </h3>
+      <span class="type"><a href="http://emberjs.com/api/classes/Function.html" class="crosslink external" target="_blank">Function</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/classes/Column.js#L263">addon/classes/Column.js:263</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>A format function used to calculate a cell's value. This method will be passed
+  the raw value if <code>valuePath</code> is specified.</p>
+  
+      </div>
+  
+  
+  
+  </div>
+  <div id="property_hidden" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_hidden"></a>
+          hidden
+      </h3>
+      <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/classes/Column.js#L24">addon/classes/Column.js:24</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>Whether the column can is hidden.</p>
+  <p>CSS Classes:</p>
+  <ul>
+  <li><code>is-hidden</code></li>
+  </ul>
+  
+      </div>
+  
+          <p><br><strong>Default:</strong> false</p>
+  
+  
+  </div>
+  <div id="property_hideable" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_hideable"></a>
+          hideable
+      </h3>
+      <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/classes/Column.js#L12">addon/classes/Column.js:12</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>Whether the column can be hidden.</p>
+  <p>CSS Classes:</p>
+  <ul>
+  <li><code>is-hideable</code></li>
+  </ul>
+  
+      </div>
+  
+          <p><br><strong>Default:</strong> true</p>
+  
+  
+  </div>
+  <div id="property_isGroupColumn" class="property item private">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_isGroupColumn"></a>
+          isGroupColumn
+      </h3>
+      <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+  
+  
+          <span class="flag private">private</span>
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/classes/Column.js#L290">addon/classes/Column.js:290</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          
+      </div>
+  
+  
+  
+  </div>
+  <div id="property_isHidden" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_isHidden"></a>
+          isHidden
+      </h3>
+      <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/classes/Column.js#L283">addon/classes/Column.js:283</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>True if <code>hidden</code> or <code>responsiveHidden</code> is true.</p>
+  
+      </div>
+  
+  
+  
+  </div>
+  <div id="property_isVisibleGroupColumn" class="property item private">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_isVisibleGroupColumn"></a>
+          isVisibleGroupColumn
+      </h3>
+      <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+  
+  
+          <span class="flag private">private</span>
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/classes/Column.js#L297">addon/classes/Column.js:297</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          
+      </div>
+  
+  
+  
+  </div>
+  <div id="property_label" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_label"></a>
+          label
+      </h3>
+      <span class="type"><a href="http://emberjs.com/api/classes/String.html" class="crosslink external" target="_blank">String</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/classes/Column.js#L114">addon/classes/Column.js:114</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>Column header label</p>
+  
+      </div>
+  
+          <p><br><strong>Default:</strong> &#x27;&#x27;</p>
+  
+  
+  </div>
+  <div id="property_minResizeWidth" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_minResizeWidth"></a>
+          minResizeWidth
+      </h3>
+      <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/classes/Column.js#L130">addon/classes/Column.js:130</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>The minimum width (in px) that this column can be resized to.</p>
+  
+      </div>
+  
+          <p><br><strong>Default:</strong> 0</p>
+  
+  
+  </div>
+  <div id="property_parent" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_parent"></a>
+          parent
+      </h3>
+      <span class="type"><a href="../classes/Column.html" class="crosslink">Column</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/classes/Column.js#L138">addon/classes/Column.js:138</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>The parent column (or group) for this sub-column.
+  This will only have a value if this column is a sub-column.
+  Note: this doesn't update if you move this sub-column to another parent after instantiation.</p>
+  
+      </div>
+  
+  
+  
+  </div>
+  <div id="property_resizable" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_resizable"></a>
+          resizable
+      </h3>
+      <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/classes/Column.js#L64">addon/classes/Column.js:64</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>Whether the column can be resized.</p>
+  <p>CSS Classes:</p>
+  <ul>
+  <li><code>is-resizable</code></li>
+  <li><code>is-resizing</code></li>
+  </ul>
+  
+      </div>
+  
+          <p><br><strong>Default:</strong> false</p>
+  
+  
+  </div>
+  <div id="property_responsiveHidden" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_responsiveHidden"></a>
+          responsiveHidden
+      </h3>
+      <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/classes/Column.js#L36">addon/classes/Column.js:36</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>If true, this column has been hidden due to the responsive behavior</p>
+  
+      </div>
+  
+          <p><br><strong>Default:</strong> false</p>
+  
+  
+  </div>
+  <div id="property_sortable" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_sortable"></a>
+          sortable
+      </h3>
+      <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/classes/Column.js#L52">addon/classes/Column.js:52</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>Whether the column can be sorted.</p>
+  <p>CSS Classes:</p>
+  <ul>
+  <li><code>is-sortable</code></li>
+  </ul>
+  
+      </div>
+  
+          <p><br><strong>Default:</strong> true</p>
+  
+  
+  </div>
+  <div id="property_sorted" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_sorted"></a>
+          sorted
+      </h3>
+      <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/classes/Column.js#L102">addon/classes/Column.js:102</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>Whether the column is sorted.</p>
+  <p>CSS Classes:</p>
+  <ul>
+  <li><code>is-sorted</code></li>
+  </ul>
+  
+      </div>
+  
+          <p><br><strong>Default:</strong> false</p>
+  
+  
+  </div>
+  <div id="property_subColumns" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_subColumns"></a>
+          subColumns
+      </h3>
+      <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/classes/Column.js#L149">addon/classes/Column.js:149</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>An array of sub columns to be grouped together</p>
+  
+      </div>
+  
+  
+  
+  </div>
+  <div id="property_syncArray" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_syncArray"></a>
+          syncArray
+      </h3>
+      <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/-private/sync-array-proxy.js#L8">addon/-private/sync-array-proxy.js:8</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>The model that will be synchronized to the content of this proxy</p>
+  
+      </div>
+  
+  
+  
+  </div>
+  <div id="property_syncEnabled" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_syncEnabled"></a>
+          syncEnabled
+      </h3>
+      <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/-private/sync-array-proxy.js#L15">addon/-private/sync-array-proxy.js:15</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          
+      </div>
+  
+  
+  
+  </div>
+  <div id="property_type" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_type"></a>
+          type
+      </h3>
+      <span class="type"><a href="http://emberjs.com/api/classes/String.html" class="crosslink external" target="_blank">String</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/classes/Column.js#L178">addon/classes/Column.js:178</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          <p>Type of column component</p>
+  <p>You can create your own column types by running the blueprint:
+  <code>ember g column-type my-column-type</code></p>
+  <p>This will generate a component for you which represents the <code>&lt;th&gt;</code>
+  element for the column. If you want to apply custom actions to the <code>th</code>,
+  or do some custom styling of the <code>th</code> with classNameBindings, all of that is
+  available to you in this component.</p>
+  <p>You can then specify the custom type you created as a string here, to use it.</p>
+  
+      </div>
+  
+          <p><br><strong>Default:</strong> &#x27;base&#x27;</p>
+  
+  
+  </div>
+  <div id="property_valuePath" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_valuePath"></a>
+          valuePath
+      </h3>
+      <span class="type"><a href="http://emberjs.com/api/classes/String.html" class="crosslink external" target="_blank">String</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/classes/Column.js#L235">addon/classes/Column.js:235</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          
+      </div>
+  
+  
+  
+  </div>
+  <div id="property_visibleSubColumns" class="property item private">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_visibleSubColumns"></a>
+          visibleSubColumns
+      </h3>
+      <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+  
+  
+          <span class="flag private">private</span>
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/classes/Column.js#L306">addon/classes/Column.js:306</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          
+      </div>
+  
+  
+  
+  </div>
+  <div id="property_width" class="property item">
+      <h3 class="name anchorable-toc">
+          <a class="fa fa-link toc-anchor" href="#property_width"></a>
+          width
+      </h3>
+      <span class="type"><a href="http://emberjs.com/api/classes/String.html" class="crosslink external" target="_blank">String</a></span>
+  
+  
+  
+  
+  
+      <div class="meta">
+                  <p>
+                  Defined in
+          <a href="https://github.com/offirgolan/ember-light-table/blob/023109c2/addon/classes/Column.js#L241">addon/classes/Column.js:241</a>
+          </p>
+  
+  
+      </div>
+  
+      <div class="description">
+          
+      </div>
+  
+  
+  
+  </div>
+                  </div>
+              </div>
+
+
+      </div>
+    </div>
+</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../assets/vendor/prettify/prettify-min.js"></script>
+    <script>prettyPrint();</script>
+    <script src="../assets/vendor/jquery/jquery.min.js"></script>
+    <script src="../assets/vendor/jquery-ui/jquery-ui.min.js"></script>
+    <script src="../assets/vendor/bootstrap/js/bootstrap.js"></script>
+    <script src="../assets/vendor/github-slugger/slugger.js"></script>
+    <script src="../assets/js/yuidoc-bootstrap.js"></script>
+</body>
+</html>

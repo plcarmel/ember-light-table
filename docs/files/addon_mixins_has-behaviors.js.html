@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>addon/mixins/has-behaviors.js - Ember Light Table</title>
+    <meta name="description" content="Lightweight, component based table for Ember 3.4+">
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/vendor/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="../assets/vendor/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../assets/css/theme.css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,700' rel='stylesheet' type='text/css'>
+    
+
+</head>
+<body>
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a href="../" class="navbar-brand">
+              <img src="../assets/img/ember-logo.png" alt="enterprise logo">
+            <span>Light Table</span>
+          </a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="nav">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="https://github.com/offirgolan/ember-light-table" class="fa fa-github github"></a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div id="main-wrapper" class="row">
+        <div id="content-wrapper">
+            <ol class="panel-group" id="sidebar" role="tablist" aria-multiselectable="true">
+                <li class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="sidebar-search-heading">
+                        <h4 class="panel-title">
+                      <a role="button" data-toggle="collapse" href="#sidebar-search" aria-expanded="true" aria-controls="collapseOne">
+                        Search
+                      </a>
+                    </h4>
+                    </div>
+                    <div id="sidebar-search" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="sidebar-search-heading">
+                        <div class="panel-body">
+                            <div id="api-tabview-filter">
+                                <input type="search" id="api-filter" placeholder="Search...">
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                    <li class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="sidebar-version-heading">
+                            <h4 class="panel-title">
+                                <a role="button" href="https://github.com/offirgolan/ember-light-table/commits/023109c2" target="_blank">
+                                  Tag: 2.0.0-beta.5.023109c2
+                                </a>
+                            </h4>
+                        </div>
+                    </li>
+                <li class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="sidebar-modules-heading">
+                        <h4 class="panel-title">
+                    <a role="button" data-toggle="collapse" href="#sidebar-modules" aria-expanded="true" aria-controls="collapseOne">
+                      Modules
+                    </a>
+                  </h4>
+                    </div>
+                    <div id="sidebar-modules" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="sidebar-modules-heading">
+                        <div class="panel-body">
+                                <ol>
+                                        <li>
+                                            <a href="../modules/Light Table.html">Light Table</a>
+                                                    <li class="sub"><a href="../modules/Cell Types.html">Cell Types</a></li>
+                                                    <li class="sub"><a href="../modules/Column Types.html">Column Types</a></li>
+                                        </li>
+                                        <li>
+                                            <a href="../modules/Table.html">Table</a>
+                                        </li>
+                                        <li>
+                                            <a href="../modules/Usage.html">Usage</a>
+                                                    <li class="sub"><a href="../modules/Table Declaration.html">Table Declaration</a></li>
+                                                    <li class="sub"><a href="../modules/Component Declaration.html">Component Declaration</a></li>
+                                        </li>
+                                        <li>
+                                            <a href="../modules/Utils.html">Utils</a>
+                                        </li>
+                                </ol>
+                        </div>
+                    </div>
+                </li>
+            
+                <li class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="sidebar-classes-heading">
+                        <h4 class="panel-title">
+                      <a role="button" data-toggle="collapse" href="#sidebar-classes" aria-expanded="true" aria-controls="collapseOne">
+                        Classes
+                      </a>
+                    </h4>
+                    </div>
+                    <div id="sidebar-classes" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="sidebar-classes-heading">
+                        <div class="panel-body">
+                            <ol>
+                                    <li>
+                                        <a href="../classes/Base Cell.html">Base Cell</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/Base Column.html">Base Column</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/Column.html">Column</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/fixProto.html">fixProto</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/light-table.html">light-table</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/Row.html">Row</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/t.body.html">t.body</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/t.foot.html">t.foot</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/t.head.html">t.head</a>
+                                    </li>
+                                    <li>
+                                        <a href="../classes/Table.html">Table</a>
+                                    </li>
+                            </ol>
+                        </div>
+                    </div>
+                </li>
+            </ol>
+            <div class="content-container">
+                <div class="apidocs">
+                    <div id="docs-main">
+                        <div class="content">
+<div class="page-header">
+    <h1><i class="fa fa-file-code-o" aria-hidden="true"></i>  File</h1>
+</div>
+
+<div class="file">
+    <pre class="prettyprint linenums">
+import { A } from &#x27;@ember/array&#x27;;
+import { computed, observer } from &#x27;@ember/object&#x27;;
+import Mixin from &#x27;@ember/object/mixin&#x27;;
+import { on } from &#x27;@ember/object/evented&#x27;;
+import { run } from &#x27;@ember/runloop&#x27;;
+import withBackingField from &#x27;ember-light-table/utils/with-backing-field&#x27;;
+import listenerName from &#x27;ember-light-table/utils/listener-name&#x27;;
+
+/*
+ * from ember-keyboard
+ */
+function gatherKeys(event) {
+  return A(
+    [&#x27;alt&#x27;, &#x27;ctrl&#x27;, &#x27;meta&#x27;, &#x27;shift&#x27;]
+      .reduce(
+        (keys, keyName) =&gt; {
+          if (event[&#x60;${keyName}Key&#x60;]) {
+            keys.push(keyName);
+          }
+          return keys;
+        },
+        []
+      )
+  );
+}
+
+/**
+ * Returns a computed property flag that turns on or off a group of
+ * mutually exclusive behaviors.
+ *
+ * @function
+ * @param {string} exclusionGroup - If present, it is
+ *   the name of the mutually exclusive group of behaviors for
+ *   which all behaviors should be turned off or for which the
+ *   behavior having the higher priority should be turned on,
+ *   based on the value of the property.
+ */
+export function behaviorGroupFlag(exclusionGroup) {
+  return computed(&#x27;behaviors.[]&#x27;, {
+    get() {
+      this._initDefaultBehaviorsIfNeeded();
+      return !!this.getActiveBehaviorOf(exclusionGroup);
+    },
+    set(key, value) {
+      this._initDefaultBehaviorsIfNeeded();
+      if (value) {
+        this.activateBehavior(this.getFirstBehaviorOf(exclusionGroup));
+      } else {
+        this.inactivateAllBehaviorsOf(exclusionGroup);
+      }
+      return value;
+    }
+  });
+}
+
+/**
+ * Returns a computed property flag that prioritize or not a specific
+ * behavior in a group of mutually exclusive behaviors.
+ *
+ * @function
+ * @param {string} exclusionGroup - The name of the mutually exclusive
+ *   group of behaviors.
+ * @param {string} behaviorPropertyName - The name of the property that
+ *   contains the instance of the behavior to prioritize or not.
+ */
+export function behaviorFlag(exclusionGroup, behaviorPropertyName) {
+  return computed(&#x27;behaviors.[]&#x27;, &#x27;behaviorsOff.[]&#x27;, {
+    get() {
+      this._initDefaultBehaviorsIfNeeded();
+      return this.getFirstBehaviorOf(exclusionGroup) === this.get(behaviorPropertyName);
+    },
+    set(key, value) {
+      this._initDefaultBehaviorsIfNeeded();
+      let l = A(this.allBehaviors.filterBy(&#x27;exclusionGroup&#x27;, exclusionGroup));
+      let b = this.get(behaviorPropertyName);
+      let b0 = l.objectAt(0);
+      if (b0 !== b &amp;&amp; value) {
+        this.activateBehavior(b);
+      } else if (b0 === b &amp;&amp; !value) {
+        this.prioritizeBehavior(l.objectAt(1));
+      }
+      return value;
+    }
+  });
+}
+
+/**
+ * Returns a computed property that is the first behavior of a given type if one is present.
+ *
+ * @function
+ * @param {string} behaviorClass - The class of the behavior to be returned.
+ */
+export function behaviorInstanceOf(behaviorClass) {
+  return computed(&#x27;behaviors.[]&#x27;, &#x27;behaviorsOff.[]&#x27;, {
+    get() {
+      this._initDefaultBehaviorsIfNeeded();
+      return this.allBehaviors.find((b) =&gt; b instanceof behaviorClass);
+    }
+  });
+}
+
+/**
+ * Use this mixin to be able to add behaviors to your class. Behaviors are
+ * small plugins that declare the javascript events they want to listen for.
+ * They are instances of subclasses of &#x60;behaviors/behavior&#x60;.
+ *
+ * @mixin
+ */
+export default Mixin.create({
+
+  /**
+   * Behaviors that are turned on, in descending order of priority.
+   */
+  behaviors: withBackingField(&#x27;_behaviors&#x27;, () =&gt; A()),
+
+  /**
+   * Behaviors that are turned off, in descending order of priority. They are
+   * backup behaviors that can replace a behavior of the same group
+   * when the later is turned off.
+   */
+  behaviorsOff: withBackingField(&#x27;_behaviorsOff&#x27;, () =&gt; A()),
+
+  allBehaviors: computed(&#x27;behaviors.[]&#x27;, &#x27;behaviorsOff.[]&#x27;, function() {
+    let result = A();
+    result.pushObjects(this.behaviors);
+    result.pushObjects(this.behaviorsOff);
+    return result;
+  }),
+
+  /**
+   * Moves a behavior in front of other behaviors.
+   *
+   * @function
+   * @param {Behavior} behavior - Instance of the behavior to prioritize.
+   */
+  prioritizeBehavior(behavior) {
+    if (behavior) {
+      let { behaviors } = this;
+      let { behaviorsOff } = this;
+      if (behaviors.includes(behavior)) {
+        behaviors.removeObject(behavior);
+        behaviors.insertAt(0, behavior);
+      } else if (behaviorsOff.includes(behavior)) {
+        behaviorsOff.removeObject(behavior);
+        behaviorsOff.insertAt(0, behavior);
+      }
+    }
+  },
+
+  /**
+   * Turns off a behavior.
+   *
+   * @function
+   * @param {Behavior} behavior - Instance of the behavior to inactivate.
+   */
+  inactivateBehavior(behavior) {
+    if (behavior) {
+      let { behaviors } = this;
+      let { behaviorsOff } = this;
+      behaviors.removeObject(behavior);
+      behaviorsOff.removeObject(behavior);
+      behaviorsOff.insertAt(0, behavior);
+    }
+  },
+
+  /**
+   * Turns on or off a behavior.
+   *
+   * @function
+   * @param {Behavior} behavior - Behavior instance to activate/inactivate.
+   * @param {boolean} [value=true] - Whether the behavior is activated (true) or inactivated (false).
+   */
+  activateBehavior(behavior, value) {
+    if (value === undefined || value)  {
+      this.inactivateAllBehaviorsOf(behavior.get(&#x27;exclusionGroup&#x27;));
+      let { behaviors } = this;
+      let { behaviorsOff } = this;
+      behaviorsOff.removeObject(behavior);
+      behaviors.insertAt(0, behavior);
+    } else {
+      this.inactivateBehavior(behavior);
+    }
+  },
+
+  /**
+   * Returns the active behavior of a multually exclusive group.
+   *
+   * @function
+   * @param {string} exclusionGroup
+   * @returns {Behavior} - The active behavior&#x27;s instance or &#x60;undefined&#x60; otherwise.
+   */
+  getActiveBehaviorOf(exclusionGroup) {
+    return A(this.behaviors).findBy(&#x27;exclusionGroup&#x27;, exclusionGroup);
+  },
+
+  /**
+   * Returns the inactive behavior of a multually exclusive group having the highest priority.
+   *
+   * @function
+   * @param {string} exclusionGroup
+   * @param {boolean} [value=true] - Whether the behavior is activated (true) or inactivated (false).
+   * @returns {Behavior} - The inactive behavior&#x27;s instance or &#x60;undefined&#x60; otherwise.
+   */
+  getInactiveBehaviorOf(exclusionGroup) {
+    return A(this.behaviorsOff).findBy(&#x27;exclusionGroup&#x27;, exclusionGroup);
+  },
+
+  /**
+   * Returns the behavior of a multually exclusive having the highest priority.
+   *
+   * @function
+   * @param {string} exclusionGroup
+   * @returns {Behavior} - The behavior&#x27;s instance or &#x60;undefined&#x60; otherwise.
+   */
+  getFirstBehaviorOf(exclusionGroup) {
+    return A(this.allBehaviors.filterBy(&#x27;exclusionGroup&#x27;, exclusionGroup)).objectAt(0);
+  },
+
+  /**
+   * Turns off the active behavior of a mutually exclusive group of behaviors.
+   *
+   * @function
+   * @param {string} exclusionGroup
+   */
+  inactivateAllBehaviorsOf(exclusionGroup) {
+    let active = this.getActiveBehaviorOf(exclusionGroup);
+    while (active) {
+      this.inactivateBehavior(active);
+      active = this.getActiveBehaviorOf(exclusionGroup);
+    }
+  },
+
+  _oldEvents: null,
+
+  _turnOffOldEvents() {
+    let oldEvents = this._oldEvents;
+    if (oldEvents) {
+      oldEvents.forEach((turnOff) =&gt; turnOff());
+    }
+    this._oldEvents = A();
+  },
+
+  /**
+   * An array containing the set of exclusion groups shared by the behaviors that are on
+   */
+  exclusionGroups: computed(&#x27;behaviors.{[],exclusionGroup}&#x27;, function() {
+    return A(this.behaviors.mapBy(&#x27;exclusionGroup&#x27;).filter((g) =&gt; g)).uniq();
+  }),
+
+  /**
+   * Behaviors that are active. A behavior is active if it&#x27;s on and if it has the greatest
+   * priority among the behaviors of its exclusion group.
+   */
+  activeBehaviors: computed(&#x27;behaviors&#x27;, &#x27;exclusionGroups&#x27;, function() {
+    let groups = this.exclusionGroups;
+    return this.behaviors
+      .filter((b) =&gt; {
+        let group = b.get(&#x27;exclusionGroup&#x27;);
+        if (group) {
+          if (groups.includes(group)) {
+            groups.removeObject(b);
+            return true;
+          }
+          return false;
+        }
+        return true;
+      });
+  }),
+
+  triggerBehaviorEvent(type) {
+    let args = Array.prototype.slice.call(arguments, 1);
+    this.trigger(listenerName(type, gatherKeys(args[args.length - 1])), ...args);
+    this.trigger(listenerName(type), ...args);
+  },
+
+  /**
+   * This function attach or detach event listeners based on the behaviors present in
+   * &#x60;behaviors&#x60;
+   *
+   * @function
+   */
+  _updateEvents() {
+    this._turnOffOldEvents();
+    let getCallback
+      = (b, f) =&gt; {
+        let that = this;
+        return function() {
+          return b[f].call(b, that, ...arguments);
+        };
+      };
+    let getTurnOffFunc = (name, f, g) =&gt; () =&gt; this.off(name, f, g);
+    let getInnerLoop = (b, f) =&gt; (name) =&gt; {
+      let g = this.on(name, getCallback(b, f));
+      this._oldEvents.pushObject(getTurnOffFunc(name, b, g));
+    };
+    this.activeBehaviors
+      .forEach((b) =&gt; {
+        for (let f in b.events) {
+          b.events[f].forEach(getInnerLoop(b, f));
+        }
+      });
+  },
+
+  _onBehaviorsChanged: on(&#x27;init&#x27;, observer(
+    &#x27;behaviors.[]&#x27;,
+    &#x27;behaviors.@each.events&#x27;,
+    function() {
+      run.once(this, &#x27;_updateEvents&#x27;);
+    }
+  )),
+
+  _setClasses: on(&#x27;didRender&#x27;, observer(
+    &#x27;activeBehaviors.[]&#x27;,
+    &#x27;behaviorsOff.[]&#x27;,
+    function() {
+      let { element } = this;
+      if (element) {
+        let classesOn = A([]);
+        let classesOff = A([]);
+        let bOff = A(this.behaviorsOff);
+        let bOn = A(this.behaviors);
+        bOff.map((b) =&gt; b.get(&#x27;classNames&#x27;)).filter((l) =&gt; l).forEach((l) =&gt; classesOff.addObjects(l));
+        bOn.map((b) =&gt; b.get(&#x27;classNames&#x27;)).filter((l) =&gt; l).forEach((l) =&gt; classesOn.addObjects(l));
+        classesOff.addObjects(bOff.mapBy(&#x27;exclusionGroup&#x27;).filter((g) =&gt; g));
+        classesOn.addObjects(bOn.mapBy(&#x27;exclusionGroup&#x27;).filter((g) =&gt; g));
+        classesOff.forEach((c) =&gt; element.classList.remove(c));
+        classesOn.forEach((c) =&gt; element.classList.add(c));
+      }
+    }
+  ))
+
+});
+
+    </pre>
+</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../assets/vendor/prettify/prettify-min.js"></script>
+    <script>prettyPrint();</script>
+    <script src="../assets/vendor/jquery/jquery.min.js"></script>
+    <script src="../assets/vendor/jquery-ui/jquery-ui.min.js"></script>
+    <script src="../assets/vendor/bootstrap/js/bootstrap.js"></script>
+    <script src="../assets/vendor/github-slugger/slugger.js"></script>
+    <script src="../assets/js/yuidoc-bootstrap.js"></script>
+</body>
+</html>

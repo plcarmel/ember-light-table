@@ -1,3 +1,5 @@
+/* eslint-disable ember/no-side-effects */
+
 import { computed } from '@ember/object';
 
 export default function withBackingField(backingField, f) {

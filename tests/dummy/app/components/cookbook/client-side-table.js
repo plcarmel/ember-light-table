@@ -3,6 +3,7 @@ import Component from '@ember/component';
 import TableCommon from '../../mixins/table-common';
 import { computed } from '@ember/object';
 import { task, timeout } from 'ember-concurrency';
+import { filterBy } from '@ember/object/computed';
 
 export default Component.extend(TableCommon, {
   query: '',
@@ -20,9 +21,8 @@ export default Component.extend(TableCommon, {
 
   // Filter Input Setup
   selectedFilter: computed.oneWay('possibleFilters.firstObject'),
-  possibleFilters: computed('table.columns', function() {
-    return this.table.columns.filterBy('sortable', true);
-  }).readOnly(),
+
+  possibleFilters: filterBy('table.columns', 'sortable', true),
 
   columns: computed(function() {
     return [{

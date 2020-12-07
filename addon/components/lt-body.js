@@ -8,7 +8,7 @@ import { warn } from '@ember/debug';
 import layout from 'ember-light-table/templates/components/lt-body';
 import { EKMixin } from 'ember-keyboard';
 import ActivateKeyboardOnFocusMixin from 'ember-keyboard/mixins/activate-keyboard-on-focus';
-import HasBehaviorsMixin, { behaviorGroupFlag, behaviorFlag, behaviorInstanceOf } from 'ember-light-table/mixins/has-behaviors';
+import { HasBehaviorsMixin, behaviorGroupFlag, behaviorFlag, behaviorInstanceOf } from 'ember-behavior';
 import RowExpansionBehavior from 'ember-light-table/behaviors/row-expansion';
 import SingleSelectBehavior from 'ember-light-table/behaviors/single-select';
 import MultiSelectBehavior from 'ember-light-table/behaviors/multi-select';

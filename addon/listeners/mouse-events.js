@@ -1,4 +1,4 @@
-import listenerName from 'ember-light-table/utils/listener-name';
+import listenerName from 'ember-behaviors/utils/listener-name';
 
 const formattedListener = function formattedListener(type, keysString) {
   const keys = keysString !== undefined ? keysString.split('+') : [];

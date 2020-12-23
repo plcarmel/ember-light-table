@@ -1,7 +1,7 @@
 import { keyDown, keyUp } from 'ember-keyboard';
 import SelectAll from './select-all';
 import RowRanges from './common/row-ranges';
-import { rowMouseUp, rowMouseDown, rowMouseMove } from 'ember-light-table/listeners/mouse-events';
+import { rowMouseUp, rowMouseDown, rowMouseMove } from 'ember-behaviors/listeners/mouse-events';
 
 export default SelectAll.extend({
 

@@ -1,6 +1,6 @@
 import Behavior from 'ember-light-table/behaviors/behavior';
 import { keyDown } from 'ember-keyboard';
-import { rowMouseDown } from 'ember-light-table/listeners/mouse-events';
+import { rowMouseDown } from 'ember-behaviors/listeners/mouse-events';
 
 export default Behavior.extend({
 
